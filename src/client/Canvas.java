@@ -32,7 +32,6 @@ public class Canvas extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		ArrayList<Player> players = control.getPlayers();
-		System.out.println(players.size());
 		Graphics2D g2d = (Graphics2D) g.create();
 		if( players != null) {
 			for( Player p: control.getPlayers()) {

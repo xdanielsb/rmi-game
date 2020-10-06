@@ -10,6 +10,7 @@ public class Player extends Thread{
 	private int speed;
 	private String name;
 	private Color color;
+	private Random random = new Random();
 	private ControlClient control;
 	public Player(ControlClient control, String name) {
 		this.control = control;
@@ -21,8 +22,8 @@ public class Player extends Thread{
 	}
 	
 	public void move( int dx, int dy) {
-		this.x =  Math.max(0,Math.min(dx+this.x, control.getWindow().WIDTH));
-		this.y = Math.max(0,Math.min(dy+this.y, control.getWindow().HEIGHT));
+		this.x =  Math.max(30,Math.min(dx+this.x, control.getWindow().WIDTH-30));
+		this.y = Math.max(30,Math.min(dy+this.y, control.getWindow().HEIGHT-30));
 	}
 	public int getX() {
 		return this.x;
@@ -45,8 +46,9 @@ public class Player extends Thread{
         return new Color(red, green, blue);
     }
 	
-	public int getRandom( int a , int b) {
-		return (int) ((int) a + (Math.random() * (b+1 - a)));
+	public int getRandom( int max , int min) {
+		int[] dx = {-1, 1, 0, 0};
+		return dx[(int) Math.abs(Math.random() * 4)];
 	}
 	
 	@Override
@@ -56,7 +58,7 @@ public class Player extends Thread{
 			this.control.getWindow().repaint();
 			try {
                 sleep(1000/60);
-                this.move(this.getRandom(-2, 2), this.getRandom(-2, 2));
+                this.move(this.getRandom(-1, 1), this.getRandom(-1, 1));
             } catch (InterruptedException ex) {
             }
 			// send player data
