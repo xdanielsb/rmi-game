@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,10 +18,6 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class Canvas extends JPanel{
-	/**
-	 * 
-	 */
-	private JPanel panel;
 	private ControlClient control;
 	
 	public Canvas(ControlClient control) {
@@ -32,13 +30,17 @@ public class Canvas extends JPanel{
 	}
 
 	public void paintComponent(Graphics g){
+		super.paintComponent(g);
 		ArrayList<Player> players = control.getPlayers();
+		System.out.println(players.size());
+		Graphics2D g2d = (Graphics2D) g.create();
 		if( players != null) {
 			for( Player p: control.getPlayers()) {
-				g.fillOval(p.getX(),p.getY(), 30, 30);
-		        g.setColor(Color.red);  
+				g2d.setColor(p.getColor());
+				g2d.fillOval(p.getX(),p.getY(), 30, 30);
 			}
 		}
+        g2d.dispose();
 	}
 
 }
