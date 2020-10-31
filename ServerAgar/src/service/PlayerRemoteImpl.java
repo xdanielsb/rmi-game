@@ -8,10 +8,11 @@ import java.util.List;
 import metier.Player;
 import metier.PlayerManager;
 import metier.DataInfo;
+import metier.GameManager;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote {
 	private PlayerManager playerManager = new PlayerManager();
-	
+	private GameManager gameManager = new GameManager();
 	public PlayerRemoteImpl() throws RemoteException
 	{
 		
@@ -39,6 +40,10 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		for(Player p:playerManager.listAllPlayers())
 		{
 			res.add(new DataInfo(p.getX(),p.getY(),p.getSize(),p.getTeamID()));
+		}
+		for(DataInfo di:gameManager.GetFoods())
+		{
+			res.add(di);
 		}
 		return res;
 	}

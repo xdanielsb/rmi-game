@@ -48,7 +48,13 @@ public class MapGraphics extends JPanel implements ActionListener {
 		for(DataInfo v:player_info)
 		{
 			
-			g.setColor(v.getTeam() == 0? Color.RED:Color.BLUE);
+			//g.setColor(v.getTeam() == 0? Color.RED:Color.BLUE);
+			if(v.getTeam() == 0)
+				g.setColor(Color.RED);
+			else if(v.getTeam() == 1)
+				g.setColor(Color.BLUE);
+			else
+				g.setColor(Color.GREEN);
 			g.fillOval((int)v.getX(), (int)v.getY(), v.getSize(), v.getSize());
 		}
 		
