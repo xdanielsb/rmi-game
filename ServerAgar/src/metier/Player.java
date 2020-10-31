@@ -14,7 +14,7 @@ public class Player implements Serializable {
 		this.name = name;
 		id_player = idP;
 		id_team = idT;
-		size = 10;
+		size = 50;
 		posX = 50;
 		posY = 50;
 	}

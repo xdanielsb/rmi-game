@@ -12,13 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import metier.Vector2;
+import metier.DataInfo;
 import service.IPlayerRemote;
 
 public class MapGraphics extends JPanel implements ActionListener {
 
 	IPlayerRemote rm;
-	private List<Vector2> player_positions;
+	private List<DataInfo> player_info;
 	private final int myID;
 	Timer tm = new Timer(30,this);
 	double x = 0;
@@ -30,7 +30,7 @@ public class MapGraphics extends JPanel implements ActionListener {
 	
 	public MapGraphics(IPlayerRemote distant, int id)
 	{
-		player_positions = new ArrayList<>();
+		player_info = new ArrayList<>();
 		rm = distant;
 		myID = id;
 		JFrame jf = new JFrame();
@@ -45,10 +45,11 @@ public class MapGraphics extends JPanel implements ActionListener {
 	{
 		super.paintComponent(g);
 		
-		for(Vector2 v:player_positions)
+		for(DataInfo v:player_info)
 		{
-			g.setColor(Color.RED);
-			g.fillOval((int)v.getX(), (int)v.getY(), 50, 50);
+			
+			g.setColor(v.getTeam() == 0? Color.RED:Color.BLUE);
+			g.fillOval((int)v.getX(), (int)v.getY(), v.getSize(), v.getSize());
 		}
 		
 		
@@ -66,7 +67,7 @@ public class MapGraphics extends JPanel implements ActionListener {
 			dx = dx/length;
 			dy = dy/length;
 		}
-		System.out.println("Length : " + length);
+		
 		if(length > 2)
 		{
 			
@@ -74,7 +75,7 @@ public class MapGraphics extends JPanel implements ActionListener {
 			y += dy * 2;
 			try {
 				rm.Move(myID, x ,y);
-				player_positions = rm.UpdateAllPositions();
+				player_info = rm.UpdateAllPositions();
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -83,7 +84,7 @@ public class MapGraphics extends JPanel implements ActionListener {
 		else
 		{
 			try {
-				player_positions = rm.UpdateAllPositions();
+				player_info = rm.UpdateAllPositions();
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

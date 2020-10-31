@@ -7,7 +7,7 @@ import java.util.List;
 
 import metier.Player;
 import metier.PlayerManager;
-import metier.Vector2;
+import metier.DataInfo;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote {
 	private PlayerManager playerManager = new PlayerManager();
@@ -34,11 +34,11 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	@Override
-	public List<Vector2> UpdateAllPositions() throws RemoteException {
-		List<Vector2> res = new ArrayList<>();
+	public List<DataInfo> UpdateAllPositions() throws RemoteException {
+		List<DataInfo> res = new ArrayList<>();
 		for(Player p:playerManager.listAllPlayers())
 		{
-			res.add(new Vector2(p.getX(),p.getY()));
+			res.add(new DataInfo(p.getX(),p.getY(),p.getSize(),p.getTeamID()));
 		}
 		return res;
 	}

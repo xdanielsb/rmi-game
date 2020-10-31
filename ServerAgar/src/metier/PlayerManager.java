@@ -15,7 +15,6 @@ public class PlayerManager {
 	public void addPlayer(Player p)
 	{
 		players.add(p);
-		
 	}
 	
 	public List<Player> listAllPlayers()
