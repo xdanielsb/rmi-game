@@ -16,5 +16,10 @@ public class GameManager {
 	{
 		return foods;
 	}
+	
+	public void RemoveFood(DataInfo di)
+	{
+		foods.remove(di);
+	}
 
 }

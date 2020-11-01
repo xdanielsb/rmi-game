@@ -27,10 +27,19 @@ public class PlayerManager {
 		return players.size();
 	}
 	
-	/*public Player getPlayer(int id)
+	public Player getPlayer(int id)
 	{
-		
-	}*/
+		Player res = null;
+		for(Player p:players)
+		{
+			if(p.getPlayerID() == id)
+			{
+				res = p;
+				break;
+			}
+		}
+		return res;
+	}
 	
 	public void Move(int id, double x, double y)
 	{
