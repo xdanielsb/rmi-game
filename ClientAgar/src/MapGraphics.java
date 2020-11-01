@@ -15,12 +15,13 @@ import javax.swing.Timer;
 import metier.DataInfo;
 import service.IPlayerRemote;
 
-public class MapGraphics extends JPanel implements ActionListener {
+import processing.core.PApplet;
+
+public class MapGraphics extends PApplet {
 
 	IPlayerRemote rm;
 	private List<DataInfo> player_positions;
 	private final int myID;
-	Timer tm = new Timer(30,this);
 	double x = 0;
 	double y = 0;
 	int centreX, centreY;
@@ -35,46 +36,45 @@ public class MapGraphics extends JPanel implements ActionListener {
 		player_positions = new ArrayList<>();
 		rm = distant;
 		myID = id;
-		jf = new JFrame();
-		jf.setTitle("Agario");
-		jf.setSize(600,600);
-		jf.setVisible(true);
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.add(this);
 	}
 	
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-		//++i;
-		//g.fillOval(i, i, 20, 20);
-		
+	// method for setting the size of the window
+    public void settings(){
+        size(800, 800);
+    }
 
+    // identical use to setup in Processing IDE except for size()
+    public void setup()
+    {
+    	surface.setTitle("Agar IO");
+    }
+	
+	public void draw()
+	{
+
+        background(255);
+		actionPerformed();
+		
 		for(DataInfo v:player_positions)
 		{
 			//g.setColor(v.getTeam() == 0 ? Color.RED : Color.BLUE);
+
 			if(v.getTeam() == 0)
-				g.setColor(Color.RED);
+				fill(255, 0, 0);
 			else if(v.getTeam() == 1)
-				g.setColor(Color.BLUE);
+				fill(0, 0, 255);
 			else
-				g.setColor(Color.GREEN);
-			g.fillOval((int)(v.getX()) + cstX -25, (int)(v.getY()) + cstY - 50, v.getSize(), v.getSize());
+				fill(0, 255, 0);
+			circle((float)(v.getX() + cstX), (float)(v.getY() + cstY), (float)v.getSize());
 			
 		}
-		
-		
-		tm.start();
 	}
 	
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed()
     {   
 		
-        Point point = MouseInfo.getPointerInfo().getLocation();
-        Point pointJf = jf.getLocationOnScreen();
-        System.out.println("pointJF: " + pointJf.getX() + " et " + pointJf.getY() );
-        double dx = point.x - pointJf.getX() - x - cstX;
-        double dy = point.y - pointJf.getY() -y - cstY;
+        double dx = mouseX - x - cstX;
+        double dy = mouseY - y - cstY;
         double length = Math.sqrt((dx*dx)+(dy*dy));
         if(length != 0)
         {
@@ -105,11 +105,10 @@ public class MapGraphics extends JPanel implements ActionListener {
             }
         }
 
-		this.centreX  = jf.getWidth()/2;
-		this.centreY = jf.getHeight()/2;
+		this.centreX  = width/2;
+		this.centreY = height/2;
 		cstX = centreX - (int)x;
 		cstY = centreY - (int)y;
-        repaint();
     }
 	
 }
