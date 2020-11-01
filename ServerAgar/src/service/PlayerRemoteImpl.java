@@ -51,8 +51,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private void CheckFoodCollision(int id)
 	{
 		List<DataInfo> d = gameManager.GetFoods();
-		System.out.println(d.size());
-		/*Player p = playerManager.getPlayer(id);
+		Player p = playerManager.getPlayer(id);
 		if(p == null)
 		{
 			System.out.println("Player ID unknown");
@@ -60,7 +59,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		}
 		int size = p.getSize();
 		
-		for(DataInfo di:gameManager.GetFoods())
+		for(DataInfo di:d)
 		{
 			double dx = p.getX() - di.getX();
 			double dy = p.getY() - di.getY();
@@ -69,9 +68,10 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			{
 				p.setSize(p.getSize()+di.getSize());
 				gameManager.RemoveFood(di);
+				return;
 			}
 			
-		}*/
+		}
 	}
 	
 }

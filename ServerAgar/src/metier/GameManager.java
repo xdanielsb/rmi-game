@@ -10,6 +10,9 @@ public class GameManager {
 	{
 		foods = new ArrayList<>();
 		foods.add(new DataInfo(200,200,10,2));
+		foods.add(new DataInfo(200,100,10,2));
+		foods.add(new DataInfo(200,50,10,2));
+		foods.add(new DataInfo(400,200,10,2));
 	}
 	
 	public List<DataInfo> GetFoods()
