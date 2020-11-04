@@ -5,16 +5,32 @@ import java.util.List;
 
 public class PlayerManager {
 	private List<Player> players;
-	 
+	private int nbTone;
+	private int nbTtwo;
 	
 	public PlayerManager()
 	{
 		players = new ArrayList<>();
+		nbTone = 0;
+		nbTtwo = 0;
+	}
+	
+	public int getTeamOne()
+	{
+		return nbTone;
+	}
+	public int getTeamtwo()
+	{
+		return nbTtwo;
 	}
 	
 	public void addPlayer(Player p)
 	{
 		players.add(p);
+		if(p.getTeamID()==0)
+			nbTone++;
+		else
+			nbTtwo++;
 	}
 	
 	public List<Player> listAllPlayers()
@@ -56,6 +72,10 @@ public class PlayerManager {
 	
 	public void RemovePlayer(Player p)
 	{
+		if(p.getTeamID() == 0)
+			nbTone --;
+		else
+			nbTtwo --;
 		players.remove(p);
 	}
 }

@@ -28,7 +28,8 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public int registerPlayer(String p) throws RemoteException {
 		int pID = playerManager.getPlayerNumber();
-		Player newPlayer = new Player(pID,0,p);
+		int idTeam = playerManager.getTeamOne()<=playerManager.getTeamtwo()? 0:1;
+		Player newPlayer = new Player(pID,idTeam,p);
 		playerManager.addPlayer(newPlayer);
 		System.out.println("Ajout de : " + p);
 		return pID;
@@ -38,7 +39,6 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public void Move(int id, double x, double y) throws RemoteException {
 		playerManager.Move(id, x, y);
-		//CheckFoodCollision(id);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			{
 				if(other.getPlayerID() != p.getPlayerID())
 				{
-					if(Math.abs(other.getSize() - p.getSize()) > 10)
+					if(other.getTeamID() != p.getTeamID() && Math.abs(other.getSize() - p.getSize()) > 10)
 					{
 						double dx = other.getX() - p.getX();
 						double dy = other.getY() - p.getY();
