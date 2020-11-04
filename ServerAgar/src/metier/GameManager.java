@@ -20,9 +20,10 @@ public class GameManager {
 		return foods;
 	}
 	
-	public void RemoveFood(DataInfo di)
+	public void RemoveFood(List<DataInfo> di)
 	{
-		foods.remove(di);
+		foods.removeAll(di);
 	}
+	
 
 }

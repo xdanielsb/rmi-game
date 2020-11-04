@@ -53,4 +53,9 @@ public class PlayerManager {
 			}
 		}
 	}
+	
+	public void RemovePlayer(Player p)
+	{
+		players.remove(p);
+	}
 }

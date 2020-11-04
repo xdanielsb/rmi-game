@@ -85,8 +85,8 @@ public class MapGraphics extends PApplet {
         if(length > 5)
         {
             
-            x += dx * 5;
-            y += dy * 5;
+            x += dx * 1;
+            y += dy * 1;
             try {
                 rm.Move(myID, x ,y);
                 player_positions = rm.UpdateAllPositions();
