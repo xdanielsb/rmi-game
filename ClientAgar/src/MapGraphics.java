@@ -27,8 +27,8 @@ public class MapGraphics extends PApplet {
 	int centreX, centreY;
 	int cstX = 0;
 	int cstY = 0;
-	JFrame jf;
 	int i = 0;
+	HeaderHandler header;
 	
 	
 	public MapGraphics(IPlayerRemote distant, int id)
@@ -36,6 +36,7 @@ public class MapGraphics extends PApplet {
 		player_positions = new ArrayList<>();
 		rm = distant;
 		myID = id;
+		header = new HeaderHandler(this);
 	}
 	
 	// method for setting the size of the window
@@ -65,9 +66,17 @@ public class MapGraphics extends PApplet {
 				fill(0, 0, 255);
 			else
 				fill(0, 255, 0);
-			circle((float)(v.getX() + cstX), (float)(v.getY() + cstY), (float)v.getSize());
-			
+			circle((float)(v.getX() + cstX), (float)(v.getY() + cstY), (float)v.getSize());	
 		}
+		
+		try {
+			header.update(rm.getTimer());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		header.draw();
+		
 	}
 	
 	public void actionPerformed()

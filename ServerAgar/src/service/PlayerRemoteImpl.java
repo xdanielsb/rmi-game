@@ -18,7 +18,8 @@ import metier.GameManager;
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote,ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
 	private GameManager gameManager = new GameManager();
-	Timer tm = new Timer(25,this);
+	Timer tm = new Timer(25, this);
+	float gameTimer = 0;
 	
 	public PlayerRemoteImpl() throws RemoteException
 	{
@@ -140,7 +141,14 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		CheckFoodCollision();
 		CheckPlayerCollision();
 		//Reset timer for next Tick
+		gameTimer += 0.025;
 		tm.start();
+	}
+
+	@Override
+	public float getTimer() throws RemoteException {
+		// TODO Auto-generated method stub
+		return gameTimer;
 	}
 
 	
