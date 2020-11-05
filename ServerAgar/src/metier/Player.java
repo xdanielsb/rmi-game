@@ -14,9 +14,17 @@ public class Player implements Serializable {
 		this.name = name;
 		id_player = idP;
 		id_team = idT;
+		if(idT == 0)
+		{
+			posX = 50;
+			posY = 400;
+		}
+		else
+		{
+			posX = 750;
+			posY = 400;
+		}
 		size = 50;
-		posX = 50;
-		posY = 50;
 	}
 	
 	public void setSize(int s)

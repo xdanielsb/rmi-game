@@ -12,5 +12,6 @@ public interface IPlayerRemote extends Remote {
 	public void Move(int id, double x, double y) throws RemoteException;
 	public List<DataInfo> UpdateAllPositions() throws RemoteException;
 	public float getTimer() throws RemoteException;
+	public Player getPlayer(int ID) throws RemoteException;
 
 }

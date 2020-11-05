@@ -37,6 +37,15 @@ public class MapGraphics extends PApplet {
 		rm = distant;
 		myID = id;
 		header = new HeaderHandler(this);
+		try
+		{
+			x = rm.getPlayer(id).getX();
+			y = rm.getPlayer(id).getY();
+		}
+		catch(Exception e)
+		{
+			
+		}
 	}
 	
 	// method for setting the size of the window
@@ -70,7 +79,7 @@ public class MapGraphics extends PApplet {
 		}
 		
 		try {
-			header.update(rm.getTimer());
+			header.update(rm.getTimer(), x, y);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,7 +90,6 @@ public class MapGraphics extends PApplet {
 	
 	public void actionPerformed()
     {   
-		
         double dx = mouseX - x - cstX;
         double dy = mouseY - y - cstY;
         double length = Math.sqrt((dx*dx)+(dy*dy));
@@ -96,6 +104,7 @@ public class MapGraphics extends PApplet {
             
             x += dx * 1;
             y += dy * 1;
+            System.out.println("X : " + x + " ; Y : " + y);
             try {
                 rm.Move(myID, x ,y);
                 player_positions = rm.UpdateAllPositions();

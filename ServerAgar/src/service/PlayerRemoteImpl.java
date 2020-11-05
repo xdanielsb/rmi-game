@@ -78,6 +78,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 								p.setSize(p.getSize()+other.getSize());
 							else
 								other.setSize(other.getSize()+p.getSize());
+							
 							playerManager.RemovePlayer(pBigger?other:p);
 							CheckPlayerCollision();
 							return;
@@ -149,6 +150,11 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	public float getTimer() throws RemoteException {
 		// TODO Auto-generated method stub
 		return gameTimer;
+	}
+
+	@Override
+	public Player getPlayer(int ID) throws RemoteException {
+		return playerManager.getPlayer(ID);
 	}
 
 	
