@@ -7,12 +7,16 @@ public class PlayerManager {
 	private List<Player> players;
 	private int nbTone;
 	private int nbTtwo;
+	private int scoreTone;
+	private int scoreTtwo;
 	
 	public PlayerManager()
 	{
 		players = new ArrayList<>();
 		nbTone = 0;
 		nbTtwo = 0;
+		scoreTone = 0;
+		scoreTtwo = 0;
 	}
 	
 	public int getTeamOne()
@@ -22,6 +26,18 @@ public class PlayerManager {
 	public int getTeamtwo()
 	{
 		return nbTtwo;
+	}
+	
+	public int getScore(int teamID)
+	{
+		return teamID == 0? scoreTone:scoreTtwo;
+	}
+	public void addScore(int teamID, int amount)
+	{
+		if(teamID == 0)
+			scoreTone += amount;
+		else
+			scoreTtwo += amount;
 	}
 	
 	public void addPlayer(Player p)

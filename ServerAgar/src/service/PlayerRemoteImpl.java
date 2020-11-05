@@ -19,7 +19,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private PlayerManager playerManager = new PlayerManager();
 	private GameManager gameManager = new GameManager();
 	Timer tm = new Timer(25, this);
-	float gameTimer = 0;
+	float gameTimer = 100;
 	
 	public PlayerRemoteImpl() throws RemoteException
 	{
@@ -75,10 +75,16 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 						{
 							boolean pBigger = p.getSize()>other.getSize();
 							if(pBigger)
+							{
 								p.setSize(p.getSize()+other.getSize());
+								UpdateScore(p,other.getSize());
+							}
 							else
+							{
 								other.setSize(other.getSize()+p.getSize());
-							
+								UpdateScore(other,p.getSize());
+							}
+								
 							playerManager.RemovePlayer(pBigger?other:p);
 							CheckPlayerCollision();
 							return;
@@ -88,32 +94,14 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			}
 		}
 	}
+	
+	private void UpdateScore(Player p, int amount)
+	{
+		playerManager.addScore(p.getTeamID(), amount);
+	}
 
 	private void CheckFoodCollision(/*int id*/)
-	{
-		/*List<DataInfo> d = gameManager.GetFoods();
-		Player p = playerManager.getPlayer(id);
-		if(p == null)
-		{
-			System.out.println("Player ID unknown");
-			return;
-		}
-		int size = p.getSize()/2;
-		
-		for(DataInfo di:d)
-		{
-			double dx = p.getX() - di.getX();
-			double dy = p.getY() - di.getY();
-			double length = Math.sqrt((dx*dx)+(dy*dy));
-			if(length < size)
-			{
-				p.setSize(p.getSize()+di.getSize());
-				gameManager.RemoveFood(di);
-				return;
-			}
-			
-		}*/
-		
+	{	
 		List<Player> players = playerManager.listAllPlayers();
 		List<DataInfo> eatenFood = new ArrayList<>();
 		for(Player p:players)
@@ -127,6 +115,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 				if(length < size)
 				{
 					p.setSize(p.getSize()+di.getSize());
+					UpdateScore(p,di.getSize());
 					eatenFood.add(di);
 				}
 			}
@@ -141,8 +130,8 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	public void actionPerformed(ActionEvent arg0) {
 		CheckFoodCollision();
 		CheckPlayerCollision();
+		gameTimer -= 0.025;
 		//Reset timer for next Tick
-		gameTimer += 0.025;
 		tm.start();
 	}
 
@@ -155,6 +144,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public Player getPlayer(int ID) throws RemoteException {
 		return playerManager.getPlayer(ID);
+	}
+
+	@Override
+	public int getScore(int teamID) throws RemoteException {
+		// TODO Auto-generated method stub
+		return playerManager.getScore(teamID);
 	}
 
 	

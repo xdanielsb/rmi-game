@@ -13,5 +13,6 @@ public interface IPlayerRemote extends Remote {
 	public List<DataInfo> UpdateAllPositions() throws RemoteException;
 	public float getTimer() throws RemoteException;
 	public Player getPlayer(int ID) throws RemoteException;
+	public int getScore(int teamID) throws RemoteException;
 
 }

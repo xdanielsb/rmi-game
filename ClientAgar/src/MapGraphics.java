@@ -79,7 +79,7 @@ public class MapGraphics extends PApplet {
 		}
 		
 		try {
-			header.update(rm.getTimer(), x, y);
+			header.update(rm.getTimer(), rm.getScore(0),rm.getScore(1));
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,7 +104,7 @@ public class MapGraphics extends PApplet {
             
             x += dx * 1;
             y += dy * 1;
-            System.out.println("X : " + x + " ; Y : " + y);
+            //System.out.println("X : " + x + " ; Y : " + y);
             try {
                 rm.Move(myID, x ,y);
                 player_positions = rm.UpdateAllPositions();

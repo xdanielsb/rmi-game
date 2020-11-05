@@ -2,8 +2,8 @@ public class HeaderHandler {
 
 	private MapGraphics drawer;
 	private float gameTimer;
-	private double xP;
-	private double yP;
+	private int xP;
+	private int yP;
 	
 	
 	public HeaderHandler(MapGraphics drawer)
@@ -13,17 +13,26 @@ public class HeaderHandler {
 		
 	}
 	
-	public void update(float newTimer, double x, double y)
+	public void update(float newTimer, int so, int st)
 	{
 		gameTimer = newTimer;
-		xP = x;
-		yP = y;
+		xP = so;
+		yP = st;
 	}
 	
 	public void draw()
 	{
-		drawer.textAlign(drawer.LEFT, drawer.TOP);
+		//System.out.println(drawer.CENTER);
+		drawer.textAlign(drawer.CENTER);
 		drawer.fill(0);
-		drawer.text("Timer : " + (int)gameTimer + ", X : " + xP + " ; Y : " + yP, 24, 0, 0); 
+		drawer.textSize(24);
+		drawer.text("Timer : " + (int)gameTimer, 0, 30, 800,100); 
+		drawer.fill(255,0,0);
+		drawer.textSize(20);
+		drawer.text("Score " + xP, 0, 30,400,100);
+		drawer.fill(0,0,255);
+		drawer.textSize(20);
+		drawer.text("Score " + yP, 400, 30,400,100);
+		
 	}
 }
