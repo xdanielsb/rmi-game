@@ -5,14 +5,18 @@ import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
+import server.ServerGUI;
 import service.PlayerRemoteImpl;
 
 public class GameManager {
 	// private List<DataInfo> foods;
 	private List<Food> foods;
-	private int nbFood = 20;
-
+	private int nbFood;
+	private PlayerRemoteImpl remoteManager;
+	private ServerGUI gui;
+	
 	public GameManager() {
+		this.nbFood  = 20;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
 			foods.add(new Food((Math.random() * 650) + 50, (Math.random() * 700) + 50));
@@ -39,19 +43,25 @@ public class GameManager {
 			}
 		}
 	}
+
 	
-	public boolean initServer() {
+	public boolean initServer(ServerGUI gui) {
 		try {
+			this.gui = gui;
 			LocateRegistry.createRegistry(1099);
-			PlayerRemoteImpl od = new PlayerRemoteImpl();
-			Naming.rebind("rmi://localhost:1099/PLM", od);
-			System.out.println("Server is ready to go.");
+			this.remoteManager = new PlayerRemoteImpl(this);
+			Naming.rebind("rmi://localhost:1099/PLM", remoteManager);
+			System.out.println("L01: Server is ready to go.");
 		} catch (Exception e) {
 			System.out.println("E01: Error initializing the server.");
 			e.printStackTrace();
 			return false;
 		}
 		return true;
+	}
+	
+	public ServerGUI getGUI() {
+		return this.gui;
 	}
 
 }

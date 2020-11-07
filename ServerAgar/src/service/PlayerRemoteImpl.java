@@ -15,11 +15,12 @@ import metier.GameManager;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
-	private GameManager gameManager = new GameManager();
+	private GameManager gameManager;// = new GameManager();
 	Timer tm = new Timer(25, this);
 	float gameTimer = 100;
 
-	public PlayerRemoteImpl() throws RemoteException {
+	public PlayerRemoteImpl(GameManager gameManager) throws RemoteException {
+		this.gameManager = gameManager;
 		tm.start();
 	}
 
@@ -30,6 +31,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		Player newPlayer = new Player(pID, idTeam, p);
 		playerManager.addPlayer(newPlayer);
 		System.out.println("Ajout de : " + p);
+		this.gameManager.getGUI().addLog("New player connected " + p );
 		return pID;
 
 	}
