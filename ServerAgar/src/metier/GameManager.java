@@ -40,7 +40,7 @@ public class GameManager {
 		}
 	}
 	
-	public void initServer() {
+	public boolean initServer() {
 		try {
 			LocateRegistry.createRegistry(1099);
 			PlayerRemoteImpl od = new PlayerRemoteImpl();
@@ -49,7 +49,9 @@ public class GameManager {
 		} catch (Exception e) {
 			System.out.println("E01: Error initializing the server.");
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 }
