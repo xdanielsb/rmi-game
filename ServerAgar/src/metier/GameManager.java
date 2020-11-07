@@ -1,7 +1,11 @@
 package metier;
 
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
+
+import service.PlayerRemoteImpl;
 
 public class GameManager {
 	// private List<DataInfo> foods;
@@ -33,6 +37,18 @@ public class GameManager {
 					break;
 				}
 			}
+		}
+	}
+	
+	public void initServer() {
+		try {
+			LocateRegistry.createRegistry(1099);
+			PlayerRemoteImpl od = new PlayerRemoteImpl();
+			Naming.rebind("rmi://localhost:1099/PLM", od);
+			System.out.println("Server is ready to go.");
+		} catch (Exception e) {
+			System.out.println("E01: Error initializing the server.");
+			e.printStackTrace();
 		}
 	}
 
