@@ -1,21 +1,11 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+package logic;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
 import metier.DataInfo;
-import service.IPlayerRemote;
-
 import processing.core.PApplet;
+import service.IPlayerRemote;
 
 public class MapGraphics extends PApplet {
 

@@ -1,3 +1,4 @@
+package logic;
 public class HeaderHandler {
 
 	private MapGraphics drawer;

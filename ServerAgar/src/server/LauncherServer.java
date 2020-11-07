@@ -2,7 +2,7 @@ package server;
 
 import metier.GameManager;
 
-public class Launcher {
+public class LauncherServer {
 
 	public static void main(String[] args) {
 		GameManager ga = new GameManager();
