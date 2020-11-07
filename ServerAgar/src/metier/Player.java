@@ -8,61 +8,55 @@ public class Player implements Serializable {
 	private final String name;
 	private int size;
 	private double posX, posY;
-	
-	public Player(int idP, int idT,String name)
-	{
+
+	public Player(int idP, int idT, String name) {
 		this.name = name;
 		id_player = idP;
 		id_team = idT;
-		if(idT == 0)
-		{
+		if (idT == 0) {
 			posX = 50;
 			posY = 400;
-		}
-		else
-		{
+		} else {
 			posX = 750;
 			posY = 400;
 		}
 		size = 50;
 	}
-	
-	public void setSize(int s)
-	{
+
+	public void setSize(int s) {
 		size = s;
 	}
-	public int getSize()
-	{
+
+	public int getSize() {
 		return size;
 	}
-	public int getPlayerID()
-	{
+
+	public int getPlayerID() {
 		return id_player;
 	}
-	public int getTeamID()
-	{
+
+	public int getTeamID() {
 		return id_team;
 	}
-	public void setX(double x)
-	{
+
+	public void setX(double x) {
 		posX = x;
 	}
-	public double getX()
-	{
+
+	public double getX() {
 		return posX;
 	}
-	public void setY(double y)
-	{
+
+	public void setY(double y) {
 		posY = y;
 	}
-	public double getY()
-	{
+
+	public double getY() {
 		return posY;
 	}
-	public String getName()
-	{
+
+	public String getName() {
 		return name;
 	}
-	
 
 }
