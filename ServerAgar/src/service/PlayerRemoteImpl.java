@@ -43,11 +43,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	@Override
-	public List<DataInfo> UpdateAllPositions() throws RemoteException {
+	public List<DataInfo> UpdateAllPositions(int ID) throws RemoteException {
 		List<DataInfo> res = new ArrayList<>();
 		for(Player p:playerManager.listAllPlayers())
 		{
-			res.add(new DataInfo(p.getX(),p.getY(),p.getSize(),p.getTeamID()));
+			if(p.getPlayerID() != ID)
+				res.add(new DataInfo(p.getX(),p.getY(),p.getSize(),p.getTeamID()));
 		}
 		for(DataInfo di:gameManager.GetFoods())
 		{

@@ -64,10 +64,29 @@ public class MapGraphics extends PApplet {
 
         background(255);
 		actionPerformed();
-		
+		float zoomRatio = 1;
+		double myX = 0,myY = 0;
+		try {
+			int mySize = rm.getPlayer(myID).getSize();
+			myX = rm.getPlayer(myID).getX() + cstX;
+			myY = rm.getPlayer(myID).getY() + cstY;
+			int stage = (mySize/20);
+			zoomRatio = (float) (1.04 - (stage*0.02));
+			//System.out.println("size " + mySize);
+			//System.out.println("ratio " + zoomRatio);
+			int TID = rm.getPlayer(myID).getTeamID();
+			if(TID == 0)
+				fill(255,0,0);
+			else
+				fill(0,0,255);	
+			circle((float)myX,(float)myY,mySize*zoomRatio);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
 		for(DataInfo v:player_positions)
 		{
-			//g.setColor(v.getTeam() == 0 ? Color.RED : Color.BLUE);
 
 			if(v.getTeam() == 0)
 				fill(255, 0, 0);
@@ -75,7 +94,14 @@ public class MapGraphics extends PApplet {
 				fill(0, 0, 255);
 			else
 				fill(0, 255, 0);
-			circle((float)(v.getX() + cstX), (float)(v.getY() + cstY), (float)v.getSize());	
+			double objX = v.getX() + cstX;
+			double objY = v.getY() + cstY;
+			double offsetX = myX - objX; 
+			double offsetY = myY - objY;
+			objX += (1-zoomRatio) * offsetX;
+			objY += (1-zoomRatio) * offsetY;
+			
+			circle((float)(objX), (float)(objY), v.getSize()*zoomRatio);	
 		}
 		
 		try {
@@ -107,7 +133,7 @@ public class MapGraphics extends PApplet {
             //System.out.println("X : " + x + " ; Y : " + y);
             try {
                 rm.Move(myID, x ,y);
-                player_positions = rm.UpdateAllPositions();
+                player_positions = rm.UpdateAllPositions(myID);
             } catch (RemoteException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -116,7 +142,7 @@ public class MapGraphics extends PApplet {
         else
         {
             try {
-                player_positions = rm.UpdateAllPositions();
+                player_positions = rm.UpdateAllPositions(myID);
             } catch (RemoteException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
