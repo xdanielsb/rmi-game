@@ -57,7 +57,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private void CheckPlayerCollision() {
 		List<Player> players = playerManager.listAllPlayers();
 		for (Player p : players) {
-			int size = p.getSize() / 4;
+			double size = p.getSize() / 4;
 			for (Player other : players) {
 				if (other.getPlayerID() != p.getPlayerID()) {
 					if (other.getTeamID() != p.getTeamID() && Math.abs(other.getSize() - p.getSize()) > 10) {
@@ -67,11 +67,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 						if (length < size) {
 							boolean pBigger = p.getSize() > other.getSize();
 							if (pBigger) {
-								p.setSize(p.getSize() + other.getSize());
-								UpdateScore(p, other.getSize());
+								//p.setSize(p.getSize() + other.getSize());
+								p.setSize(Math.sqrt((p.getSize()/2 * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2));
+								UpdateScore(p, (int)other.getSize());
 							} else {
-								other.setSize(other.getSize() + p.getSize());
-								UpdateScore(other, p.getSize());
+								other.setSize(Math.sqrt((p.getSize()/2 * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2));
+								UpdateScore(other, (int)p.getSize());
 							}
 
 							playerManager.RemovePlayer(pBigger ? other : p);
@@ -92,14 +93,14 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		List<Player> players = playerManager.listAllPlayers();
 		List<DataInfo> eatenFood = new ArrayList<>();
 		for (Player p : players) {
-			int size = p.getSize() / 2;
+			double size = p.getSize() / 2;
 			for (DataInfo di : gameManager.GetFoods()) {
 				double dx = p.getX() - di.getX();
 				double dy = p.getY() - di.getY();
 				double length = Math.sqrt((dx * dx) + (dy * dy));
 				if (length < size) {
-					p.setSize(p.getSize() + di.getSize());
-					UpdateScore(p, di.getSize());
+					p.setSize(Math.sqrt((p.getSize()/2)*(p.getSize()/2) + (di.getSize()/2)*(di.getSize()/2))*2);
+					UpdateScore(p, (int)di.getSize());
 					eatenFood.add(di);
 				}
 			}

@@ -16,7 +16,7 @@ public class GameManager {
 	private ServerGUI gui;
 	
 	public GameManager() {
-		this.nbFood  = 20;
+		this.nbFood  = 30;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
 			foods.add(new Food((Math.random() * 650) + 50, (Math.random() * 700) + 50));

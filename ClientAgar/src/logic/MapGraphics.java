@@ -57,10 +57,10 @@ public class MapGraphics extends PApplet {
 		float zoomRatio = 1;
 		double myX = 0,myY = 0;
 		try {
-			int mySize = rm.getPlayer(myID).getSize();
+			double mySize = rm.getPlayer(myID).getSize();
 			myX = rm.getPlayer(myID).getX() + cstX;
 			myY = rm.getPlayer(myID).getY() + cstY;
-			int stage = (mySize/20);
+			double stage = (mySize/20);
 			zoomRatio = (float) (1.04 - (stage*0.02));
 			//System.out.println("size " + mySize);
 			//System.out.println("ratio " + zoomRatio);
@@ -69,7 +69,7 @@ public class MapGraphics extends PApplet {
 				fill(255,0,0);
 			else
 				fill(0,0,255);	
-			circle((float)myX,(float)myY,mySize*zoomRatio);
+			circle((float)myX,(float)myY,(float)mySize*zoomRatio);
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -83,7 +83,9 @@ public class MapGraphics extends PApplet {
 			else if(v.getTeam() == 1)
 				fill(0, 0, 255);
 			else
-				fill(0, 255, 0);
+			{
+				fill((float)v.getR(),(float) v.getG(),(float)v.getB());
+			}
 			double objX = v.getX() + cstX;
 			double objY = v.getY() + cstY;
 			double offsetX = myX - objX; 
@@ -91,7 +93,7 @@ public class MapGraphics extends PApplet {
 			objX += (1-zoomRatio) * offsetX;
 			objY += (1-zoomRatio) * offsetY;
 			
-			circle((float)(objX), (float)(objY), v.getSize()*zoomRatio);	
+			circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));	
 		}
 		
 		try {
