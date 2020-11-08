@@ -5,12 +5,14 @@ import java.util.List;
 
 public class PlayerManager {
 	private List<Player> players;
+	Monitor monitor;
 	private int nbTone;
 	private int nbTtwo;
 	private int scoreTone;
 	private int scoreTtwo;
 
 	public PlayerManager() {
+		monitor = new Monitor();
 		players = new ArrayList<>();
 		nbTone = 0;
 		nbTtwo = 0;
@@ -27,14 +29,14 @@ public class PlayerManager {
 	}
 
 	public int getScore(int teamID) {
-		return teamID == 0 ? scoreTone : scoreTtwo;
+		return teamID == 0 ? monitor.getScoreOne() : monitor.getScoreTwo();
 	}
 
 	public void addScore(int teamID, int amount) {
 		if (teamID == 0)
-			scoreTone += amount;
+			monitor.addScoreOne(amount);
 		else
-			scoreTtwo += amount;
+			monitor.addScoreTwo(amount);
 	}
 
 	public void addPlayer(Player p) {
