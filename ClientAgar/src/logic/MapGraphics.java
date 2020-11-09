@@ -108,43 +108,47 @@ public class MapGraphics extends PApplet {
 	
 	public void actionPerformed()
     {   
-        double dx = mouseX - x - cstX;
-        double dy = mouseY - y - cstY;
-        double length = Math.sqrt((dx*dx)+(dy*dy));
-        if(length != 0)
-        {
-            dx = dx/length;
-            dy = dy/length;
-        }
-        //System.out.println("Length : " + length);
-        if(length > 5)
-        {
-            
-            x += dx * 1;
-            y += dy * 1;
-            //System.out.println("X : " + x + " ; Y : " + y);
-            try {
-                rm.Move(myID, x ,y);
-                player_positions = rm.UpdateAllPositions(myID);
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        }
-        else
-        {
-            try {
-                player_positions = rm.UpdateAllPositions(myID);
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        }
+		try {
+			if(rm.getPlayer(myID).isAlive())
+			{
+				x = rm.getPlayer(myID).getX();
+				y = rm.getPlayer(myID).getY();
+				double dx = mouseX - x - cstX;
+			    double dy = mouseY - y - cstY;
+			    double length = Math.sqrt((dx*dx)+(dy*dy));
+			    if(length != 0)
+			    {
+			        dx = dx/length;
+			        dy = dy/length;
+			    }
+			    //System.out.println("Length : " + length);
+			    if(length > 5)
+			    {
+			        
+			        x += dx * 1;
+			        y += dy * 1;
+			        //System.out.println("X : " + x + " ; Y : " + y);
+			        try {
+			            rm.Move(myID, x ,y);
+			            //player_positions = rm.UpdateAllPositions(myID);
+			        } catch (RemoteException e1) {
+			            // TODO Auto-generated catch block
+			            e1.printStackTrace();
+			        }
+			    }
 
-		this.centreX  = width/2;
-		this.centreY = height/2;
-		cstX = centreX - (int)x;
-		cstY = centreY - (int)y;
+
+				this.centreX  = width/2;
+				this.centreY = height/2;
+				cstX = centreX - (int)x;
+				cstY = centreY - (int)y;
+			}
+			player_positions = rm.UpdateAllPositions(myID);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
 	
 }

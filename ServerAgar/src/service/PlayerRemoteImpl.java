@@ -16,6 +16,7 @@ import metier.GameManager;
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
 	private GameManager gameManager;// = new GameManager();
+	private final Object mutex = new Object();
 	Timer tm = new Timer(25, this);
 	float gameTimer = 100;
 
@@ -26,14 +27,16 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public int registerPlayer(String p) throws RemoteException {
-		int pID = playerManager.getPlayerNumber();
-		int idTeam = playerManager.getTeamOne() <= playerManager.getTeamtwo() ? 0 : 1;
-		Player newPlayer = new Player(pID, idTeam, p);
-		playerManager.addPlayer(newPlayer);
-		System.out.println("Ajout de : " + p);
-		this.gameManager.getGUI().addLog("New player connected " + p );
-		return pID;
-
+		synchronized(mutex)
+		{
+			int pID = playerManager.getPlayerNumber();
+			int idTeam = playerManager.getTeamOne() <= playerManager.getTeamtwo() ? 0 : 1;
+			Player newPlayer = new Player(pID, idTeam, p);
+			playerManager.addPlayer(newPlayer);
+			System.out.println("Ajout de : " + p);
+			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + pID );
+			return pID;
+		}
 	}
 
 	@Override
@@ -57,8 +60,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private void CheckPlayerCollision() {
 		List<Player> players = playerManager.listAllPlayers();
 		for (Player p : players) {
+			if(!p.isAlive())
+				continue;
 			double size = p.getSize() / 4;
 			for (Player other : players) {
+				if(!other.isAlive())
+					continue;
 				if (other.getPlayerID() != p.getPlayerID()) {
 					if (other.getTeamID() != p.getTeamID() && Math.abs(other.getSize() - p.getSize()) > 10) {
 						double dx = other.getX() - p.getX();
@@ -68,10 +75,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 							boolean pBigger = p.getSize() > other.getSize();
 							if (pBigger) {
 								//p.setSize(p.getSize() + other.getSize());
-								p.setSize(Math.sqrt((p.getSize()/2 * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2));
+								p.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
 								UpdateScore(p, (int)other.getSize());
 							} else {
-								other.setSize(Math.sqrt((p.getSize()/2 * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2));
+								System.out.println("SECOND BSize : " + p.getSize());
+								other.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
+								System.out.println("ASize : " + p.getSize());
 								UpdateScore(other, (int)p.getSize());
 							}
 
