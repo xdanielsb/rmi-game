@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import metier.GameManager;
+import control.GameManager;
 
 @SuppressWarnings("serial")
 public class ServerGUI extends JFrame implements ActionListener{

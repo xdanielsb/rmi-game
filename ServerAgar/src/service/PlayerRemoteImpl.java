@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Timer;
 
-import metier.Player;
-import metier.PlayerManager;
-import metier.DataInfo;
-import metier.GameManager;
+import control.DataInfo;
+import control.GameManager;
+import control.Player;
+import control.PlayerManager;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();

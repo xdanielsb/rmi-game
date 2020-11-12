@@ -1,4 +1,5 @@
 package logic;
+
 public class HeaderHandler {
 
 	private MapGraphics drawer;
@@ -9,7 +10,6 @@ public class HeaderHandler {
 	public HeaderHandler(MapGraphics drawer) {
 		this.drawer = drawer;
 		gameTimer = 0;
-
 	}
 
 	public void update(float newTimer, int so, int st) {
@@ -19,7 +19,6 @@ public class HeaderHandler {
 	}
 
 	public void draw() {
-		// System.out.println(drawer.CENTER);
 		drawer.textAlign(drawer.CENTER);
 		drawer.fill(0);
 		drawer.textSize(24);

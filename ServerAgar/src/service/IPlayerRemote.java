@@ -4,8 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import metier.Player;
-import metier.DataInfo;
+import control.DataInfo;
+import control.Player;
 
 public interface IPlayerRemote extends Remote {
 	public int registerPlayer(String p) throws RemoteException;

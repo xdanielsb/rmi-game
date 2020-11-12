@@ -1,6 +1,6 @@
 package server;
 
-import metier.GameManager;
+import control.GameManager;
 
 public class LauncherServer {
 
