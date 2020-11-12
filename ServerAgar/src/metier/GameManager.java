@@ -16,10 +16,10 @@ public class GameManager {
 	private ServerGUI gui;
 	
 	public GameManager() {
-		this.nbFood  = 20;
+		this.nbFood  = 300;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
-			foods.add(new Food((Math.random() * 650) + 50, (Math.random() * 700) + 50));
+			foods.add(new Food((Math.random() * 1500) + 50, (Math.random() * 1500) + 50));
 		}
 
 	}

@@ -6,8 +6,9 @@ public class Player implements Serializable {
 	private final int id_player;
 	private final int id_team;
 	private final String name;
-	private int size;
+	private double size;
 	private double posX, posY;
+	private boolean isAlive = true;
 
 	public Player(int idP, int idT, String name) {
 		this.name = name;
@@ -22,12 +23,21 @@ public class Player implements Serializable {
 		}
 		size = 50;
 	}
-
-	public void setSize(int s) {
-		size = s;
+	
+	public void setLife()
+	{
+		isAlive = !isAlive;
+	}
+	public boolean isAlive()
+	{
+		return isAlive;
+	}
+	
+	public void setSize(double s) {
+		size = s > 750? 750:s;
 	}
 
-	public int getSize() {
+	public double getSize() {
 		return size;
 	}
 

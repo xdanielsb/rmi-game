@@ -52,15 +52,16 @@ public class MapGraphics extends PApplet {
 	public void draw()
 	{
 
-        background(255);
+        background(230);
+        cursor(CROSS);
 		actionPerformed();
 		float zoomRatio = 1;
 		double myX = 0,myY = 0;
 		try {
-			int mySize = rm.getPlayer(myID).getSize();
+			double mySize = rm.getPlayer(myID).getSize();
 			myX = rm.getPlayer(myID).getX() + cstX;
 			myY = rm.getPlayer(myID).getY() + cstY;
-			int stage = (mySize/20);
+			double stage = (mySize/20);
 			zoomRatio = (float) (1.04 - (stage*0.02));
 			//System.out.println("size " + mySize);
 			//System.out.println("ratio " + zoomRatio);
@@ -69,7 +70,8 @@ public class MapGraphics extends PApplet {
 				fill(255,0,0);
 			else
 				fill(0,0,255);	
-			circle((float)myX,(float)myY,mySize*zoomRatio);
+			circle((float)myX,(float)myY,(float)mySize*zoomRatio);
+			drawOuterBounds(rm.getPlayer(myID).getX(),rm.getPlayer(myID).getY(),zoomRatio);
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -83,7 +85,9 @@ public class MapGraphics extends PApplet {
 			else if(v.getTeam() == 1)
 				fill(0, 0, 255);
 			else
-				fill(0, 255, 0);
+			{
+				fill((float)v.getR(),(float) v.getG(),(float)v.getB());
+			}
 			double objX = v.getX() + cstX;
 			double objY = v.getY() + cstY;
 			double offsetX = myX - objX; 
@@ -91,8 +95,13 @@ public class MapGraphics extends PApplet {
 			objX += (1-zoomRatio) * offsetX;
 			objY += (1-zoomRatio) * offsetY;
 			
-			circle((float)(objX), (float)(objY), v.getSize()*zoomRatio);	
+			float resizing = (1-zoomRatio) * ((float)v.getSize()*zoomRatio);
+			
+			//circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));
+			circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));
 		}
+		
+		
 		
 		try {
 			header.update(rm.getTimer(), rm.getScore(0),rm.getScore(1));
@@ -104,45 +113,79 @@ public class MapGraphics extends PApplet {
 		
 	}
 	
+	private void drawOuterBounds(double x, double y, float zoom)
+	{
+		noFill();
+		strokeWeight(5000);
+		stroke(180,180,180);
+		float dx = (float)(cstX);
+		float dy = (float)(cstY);
+		float dxx = (float)(cstX);
+		float dyy = (float)(cstY);
+		float offsetX = (float)x + cstX - dx;
+		float offsetY = (float)y + cstY - dy;
+		float offsetXX = (float)x + cstX - dxx;
+		float offsetYY = (float)y + cstY - dyy;
+		dx += (1-zoom) * offsetX;
+		dy += (1-zoom) * offsetY;
+		dxx += (1-zoom) * offsetXX;
+		dyy += (1-zoom) * offsetYY;
+		
+		float resizing = (1-zoom)*(1600);
+		
+		rect(dx-2500,dy-2500,6600-resizing,6600-resizing);
+		stroke(255,0,0);
+		strokeWeight(1);
+		rect(dxx,dyy,1600-resizing,1600-resizing);
+		stroke(0,0,0);
+		
+	}
+	
 	public void actionPerformed()
     {   
-        double dx = mouseX - x - cstX;
-        double dy = mouseY - y - cstY;
-        double length = Math.sqrt((dx*dx)+(dy*dy));
-        if(length != 0)
-        {
-            dx = dx/length;
-            dy = dy/length;
-        }
-        //System.out.println("Length : " + length);
-        if(length > 5)
-        {
-            
-            x += dx * 1;
-            y += dy * 1;
-            //System.out.println("X : " + x + " ; Y : " + y);
-            try {
-                rm.Move(myID, x ,y);
-                player_positions = rm.UpdateAllPositions(myID);
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        }
-        else
-        {
-            try {
-                player_positions = rm.UpdateAllPositions(myID);
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        }
+		try {
+			if(focused && rm.getPlayer(myID).isAlive())
+			{
+				x = rm.getPlayer(myID).getX();
+				y = rm.getPlayer(myID).getY();
+				double dx = mouseX - x - cstX;
+			    double dy = mouseY - y - cstY;
+			    double length = Math.sqrt((dx*dx)+(dy*dy));
+			    if(length != 0)
+			    {
+			        dx = dx/length;
+			        dy = dy/length;
+			    }
+			    if(length > 10)
+			    {
+			        
+			        x += dx * 1;
+			        y += dy * 1;
+			        try {
+			            rm.Move(myID, x ,y);
+			        } catch (RemoteException e1) {
+			            // TODO Auto-generated catch block
+			            e1.printStackTrace();
+			        }
+			    }
 
-		this.centreX  = width/2;
-		this.centreY = height/2;
-		cstX = centreX - (int)x;
-		cstY = centreY - (int)y;
+
+				this.centreX  = width/2;
+				this.centreY = height/2;
+				cstX = centreX - (int)x;
+				cstY = centreY - (int)y;
+			}
+			player_positions = rm.UpdateAllPositions(myID);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
+	
+	private void Movement()
+	{
+		
+	}
 	
 }
