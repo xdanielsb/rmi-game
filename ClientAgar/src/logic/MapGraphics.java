@@ -52,7 +52,8 @@ public class MapGraphics extends PApplet {
 	public void draw()
 	{
 
-        background(255);
+        background(230);
+        cursor(CROSS);
 		actionPerformed();
 		float zoomRatio = 1;
 		double myX = 0,myY = 0;
@@ -70,6 +71,7 @@ public class MapGraphics extends PApplet {
 			else
 				fill(0,0,255);	
 			circle((float)myX,(float)myY,(float)mySize*zoomRatio);
+			drawOuterBounds(rm.getPlayer(myID).getX(),rm.getPlayer(myID).getY(),zoomRatio);
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -93,8 +95,13 @@ public class MapGraphics extends PApplet {
 			objX += (1-zoomRatio) * offsetX;
 			objY += (1-zoomRatio) * offsetY;
 			
-			circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));	
+			float resizing = (1-zoomRatio) * ((float)v.getSize()*zoomRatio);
+			
+			//circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));
+			circle((float)(objX), (float)(objY), (float) (v.getSize()*zoomRatio));
 		}
+		
+		
 		
 		try {
 			header.update(rm.getTimer(), rm.getScore(0),rm.getScore(1));
@@ -106,10 +113,38 @@ public class MapGraphics extends PApplet {
 		
 	}
 	
+	private void drawOuterBounds(double x, double y, float zoom)
+	{
+		noFill();
+		strokeWeight(5000);
+		stroke(180,180,180);
+		float dx = (float)(cstX);
+		float dy = (float)(cstY);
+		float dxx = (float)(cstX);
+		float dyy = (float)(cstY);
+		float offsetX = (float)x + cstX - dx;
+		float offsetY = (float)y + cstY - dy;
+		float offsetXX = (float)x + cstX - dxx;
+		float offsetYY = (float)y + cstY - dyy;
+		dx += (1-zoom) * offsetX;
+		dy += (1-zoom) * offsetY;
+		dxx += (1-zoom) * offsetXX;
+		dyy += (1-zoom) * offsetYY;
+		
+		float resizing = (1-zoom)*(1600);
+		
+		rect(dx-2500,dy-2500,6600-resizing,6600-resizing);
+		stroke(255,0,0);
+		strokeWeight(1);
+		rect(dxx,dyy,1600-resizing,1600-resizing);
+		stroke(0,0,0);
+		
+	}
+	
 	public void actionPerformed()
     {   
 		try {
-			if(rm.getPlayer(myID).isAlive())
+			if(focused && rm.getPlayer(myID).isAlive())
 			{
 				x = rm.getPlayer(myID).getX();
 				y = rm.getPlayer(myID).getY();
@@ -121,16 +156,13 @@ public class MapGraphics extends PApplet {
 			        dx = dx/length;
 			        dy = dy/length;
 			    }
-			    //System.out.println("Length : " + length);
-			    if(length > 5)
+			    if(length > 10)
 			    {
 			        
 			        x += dx * 1;
 			        y += dy * 1;
-			        //System.out.println("X : " + x + " ; Y : " + y);
 			        try {
 			            rm.Move(myID, x ,y);
-			            //player_positions = rm.UpdateAllPositions(myID);
 			        } catch (RemoteException e1) {
 			            // TODO Auto-generated catch block
 			            e1.printStackTrace();
@@ -150,5 +182,10 @@ public class MapGraphics extends PApplet {
 		}
         
     }
+	
+	private void Movement()
+	{
+		
+	}
 	
 }

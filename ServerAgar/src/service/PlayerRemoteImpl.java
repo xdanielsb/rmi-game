@@ -78,9 +78,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 								p.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
 								UpdateScore(p, (int)other.getSize());
 							} else {
-								System.out.println("SECOND BSize : " + p.getSize());
 								other.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
-								System.out.println("ASize : " + p.getSize());
 								UpdateScore(other, (int)p.getSize());
 							}
 
