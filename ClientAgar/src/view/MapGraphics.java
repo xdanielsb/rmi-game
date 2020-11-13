@@ -44,38 +44,46 @@ public class MapGraphics extends PApplet {
 			background(230);
 			cursor(CROSS);
 			actionPerformed();
-
-			float zoomRatio = 1;
-			double myX = 0, myY = 0;
-
-			double mySize = rm.getPlayer(id).getSize();
-			myX = rm.getPlayer(id).getX() + cstX;
-			myY = rm.getPlayer(id).getY() + cstY;
-			double stage = (mySize / 20);
-			zoomRatio = (float) (1.04 - (stage * 0.02));
-			int TID = rm.getPlayer(id).getTeamID();
-			if (TID == 0)
-				fill(255, 0, 0);
-			else
-				fill(0, 0, 255);
-			circle((float) myX, (float) myY, (float) mySize * zoomRatio);
-			drawOuterBounds(rm.getPlayer(id).getX(), rm.getPlayer(id).getY(), zoomRatio);
-			for (DataInfo v : player_positions) {
-				fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
-				double objX = v.getX() + cstX;
-				double objY = v.getY() + cstY;
-				double offsetX = myX - objX;
-				double offsetY = myY - objY;
-				objX += (1 - zoomRatio) * offsetX;
-				objY += (1 - zoomRatio) * offsetY;
-				float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);
-				circle((float) (objX), (float) (objY), (float) (v.getSize() * zoomRatio));
+			
+			if(!rm.gameOver()) {
+				float zoomRatio = 1;
+				double myX = 0, myY = 0;
+	
+				double mySize = rm.getPlayer(id).getSize();
+				myX = rm.getPlayer(id).getX() + cstX;
+				myY = rm.getPlayer(id).getY() + cstY;
+				double stage = (mySize / 20);
+				zoomRatio = (float) (1.04 - (stage * 0.02));
+				int TID = rm.getPlayer(id).getTeamID();
+				if (TID == 0)
+					fill(255, 0, 0);
+				else
+					fill(0, 0, 255);
+				circle((float) myX, (float) myY, (float) mySize * zoomRatio);
+				drawOuterBounds(rm.getPlayer(id).getX(), rm.getPlayer(id).getY(), zoomRatio);
+				for (DataInfo v : player_positions) {
+					fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
+					double objX = v.getX() + cstX;
+					double objY = v.getY() + cstY;
+					double offsetX = myX - objX;
+					double offsetY = myY - objY;
+					objX += (1 - zoomRatio) * offsetX;
+					objY += (1 - zoomRatio) * offsetY;
+					float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);
+					circle((float) (objX), (float) (objY), (float) (v.getSize() * zoomRatio));
+				}
+				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
+				header.draw();
+			}else {
+				textSize(80);
+				textAlign(CENTER);
+				fill(0);
+				text("Team " + (rm.getScore(0)>=rm.getScore(1)? "red":"blue") + " wins",0,200, 800,100);
 			}
-			header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
-			header.draw();
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
+		
 	}
 
 	private void drawOuterBounds(double x, double y, float zoom) {
