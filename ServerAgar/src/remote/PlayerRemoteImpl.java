@@ -19,7 +19,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private GameManager gameManager;
 	private final Object mutex = new Object();
 	Timer tm = new Timer(25, this);
-	float gameTimer = 100;
+	float gameTimer = 60;
 
 	public PlayerRemoteImpl(GameManager gameManager) throws RemoteException {
 		this.gameManager = gameManager;
@@ -128,7 +128,13 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public float getTimer() throws RemoteException {
 		// TODO Auto-generated method stub
-		return gameTimer;
+		return gameTimer <= 0? 0:gameTimer;
+	}
+	
+	@Override
+	public boolean gameOver(){
+		System.out.println(gameTimer);
+		return gameTimer <= 0;
 	}
 
 	@Override
