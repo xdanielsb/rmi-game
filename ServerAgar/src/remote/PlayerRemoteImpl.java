@@ -42,7 +42,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public void move(int id, double x, double y) throws RemoteException {
-		playerManager.Move(id, x, y);
+		playerManager.move(id, x, y);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 								UpdateScore(other, (int)p.getSize());
 							}
 
-							playerManager.RemovePlayer(pBigger ? other : p);
+							playerManager.removePlayer(pBigger ? other : p);
 							CheckPlayerCollision();
 							return;
 						}

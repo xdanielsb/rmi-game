@@ -72,7 +72,7 @@ public class PlayerManager {
 		return players.get(id);
 	}
 
-	public void Move(int id, double x, double y) {
+	public void move(int id, double x, double y) {
 		Player p = players.get(id);
 		if (p.getPlayerID() == id && p.isAlive()) {
 			p.setX(x);
@@ -80,12 +80,12 @@ public class PlayerManager {
 		}
 	}
 
-	private void ResetPosition(Player p) {
+	private void resetPosition(Player p) {
 		p.setX(p.getTeamID() == 0 ? 50 : 750);
 		p.setY(400);
 	}
 
-	public void RemovePlayer(Player p) {
+	public void removePlayer(Player p) {
 		/*
 		 * if (p.getTeamID() == 0) nbTone--; else nbTtwo--; players.remove(p);
 		 */
@@ -96,7 +96,7 @@ public class PlayerManager {
 			try {
 				Thread.sleep(3000);
 				// Move(p.getPlayerID(), p.getTeamID()==0? 50:750, 400);
-				ResetPosition(p);
+				resetPosition(p);
 				p.setSize(50);
 				p.setLife();
 			} catch (InterruptedException e) {
