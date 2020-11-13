@@ -3,6 +3,8 @@ package control;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Player;
+
 public class PlayerManager {
 	private List<Player> players;
 	Monitor monitor;

@@ -1,35 +1,31 @@
-package logic;
+package view;
 
 
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import control.ClientManager;
 
 
 @SuppressWarnings("serial")
 public class ClientConnectGUI extends JFrame implements ActionListener{
-	/**
-	 * 
-	 */
+
 	private JPanel panel;
 	private JLabel status;
 	private JButton startGame;
 	private ClientManager manager;
 	private JTextField username;
-	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 	
 	public ClientConnectGUI(ClientManager manager) {
 		this.manager  = manager;
@@ -60,7 +56,7 @@ public class ClientConnectGUI extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent evt) {
 		if( evt.getSource() == startGame) {
 			this.startGame.setEnabled(false);
-			this.manager.connectToServer(this);
+			this.manager.connectToServer(this.getUserName());
 		}
 	}
 

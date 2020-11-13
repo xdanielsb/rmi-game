@@ -1,23 +1,22 @@
-package logic;
+package control;
 
 import java.rmi.Naming;
 
 import processing.core.PApplet;
-import service.IPlayerRemote;
+import remote.IPlayerRemote;
+import view.ClientConnectGUI;
+import view.MapGraphics;
 
 public class ClientManager {
-	private ClientConnectGUI clientConnect;
 	private IPlayerRemote stub;
-	
 	public ClientManager() {
 		
 	}
-
-	public void connectToServer(ClientConnectGUI clientConnect) {
-		this.clientConnect = clientConnect;
+	public void connectToServer(String username) {
+		
 		try {
 			this.stub = (IPlayerRemote) Naming.lookup("rmi://localhost:1099/PLM");
-			MapGraphics map = new MapGraphics(stub, stub.registerPlayer(clientConnect.getUserName()));
+			MapGraphics map = new MapGraphics(stub, username);
 			PApplet.runSketch(new String[] { "MapGraphics" }, map);
 		} catch (Exception e) {
 			e.printStackTrace();

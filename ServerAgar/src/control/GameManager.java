@@ -5,8 +5,10 @@ import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.ServerGUI;
-import service.PlayerRemoteImpl;
+import model.DataInfo;
+import model.Food;
+import remote.PlayerRemoteImpl;
+import view.ServerGUI;
 
 public class GameManager {
 	// private List<DataInfo> foods;

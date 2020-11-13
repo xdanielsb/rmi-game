@@ -1,6 +1,6 @@
 package tranverse;
 
-public aspect AspectMovement {
+public aspect aspectMovement {
 
 	pointcut boundMovement(int i, double x, double y):within(metier.PlayerManager) && execution(public void Move(int,double,double)) && args(i,x,y);
 

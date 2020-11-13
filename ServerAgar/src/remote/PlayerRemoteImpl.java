@@ -1,4 +1,4 @@
-package service;
+package remote;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Timer;
 
-import control.DataInfo;
 import control.GameManager;
-import control.Player;
 import control.PlayerManager;
+import model.DataInfo;
+import model.Player;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
@@ -40,12 +40,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	@Override
-	public void Move(int id, double x, double y) throws RemoteException {
+	public void move(int id, double x, double y) throws RemoteException {
 		playerManager.Move(id, x, y);
 	}
 
 	@Override
-	public List<DataInfo> UpdateAllPositions(int ID) throws RemoteException {
+	public List<DataInfo> updateAllPositions(int ID) throws RemoteException {
 		List<DataInfo> res = new ArrayList<>();
 		for (Player p : playerManager.listAllPlayers()) {
 			if (p.getPlayerID() != ID)
