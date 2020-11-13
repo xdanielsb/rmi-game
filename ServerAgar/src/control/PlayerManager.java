@@ -1,12 +1,16 @@
 package control;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.Player;
 
 public class PlayerManager {
-	private List<Player> players;
+	// private List<Player> players;
+	private Map<Integer, Player> players;
 	Monitor monitor;
 	private int nbTone;
 	private int nbTtwo;
@@ -15,7 +19,7 @@ public class PlayerManager {
 
 	public PlayerManager() {
 		monitor = new Monitor();
-		players = new ArrayList<>();
+		players = new HashMap<Integer, Player>();
 		nbTone = 0;
 		nbTtwo = 0;
 		scoreTone = 0;
@@ -48,16 +52,16 @@ public class PlayerManager {
 	}
 
 	public void addPlayer(Player p) {
-		players.add(p);
-		if (p.getTeamID() == 0)
+		players.put(p.getPlayerID(), p);
+		if (p.getTeamID() == 0) {
 			nbTone++;
-		else
+		} else {
 			nbTtwo++;
-
+		}
 	}
 
-	public List<Player> listAllPlayers() {
-		return players;
+	public Collection<Player> getPlayers() {
+		return players.values();
 	}
 
 	public int getPlayerNumber() {
@@ -65,23 +69,14 @@ public class PlayerManager {
 	}
 
 	public Player getPlayer(int id) {
-		Player res = null;
-		for (Player p : players) {
-			if (p.getPlayerID() == id) {
-				res = p;
-				break;
-			}
-		}
-		return res;
+		return players.get(id);
 	}
 
 	public void Move(int id, double x, double y) {
-		for (Player p : players) {
-			if (p.getPlayerID() == id && p.isAlive()) {
-				p.setX(x);
-				p.setY(y);
-				return;
-			}
+		Player p = players.get(id);
+		if (p.getPlayerID() == id && p.isAlive()) {
+			p.setX(x);
+			p.setY(y);
 		}
 	}
 

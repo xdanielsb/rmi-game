@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.Timer;
 
@@ -15,7 +16,7 @@ import model.Player;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
-	private GameManager gameManager;// = new GameManager();
+	private GameManager gameManager;
 	private final Object mutex = new Object();
 	Timer tm = new Timer(25, this);
 	float gameTimer = 100;
@@ -47,7 +48,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public List<DataInfo> updateAllPositions(int ID) throws RemoteException {
 		List<DataInfo> res = new ArrayList<>();
-		for (Player p : playerManager.listAllPlayers()) {
+		for (Player p : playerManager.getPlayers()) {
 			if (p.getPlayerID() != ID)
 				res.add(new DataInfo(p.getX(), p.getY(), p.getSize(), p.getTeamID()));
 		}
@@ -58,7 +59,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	private void CheckPlayerCollision() {
-		List<Player> players = playerManager.listAllPlayers();
+		Collection<Player> players = playerManager.getPlayers();
 		for (Player p : players) {
 			if(!p.isAlive())
 				continue;
@@ -97,9 +98,8 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	private void CheckFoodCollision(/* int id */) {
-		List<Player> players = playerManager.listAllPlayers();
 		List<DataInfo> eatenFood = new ArrayList<>();
-		for (Player p : players) {
+		for (Player p : playerManager.getPlayers()) {
 			double size = p.getSize() / 2;
 			for (DataInfo di : gameManager.GetFoods()) {
 				double dx = p.getX() - di.getX();
