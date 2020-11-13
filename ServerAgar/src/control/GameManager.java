@@ -1,12 +1,14 @@
-package metier;
+package control;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.ServerGUI;
-import service.PlayerRemoteImpl;
+import model.DataInfo;
+import model.Food;
+import remote.PlayerRemoteImpl;
+import view.ServerGUI;
 
 public class GameManager {
 	// private List<DataInfo> foods;
@@ -14,9 +16,9 @@ public class GameManager {
 	private int nbFood;
 	private PlayerRemoteImpl remoteManager;
 	private ServerGUI gui;
-	
+
 	public GameManager() {
-		this.nbFood  = 300;
+		this.nbFood = 300;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
 			foods.add(new Food((Math.random() * 1500) + 50, (Math.random() * 1500) + 50));
@@ -44,7 +46,6 @@ public class GameManager {
 		}
 	}
 
-	
 	public boolean initServer(ServerGUI gui) {
 		try {
 			this.gui = gui;
@@ -59,7 +60,7 @@ public class GameManager {
 		}
 		return true;
 	}
-	
+
 	public ServerGUI getGUI() {
 		return this.gui;
 	}

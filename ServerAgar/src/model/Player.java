@@ -1,4 +1,4 @@
-package metier;
+package model;
 
 import java.io.Serializable;
 
@@ -23,18 +23,17 @@ public class Player implements Serializable {
 		}
 		size = 50;
 	}
-	
-	public void setLife()
-	{
+
+	public void setLife() {
 		isAlive = !isAlive;
 	}
-	public boolean isAlive()
-	{
+
+	public boolean isAlive() {
 		return isAlive;
 	}
-	
+
 	public void setSize(double s) {
-		size = s > 750? 750:s;
+		size = s > 750 ? 750 : s;
 	}
 
 	public double getSize() {
