@@ -52,8 +52,8 @@ public class PlayerManager {
 	}
 
 	public void addPlayer(Player p) {
-		players.put(p.getPlayerID(), p);
-		if (p.getTeamID() == 0) {
+		players.put(p.getId(), p);
+		if (p.getTeam() == 0) {
 			nbTone++;
 		} else {
 			nbTtwo++;
@@ -74,14 +74,14 @@ public class PlayerManager {
 
 	public void move(int id, double x, double y) {
 		Player p = players.get(id);
-		if (p.getPlayerID() == id && p.isAlive()) {
+		if (p.getId() == id && p.isAlive()) {
 			p.setX(x);
 			p.setY(y);
 		}
 	}
 
 	private void resetPosition(Player p) {
-		p.setX(p.getTeamID() == 0 ? 50 : 750);
+		p.setX(p.getTeam() == 0 ? 50 : 750);
 		p.setY(400);
 	}
 

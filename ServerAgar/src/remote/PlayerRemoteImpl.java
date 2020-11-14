@@ -1,5 +1,6 @@
 package remote;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -11,15 +12,15 @@ import javax.swing.Timer;
 
 import control.GameManager;
 import control.PlayerManager;
-import model.DataInfo;
 import model.Player;
+import model.SpaceObject;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
 	private GameManager gameManager;
 	private final Object mutex = new Object();
 	Timer tm = new Timer(25, this);
-	float gameTimer = 60;
+	float gameTimer = 600;
 
 	public PlayerRemoteImpl(GameManager gameManager) throws RemoteException {
 		this.gameManager = gameManager;
@@ -28,14 +29,16 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public int registerPlayer(String p) throws RemoteException {
-		synchronized(mutex)
-		{
+		synchronized (mutex) {
 			int pID = playerManager.getPlayerNumber();
 			int idTeam = playerManager.getTeamOne() <= playerManager.getTeamtwo() ? 0 : 1;
 			Player newPlayer = new Player(pID, idTeam, p);
+			if (idTeam == 0)
+				newPlayer.setColor(new Color(255, 0, 0));
+			else if (idTeam == 1)
+				newPlayer.setColor(new Color(0, 0, 255));
 			playerManager.addPlayer(newPlayer);
-			System.out.println("Ajout de : " + p);
-			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + pID );
+			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + pID);
 			return pID;
 		}
 	}
@@ -46,45 +49,47 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	@Override
-	public List<DataInfo> updateAllPositions(int ID) throws RemoteException {
-		List<DataInfo> res = new ArrayList<>();
+	public List<SpaceObject> updateAllPositions(int ID) throws RemoteException {
+		List<SpaceObject> res = new ArrayList<>();
 		for (Player p : playerManager.getPlayers()) {
-			if (p.getPlayerID() != ID)
-				res.add(new DataInfo(p.getX(), p.getY(), p.getSize(), p.getTeamID()));
+			if (p.getId() != ID)
+				res.add(p);
 		}
-		for (DataInfo di : gameManager.GetFoods()) {
+		for (SpaceObject di : gameManager.GetFoods()) {
 			res.add(di);
 		}
 		return res;
 	}
 
-	private void CheckPlayerCollision() {
+	private void checkPlayerCollision() {
 		Collection<Player> players = playerManager.getPlayers();
 		for (Player p : players) {
-			if(!p.isAlive())
+			if (!p.isAlive())
 				continue;
 			double size = p.getSize() / 4;
 			for (Player other : players) {
-				if(!other.isAlive())
+				if (!other.isAlive())
 					continue;
-				if (other.getPlayerID() != p.getPlayerID()) {
-					if (other.getTeamID() != p.getTeamID() && Math.abs(other.getSize() - p.getSize()) > 10) {
+				if (other.getId() != p.getId()) {
+					if (other.getTeam() != p.getTeam() && Math.abs(other.getSize() - p.getSize()) > 10) {
 						double dx = other.getX() - p.getX();
 						double dy = other.getY() - p.getY();
 						double length = Math.sqrt((dx * dx) + (dy * dy));
 						if (length < size) {
 							boolean pBigger = p.getSize() > other.getSize();
 							if (pBigger) {
-								//p.setSize(p.getSize() + other.getSize());
-								p.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
-								UpdateScore(p, (int)other.getSize());
+								// p.setSize(p.getSize() + other.getSize());
+								p.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2)
+										+ (other.getSize() / 2) * (other.getSize() / 2)) * 2);
+								updateScore(p, (int) other.getSize());
 							} else {
-								other.setSize(Math.sqrt((p.getSize()/2) * (p.getSize()/2) + (other.getSize()/2) * (other.getSize()/2))*2);
-								UpdateScore(other, (int)p.getSize());
+								other.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2)
+										+ (other.getSize() / 2) * (other.getSize() / 2)) * 2);
+								updateScore(other, (int) p.getSize());
 							}
 
 							playerManager.removePlayer(pBigger ? other : p);
-							CheckPlayerCollision();
+							checkPlayerCollision();
 							return;
 						}
 					}
@@ -93,22 +98,23 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 		}
 	}
 
-	private void UpdateScore(Player p, int amount) {
-		playerManager.addScore(p.getTeamID(), amount);
+	private void updateScore(Player p, int amount) {
+		playerManager.addScore(p.getTeam(), amount);
 	}
 
-	private void CheckFoodCollision(/* int id */) {
-		List<DataInfo> eatenFood = new ArrayList<>();
+	private void checkFoodCollision(/* int id */) {
+		List<Integer> eatenFood = new ArrayList<>();
 		for (Player p : playerManager.getPlayers()) {
 			double size = p.getSize() / 2;
-			for (DataInfo di : gameManager.GetFoods()) {
+			for (SpaceObject di : gameManager.GetFoods()) {
 				double dx = p.getX() - di.getX();
 				double dy = p.getY() - di.getY();
 				double length = Math.sqrt((dx * dx) + (dy * dy));
 				if (length < size) {
-					p.setSize(Math.sqrt((p.getSize()/2)*(p.getSize()/2) + (di.getSize()/2)*(di.getSize()/2))*2);
-					UpdateScore(p, (int)di.getSize());
-					eatenFood.add(di);
+					p.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2) + (di.getSize() / 2) * (di.getSize() / 2))
+							* 2);
+					updateScore(p, (int) di.getSize());
+					eatenFood.add(di.getId());
 				}
 			}
 			gameManager.RemoveFood(eatenFood);
@@ -118,8 +124,8 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		CheckFoodCollision();
-		CheckPlayerCollision();
+		checkFoodCollision();
+		checkPlayerCollision();
 		gameTimer -= 0.025;
 		// Reset timer for next Tick
 		tm.start();
@@ -127,13 +133,11 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public float getTimer() throws RemoteException {
-		// TODO Auto-generated method stub
-		return gameTimer <= 0? 0:gameTimer;
+		return gameTimer <= 0 ? 0 : gameTimer;
 	}
-	
+
 	@Override
-	public boolean gameOver(){
-		System.out.println(gameTimer);
+	public boolean gameOver() {
 		return gameTimer <= 0;
 	}
 
@@ -144,7 +148,6 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 
 	@Override
 	public int getScore(int teamID) throws RemoteException {
-		// TODO Auto-generated method stub
 		return playerManager.getScore(teamID);
 	}
 
