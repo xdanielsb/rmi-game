@@ -63,6 +63,14 @@ public class PlayerManager {
 	public Collection<Player> getPlayers() {
 		return players.values();
 	}
+	
+	public List<Player> getPlayersTeam(int team){
+		List<Player> pteam = new ArrayList<Player>();
+		for(Player p: players.values()) {
+			if(p.getTeam() == team) pteam.add(p);
+		}
+		return pteam;
+	}
 
 	public int getPlayerNumber() {
 		return players.size();

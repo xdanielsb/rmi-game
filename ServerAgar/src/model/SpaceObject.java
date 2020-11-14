@@ -66,6 +66,10 @@ public class SpaceObject implements Serializable {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	
+	public double dist(SpaceObject p) {
+		return Math.hypot(p.getX() - this.getX(), p.getY() - this.getY());
+	}
 
 	public int getId() {
 		return id;

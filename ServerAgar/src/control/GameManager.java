@@ -16,15 +16,14 @@ public class GameManager {
 	private ServerGUI gui;
 
 	public GameManager() {
-		this.nbFood = 300;
+		this.nbFood = 150;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
-			foods.add(new Food(-i-1));
+			foods.add(new Food(-i-15000));
 			foods.get(i);
 		}
 	}
-
-	public List<SpaceObject> GetFoods() {
+	public List<SpaceObject> getFoods() {
 		List<SpaceObject> availableFood = new ArrayList<>();
 		for (Food f : foods) {
 			if (f.isAlive())
@@ -33,7 +32,7 @@ public class GameManager {
 		return availableFood;
 	}
 
-	public void RemoveFood(List<Integer> di) {
+	public void removeFood(List<Integer> di) {
 		for (Integer d : di) {
 			for (Food f : foods) {
 				if (d == f.getId()) {
