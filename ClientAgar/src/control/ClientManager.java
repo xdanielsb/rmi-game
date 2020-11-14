@@ -4,7 +4,6 @@ import java.rmi.Naming;
 
 import processing.core.PApplet;
 import remote.IPlayerRemote;
-import view.ClientConnectGUI;
 import view.MapGraphics;
 
 public class ClientManager {

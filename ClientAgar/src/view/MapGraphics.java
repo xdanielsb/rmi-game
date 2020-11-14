@@ -40,7 +40,6 @@ public class MapGraphics extends PApplet {
 	}
 
 	public void draw() {
-		
 		try {
 			Player p = rm.getPlayer(id);
 			double myX = p.getX() + cstX;

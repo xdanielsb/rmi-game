@@ -55,58 +55,47 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			if (p.getId() != ID)
 				res.add(p);
 		}
-		for (SpaceObject di : gameManager.GetFoods()) {
+		for (SpaceObject di : gameManager.getFoods()) {
 			res.add(di);
 		}
 		return res;
 	}
 
 	private void checkPlayerCollision() {
-		Collection<Player> players = playerManager.getPlayers();
-		for (Player p : players) {
-			if (!p.isAlive())
-				continue;
-			double size = p.getSize() / 4;
-			for (Player other : players) {
-				if (!other.isAlive())
-					continue;
-				if (other.getId() != p.getId()) {
-					if (other.getTeam() != p.getTeam() && Math.abs(other.getSize() - p.getSize()) > 10) {
-						double dx = other.getX() - p.getX();
-						double dy = other.getY() - p.getY();
-						double length = Math.sqrt((dx * dx) + (dy * dy));
-						if (length < size) {
-							boolean pBigger = p.getSize() > other.getSize();
-							if (pBigger) {
-								// p.setSize(p.getSize() + other.getSize());
-								p.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2)
-										+ (other.getSize() / 2) * (other.getSize() / 2)) * 2);
-								updateScore(p, (int) other.getSize());
-							} else {
-								other.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2)
-										+ (other.getSize() / 2) * (other.getSize() / 2)) * 2);
-								updateScore(other, (int) p.getSize());
-							}
-
-							playerManager.removePlayer(pBigger ? other : p);
-							checkPlayerCollision();
-							return;
-						}
+		List<Player> team1, team2;
+		team1 = playerManager.getPlayersTeam(0);
+		team2 = playerManager.getPlayersTeam(1);
+		for( Player pteam1: team1) {
+			if(!pteam1.isAlive()) continue;
+			for(Player pteam2: team2) {
+				if(!pteam2.isAlive()) continue;
+				if( pteam1.dist(pteam2) < Math.max(pteam1.getSize(), pteam2.getSize()) ) {
+					if (pteam1.getSize() < pteam2.getSize()) {
+						pteam1.setAlive(false);
+						pteam2.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
+								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
+						updateScore(pteam1, (int) pteam2.getSize());
+						break;
+					}else {
+						pteam2.setAlive(false);
+						pteam1.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
+								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
+						updateScore(pteam2, (int) pteam1.getSize());
 					}
 				}
 			}
 		}
 	}
-
+	
+	
 	private void updateScore(Player p, int amount) {
 		playerManager.addScore(p.getTeam(), amount);
 	}
 
-	private void checkFoodCollision(/* int id */) {
-		List<Integer> eatenFood = new ArrayList<>();
+	private void checkFoodCollision() {
 		for (Player p : playerManager.getPlayers()) {
 			double size = p.getSize() / 2;
-			for (SpaceObject di : gameManager.GetFoods()) {
+			for (SpaceObject di : gameManager.getFoods()) {
 				double dx = p.getX() - di.getX();
 				double dy = p.getY() - di.getY();
 				double length = Math.sqrt((dx * dx) + (dy * dy));
@@ -114,13 +103,12 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 					p.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2) + (di.getSize() / 2) * (di.getSize() / 2))
 							* 2);
 					updateScore(p, (int) di.getSize());
-					eatenFood.add(di.getId());
+					di.setAlive(false);
 				}
 			}
-			gameManager.RemoveFood(eatenFood);
-			eatenFood.clear();
 		}
 	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {

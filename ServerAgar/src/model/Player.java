@@ -22,6 +22,8 @@ public class Player extends SpaceObject implements Serializable {
 		this.setId(idP);
 		this.setAlive(true);
 	}
+	
+
 
 	public int getTeam() {
 		return team;
