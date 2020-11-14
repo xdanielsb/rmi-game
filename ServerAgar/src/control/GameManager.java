@@ -32,10 +32,10 @@ public class GameManager {
 		return availableFood;
 	}
 
-	public void removeFood(List<Integer> di) {
-		for (Integer d : di) {
+	public void removeFood(List<SpaceObject> di) {
+		for (SpaceObject d : di) {
 			for (Food f : foods) {
-				if (d == f.getId()) {
+				if (d == f) {
 					f.DisableFood();
 				}
 			}

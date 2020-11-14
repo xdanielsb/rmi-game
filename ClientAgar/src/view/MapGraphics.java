@@ -24,6 +24,16 @@ public class MapGraphics extends PApplet {
 		spaceobjs = new ArrayList<>();
 		this.rm = distant;
 		this.id = distant.registerPlayer(username);
+		Runtime runtime = Runtime.getRuntime();
+		Runnable runnable = () -> {
+			try {
+				rm.erasePlayer(id);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
+		runtime.addShutdownHook(new Thread(runnable));
 		header = new HeaderHandler(this);
 		x = rm.getPlayer(id).getX();
 		y = rm.getPlayer(id).getY();
@@ -49,8 +59,9 @@ public class MapGraphics extends PApplet {
 			double mySize = p.getSize();
 			background(230);
 			cursor(CROSS);
-			actionPerformed();
+
 			if (!rm.gameOver()) {
+				actionPerformed();
 				double stage = (mySize / 20);
 				zoomRatio = (float) (1.04 - (stage * 0.02));
 				if (TID == 0) fill(255, 0, 0);
@@ -65,7 +76,7 @@ public class MapGraphics extends PApplet {
 					double offsetY = myY - objY;
 					objX += (1 - zoomRatio) * offsetX;
 					objY += (1 - zoomRatio) * offsetY;
-					float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);
+					//float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);
 					circle((float) (objX), (float) (objY), (float) (v.getSize() * zoomRatio));
 				}
 				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));

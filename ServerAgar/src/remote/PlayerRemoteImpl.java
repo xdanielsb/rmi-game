@@ -20,7 +20,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	private GameManager gameManager;
 	private final Object mutex = new Object();
 	Timer tm = new Timer(25, this);
-	float gameTimer = 600;
+	float gameTimer = 180;
 
 	public PlayerRemoteImpl(GameManager gameManager) throws RemoteException {
 		this.gameManager = gameManager;
@@ -69,30 +69,33 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			if(!pteam1.isAlive()) continue;
 			for(Player pteam2: team2) {
 				if(!pteam2.isAlive()) continue;
-				if( pteam1.dist(pteam2) < Math.max(pteam1.getSize(), pteam2.getSize()) ) {
+				if( (pteam1.dist(pteam2) < Math.max(pteam1.getSize()/4, pteam2.getSize()/4)) && Math.abs(pteam1.getSize()-pteam2.getSize()) >= 10) {
 					if (pteam1.getSize() < pteam2.getSize()) {
-						pteam1.setAlive(false);
+						//pteam1.setAlive(false);
 						pteam2.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
 								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
-						updateScore(pteam1, (int) pteam2.getSize());
+						updateScore(pteam2, (int) pteam2.getSize());
+						playerManager.removePlayer(pteam1);
 						break;
 					}else {
-						pteam2.setAlive(false);
+						//pteam2.setAlive(false);
 						pteam1.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
 								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
-						updateScore(pteam2, (int) pteam1.getSize());
+						updateScore(pteam1, (int) pteam1.getSize());
+						playerManager.removePlayer(pteam2);
 					}
 				}
 			}
 		}
 	}
-	
-	
+
+
 	private void updateScore(Player p, int amount) {
 		playerManager.addScore(p.getTeam(), amount);
 	}
 
 	private void checkFoodCollision() {
+		List<SpaceObject> eatenFood = new ArrayList<>();
 		for (Player p : playerManager.getPlayers()) {
 			double size = p.getSize() / 2;
 			for (SpaceObject di : gameManager.getFoods()) {
@@ -103,12 +106,17 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 					p.setSize(Math.sqrt((p.getSize() / 2) * (p.getSize() / 2) + (di.getSize() / 2) * (di.getSize() / 2))
 							* 2);
 					updateScore(p, (int) di.getSize());
-					di.setAlive(false);
+					eatenFood.add(di);
+					//di.setAlive(false);
+
 				}
 			}
+			gameManager.removeFood(eatenFood);
+			eatenFood.clear();
 		}
+
 	}
-	
+
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -137,6 +145,11 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	@Override
 	public int getScore(int teamID) throws RemoteException {
 		return playerManager.getScore(teamID);
+	}
+
+	@Override
+	public void erasePlayer(int id) throws RemoteException {
+		playerManager.erasePlayer(id);
 	}
 
 }
