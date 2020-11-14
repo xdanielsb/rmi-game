@@ -1,36 +1,28 @@
 package model;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class Food implements ActionListener {
-	private DataInfo position;
-	private boolean isAlive;
-	Timer tm = new Timer(10000, this);
-	
-	public Food(double xPos, double yPos) {
-		position = new DataInfo(xPos, yPos, 20, 2);
-		isAlive = true;
-	}
+public class Food extends SpaceObject implements ActionListener {
 
+	Timer tm = new Timer(10000, this);
+
+	public Food(int id) {
+		super((Math.random() * 1500) + 50, (Math.random() * 1500) + 50, 20);
+		this.setId(id);
+		this.setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
+	}
 
 	public void DisableFood() {
-		isAlive = false;
+		this.setAlive(false);
 		tm.start();
-	}
-
-	public boolean isAlive() {
-		return isAlive;
-	}
-
-	public DataInfo getPosition() {
-		return position;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		isAlive = true;
+		this.setAlive(true);
 	}
 
 }

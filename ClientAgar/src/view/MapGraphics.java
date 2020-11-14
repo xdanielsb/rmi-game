@@ -3,15 +3,15 @@ package view;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import model.DataInfo;
+import model.Player;
+import model.SpaceObject;
 import processing.core.PApplet;
 import remote.IPlayerRemote;
 
 public class MapGraphics extends PApplet {
 
 	private IPlayerRemote rm;
-	private List<DataInfo> player_positions;
+	private List<SpaceObject> spaceobjs;
 	private final int id;
 	private double x;
 	private double y;
@@ -21,7 +21,7 @@ public class MapGraphics extends PApplet {
 	private HeaderHandler header;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
-		player_positions = new ArrayList<>();
+		spaceobjs = new ArrayList<>();
 		this.rm = distant;
 		this.id = distant.registerPlayer(username);
 		header = new HeaderHandler(this);
@@ -40,28 +40,25 @@ public class MapGraphics extends PApplet {
 	}
 
 	public void draw() {
+		
 		try {
+			Player p = rm.getPlayer(id);
+			double myX = p.getX() + cstX;
+			double myY = p.getY() + cstY;
+			int TID = p.getTeam();
+			float zoomRatio = 1;
+			double mySize = p.getSize();
 			background(230);
 			cursor(CROSS);
 			actionPerformed();
-			
-			if(!rm.gameOver()) {
-				float zoomRatio = 1;
-				double myX = 0, myY = 0;
-	
-				double mySize = rm.getPlayer(id).getSize();
-				myX = rm.getPlayer(id).getX() + cstX;
-				myY = rm.getPlayer(id).getY() + cstY;
+			if (!rm.gameOver()) {
 				double stage = (mySize / 20);
 				zoomRatio = (float) (1.04 - (stage * 0.02));
-				int TID = rm.getPlayer(id).getTeamID();
-				if (TID == 0)
-					fill(255, 0, 0);
-				else
-					fill(0, 0, 255);
+				if (TID == 0) fill(255, 0, 0);
+				else fill(0, 0, 255);
 				circle((float) myX, (float) myY, (float) mySize * zoomRatio);
-				drawOuterBounds(rm.getPlayer(id).getX(), rm.getPlayer(id).getY(), zoomRatio);
-				for (DataInfo v : player_positions) {
+				drawOuterBounds(p.getX(), p.getY(), zoomRatio);
+				for (SpaceObject v : spaceobjs) {
 					fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
 					double objX = v.getX() + cstX;
 					double objY = v.getY() + cstY;
@@ -74,16 +71,16 @@ public class MapGraphics extends PApplet {
 				}
 				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
 				header.draw();
-			}else {
+			} else {
 				textSize(80);
 				textAlign(CENTER);
 				fill(0);
-				text("Team " + (rm.getScore(0)>=rm.getScore(1)? "red":"blue") + " wins",0,200, 800,100);
+				text("Team " + (rm.getScore(0) >= rm.getScore(1) ? "red" : "blue") + " wins", 0, 200, 800, 100);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
 
 	private void drawOuterBounds(double x, double y, float zoom) {
@@ -134,7 +131,7 @@ public class MapGraphics extends PApplet {
 			cstX = centreX - (int) x;
 			cstY = centreY - (int) y;
 		}
-		player_positions = rm.updateAllPositions(id);
+		spaceobjs = rm.updateAllPositions(id);
 	}
 
 }

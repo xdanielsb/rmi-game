@@ -4,14 +4,12 @@ import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
-
-import model.DataInfo;
 import model.Food;
+import model.SpaceObject;
 import remote.PlayerRemoteImpl;
 import view.ServerGUI;
 
 public class GameManager {
-	// private List<DataInfo> foods;
 	private List<Food> foods;
 	private int nbFood;
 	private PlayerRemoteImpl remoteManager;
@@ -21,26 +19,25 @@ public class GameManager {
 		this.nbFood = 300;
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
-			foods.add(new Food((Math.random() * 1500) + 50, (Math.random() * 1500) + 50));
+			foods.add(new Food(-i-1));
+			foods.get(i);
 		}
-
 	}
 
-	public List<DataInfo> GetFoods() {
-		List<DataInfo> availableFood = new ArrayList<>();
+	public List<SpaceObject> GetFoods() {
+		List<SpaceObject> availableFood = new ArrayList<>();
 		for (Food f : foods) {
 			if (f.isAlive())
-				availableFood.add(f.getPosition());
+				availableFood.add(f);
 		}
 		return availableFood;
 	}
 
-	public void RemoveFood(List<DataInfo> di) {
-		for (DataInfo d : di) {
+	public void RemoveFood(List<Integer> di) {
+		for (Integer d : di) {
 			for (Food f : foods) {
-				if (d == f.getPosition()) {
+				if (d == f.getId()) {
 					f.DisableFood();
-					break;
 				}
 			}
 		}
@@ -52,7 +49,6 @@ public class GameManager {
 			LocateRegistry.createRegistry(1099);
 			this.remoteManager = new PlayerRemoteImpl(this);
 			Naming.rebind("rmi://localhost:1099/PLM", remoteManager);
-			System.out.println("L01: Server is ready to go.");
 		} catch (Exception e) {
 			System.out.println("E01: Error initializing the server.");
 			e.printStackTrace();

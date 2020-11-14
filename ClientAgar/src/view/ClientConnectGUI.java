@@ -56,6 +56,7 @@ public class ClientConnectGUI extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent evt) {
 		if( evt.getSource() == startGame) {
 			this.startGame.setEnabled(false);
+			this.dispose();
 			this.manager.connectToServer(this.getUserName());
 		}
 	}
