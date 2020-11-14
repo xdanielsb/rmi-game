@@ -2,7 +2,7 @@ package tranverse;
 
 public aspect aspectMovement {
 
-	pointcut boundMovement(int i, double x, double y):within(metier.PlayerManager) && execution(public void Move(int,double,double)) && args(i,x,y);
+	pointcut boundMovement(int i, double x, double y):within(control.PlayerManager) && execution(public void move(int,double,double)) && args(i,x,y);
 
 	void around(int i, double x, double y):boundMovement(i,x,y)
 	{
