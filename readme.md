@@ -1,4 +1,4 @@
-This is a simple game to apply RMI, concurrency and AspecJ
+This is a simple game to apply RMI, concurrency and AspectJ
 
 - RMI
 - AspectJ
