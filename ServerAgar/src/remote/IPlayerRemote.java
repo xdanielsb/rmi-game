@@ -20,5 +20,7 @@ public interface IPlayerRemote extends Remote {
 	public int getScore(int teamID) throws RemoteException;
 
 	public boolean gameOver() throws RemoteException;
+	
+	public void erasePlayer(int id) throws RemoteException;
 
 }

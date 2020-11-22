@@ -12,26 +12,19 @@ public class PlayerManager {
 	// private List<Player> players;
 	private Map<Integer, Player> players;
 	Monitor monitor;
-	private int nbTone;
-	private int nbTtwo;
-	private int scoreTone;
-	private int scoreTtwo;
+	int total = 0;
 
 	public PlayerManager() {
 		monitor = new Monitor();
 		players = new HashMap<Integer, Player>();
-		nbTone = 0;
-		nbTtwo = 0;
-		scoreTone = 0;
-		scoreTtwo = 0;
 	}
 
 	public int getTeamOne() {
-		return nbTone;
+		return monitor.getTeamNum(0);
 	}
 
 	public int getTeamtwo() {
-		return nbTtwo;
+		return monitor.getTeamNum(1);
 	}
 
 	public int getScore(int teamID) {
@@ -52,18 +45,26 @@ public class PlayerManager {
 	}
 
 	public void addPlayer(Player p) {
+		total++;
 		players.put(p.getId(), p);
 		if (p.getTeam() == 0) {
-			nbTone++;
+			monitor.setTeamNumber(0,1);
 		} else {
-			nbTtwo++;
+			monitor.setTeamNumber(1,1);
 		}
+	}
+
+	public void erasePlayer(int id)
+	{
+		int team = getPlayer(id).getTeam();
+		monitor.setTeamNumber(team,-1);
+		players.remove(id);
 	}
 
 	public Collection<Player> getPlayers() {
 		return players.values();
 	}
-	
+
 	public List<Player> getPlayersTeam(int team){
 		List<Player> pteam = new ArrayList<Player>();
 		for(Player p: players.values()) {
@@ -73,7 +74,7 @@ public class PlayerManager {
 	}
 
 	public int getPlayerNumber() {
-		return players.size();
+		return total;
 	}
 
 	public Player getPlayer(int id) {
