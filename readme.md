@@ -1,7 +1,8 @@
-This is a simple game to apply RMI and AspectJ
+This is a simple game to apply RMI, concurrency and AspecJ
 
 - RMI
 - AspectJ
+- Monitor
 
 
 Server
