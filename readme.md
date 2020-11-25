@@ -4,6 +4,7 @@
 - AspectJ
 - Monitor
 
+<img src="assets/demo.gif">
 
 ### Server
 - control
