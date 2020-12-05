@@ -13,7 +13,8 @@ import javax.swing.Timer;
 import control.GameManager;
 import control.PlayerManager;
 import model.Player;
-import model.SpaceObject;
+import model.Food;
+import model.CoordinateObject;
 
 public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemote, ActionListener {
 	private PlayerManager playerManager = new PlayerManager();
@@ -33,10 +34,6 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 			int pID = playerManager.getPlayerNumber();
 			int idTeam = playerManager.getTeamOne() <= playerManager.getTeamtwo() ? 0 : 1;
 			Player newPlayer = new Player(pID, idTeam, p);
-			if (idTeam == 0)
-				newPlayer.setColor(new Color(255, 0, 0));
-			else if (idTeam == 1)
-				newPlayer.setColor(new Color(0, 0, 255));
 			playerManager.addPlayer(newPlayer);
 			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + pID);
 			return pID;
@@ -49,13 +46,13 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	@Override
-	public List<SpaceObject> updateAllPositions(int ID) throws RemoteException {
-		List<SpaceObject> res = new ArrayList<>();
+	public List<CoordinateObject> updateAllPositions(int ID) throws RemoteException {
+		List<CoordinateObject> res = new ArrayList<>();
 		for (Player p : playerManager.getPlayers()) {
 			if (p.getId() != ID)
-				res.add(p);
+				res.add(p.getCell());
 		}
-		for (SpaceObject di : gameManager.getFoods()) {
+		for (Food di : gameManager.getFoods()) {
 			res.add(di);
 		}
 		return res;
@@ -95,10 +92,10 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	}
 
 	private void checkFoodCollision() {
-		List<SpaceObject> eatenFood = new ArrayList<>();
+		List<Food> eatenFood = new ArrayList<>();
 		for (Player p : playerManager.getPlayers()) {
 			double size = p.getSize() / 2;
-			for (SpaceObject di : gameManager.getFoods()) {
+			for (Food di : gameManager.getFoods()) {
 				double dx = p.getX() - di.getX();
 				double dy = p.getY() - di.getY();
 				double length = Math.sqrt((dx * dx) + (dy * dy));

@@ -5,7 +5,6 @@ import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
 import model.Food;
-import model.SpaceObject;
 import remote.PlayerRemoteImpl;
 import view.ServerGUI;
 
@@ -22,9 +21,10 @@ public class GameManager {
 			foods.add(new Food(-i-15000));
 			foods.get(i);
 		}
+		System.out.println(foods.size());
 	}
-	public List<SpaceObject> getFoods() {
-		List<SpaceObject> availableFood = new ArrayList<>();
+	public List<Food> getFoods() {
+		List<Food> availableFood = new ArrayList<>();
 		for (Food f : foods) {
 			if (f.isAlive())
 				availableFood.add(f);
@@ -32,8 +32,8 @@ public class GameManager {
 		return availableFood;
 	}
 
-	public void removeFood(List<SpaceObject> di) {
-		for (SpaceObject d : di) {
+	public void removeFood(List<Food> di) {
+		for (Food d : di) {
 			for (Food f : foods) {
 				if (d == f) {
 					f.DisableFood();

@@ -99,7 +99,7 @@ public class PlayerManager {
 		 * if (p.getTeamID() == 0) nbTone--; else nbTtwo--; players.remove(p);
 		 */
 		// Move(p.getPlayerID(), p.getTeamID()==0? 50:750, 400);
-		p.setLife();
+		p.setAlive(false);
 		p.setSize(0);
 		Runnable runnable = () -> {
 			try {
@@ -107,7 +107,7 @@ public class PlayerManager {
 				// Move(p.getPlayerID(), p.getTeamID()==0? 50:750, 400);
 				resetPosition(p);
 				p.setSize(50);
-				p.setLife();
+				p.setAlive(true);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

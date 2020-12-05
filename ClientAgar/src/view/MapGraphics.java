@@ -4,14 +4,14 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Player;
-import model.SpaceObject;
+import model.CoordinateObject;
 import processing.core.PApplet;
 import remote.IPlayerRemote;
 
 public class MapGraphics extends PApplet {
 
 	private IPlayerRemote rm;
-	private List<SpaceObject> spaceobjs;
+	private List<CoordinateObject> coordObjs;
 	private final int id;
 	private double x;
 	private double y;
@@ -21,7 +21,7 @@ public class MapGraphics extends PApplet {
 	private HeaderHandler header;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
-		spaceobjs = new ArrayList<>();
+		coordObjs = new ArrayList<>();
 		this.rm = distant;
 		this.id = distant.registerPlayer(username);
 		Runtime runtime = Runtime.getRuntime();
@@ -68,7 +68,7 @@ public class MapGraphics extends PApplet {
 				else fill(0, 0, 255);
 				circle((float) myX, (float) myY, (float) mySize * zoomRatio);
 				drawOuterBounds(p.getX(), p.getY(), zoomRatio);
-				for (SpaceObject v : spaceobjs) {
+				for (CoordinateObject v : coordObjs) {
 					fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
 					double objX = v.getX() + cstX;
 					double objY = v.getY() + cstY;
@@ -99,23 +99,17 @@ public class MapGraphics extends PApplet {
 		stroke(180, 180, 180);
 		float dx = (float) (cstX);
 		float dy = (float) (cstY);
-		float dxx = (float) (cstX);
-		float dyy = (float) (cstY);
 		float offsetX = (float) x + cstX - dx;
 		float offsetY = (float) y + cstY - dy;
-		float offsetXX = (float) x + cstX - dxx;
-		float offsetYY = (float) y + cstY - dyy;
 		dx += (1 - zoom) * offsetX;
 		dy += (1 - zoom) * offsetY;
-		dxx += (1 - zoom) * offsetXX;
-		dyy += (1 - zoom) * offsetYY;
 
 		float resizing = (1 - zoom) * (1600);
 
 		rect(dx - 2500, dy - 2500, 6600 - resizing, 6600 - resizing);
 		stroke(255, 0, 0);
 		strokeWeight(1);
-		rect(dxx, dyy, 1600 - resizing, 1600 - resizing);
+		rect(dx, dy, 1600 - resizing, 1600 - resizing);
 		stroke(0, 0, 0);
 
 	}
@@ -141,7 +135,7 @@ public class MapGraphics extends PApplet {
 			cstX = centreX - (int) x;
 			cstY = centreY - (int) y;
 		}
-		spaceobjs = rm.updateAllPositions(id);
+		coordObjs = rm.updateAllPositions(id);
 	}
 
 }
