@@ -1,59 +1,57 @@
 package control;
 
 public class Monitor {
-	public final Object teamOne = new Object();
-	public final Object teamTwo = new Object();
-	public final Object addTeamate = new Object();
-	public final Object countTeamate = new Object();
+	
+	public final Object[] teamBell;
+	public final Object addTeamate;
+	public final int nbTeam = 2;
 
-	private int scoreOne = 0;
-	private int ScoreTwo = 0;
-	private int nbTone = 0;
-	private int nbTtwo = 0;
-
-	public void addScoreOne(int amount) {
-		synchronized (teamOne) {
-			scoreOne += amount;
+	private int[] score;
+	private int[] nbPlayerTeam;
+	
+	public Monitor() {
+		teamBell = new Object[nbTeam];
+		for(int i = 0; i < teamBell.length; i++) {
+			teamBell[i] = new Object();
 		}
+		addTeamate = new Object();
+		
+		score = new int[nbTeam];
+		nbPlayerTeam = new int[nbTeam];
 	}
 
-	public void addScoreTwo(int amount) {
-		synchronized (teamTwo) {
-			ScoreTwo += amount;
+	public void addScore(int team, int amount) {
+		if(team < 0 || team >= nbTeam) {
+			return;
+		}
+		synchronized (teamBell[team]) {
+			score[team] += amount;
 		}
 	}
 	
-	public int getScoreOne() {
-		return scoreOne;
-	}
-
-	public int getScoreTwo() {
-		return ScoreTwo;
+	public int getScore(int team) {
+		return score[team];
 	}
 	
-	public void setTeamNumber(int i,int amount)
-	{
+	public void addTeamNumber(int team,int amount) {
+		
 		//already synchronized in registerPlayer mutex
 		// no reason to synchro further at this point
-		synchronized(addTeamate)
-		{
-
-			if(i == 0)
-				nbTone += amount;
-			else
-				nbTtwo += amount;			
+		if(team < 0 && team >= nbTeam) {
+			return;
 		}
-		
-		
+		synchronized(addTeamate) {
+			nbPlayerTeam[team] += amount;
+		}
 		
 	}
 	
-	public int getTeamNum(int t)
-	{
-		synchronized(addTeamate)
-		{
-			return t==0? nbTone:nbTtwo;
-			
+	public int getTeamNum(int team) {
+		if(team < 0 || team >= nbTeam) {
+			return 0;
+		}
+		synchronized(addTeamate) {
+			return nbPlayerTeam[team];
 		}
 	}
 

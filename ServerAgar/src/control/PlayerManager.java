@@ -12,32 +12,24 @@ public class PlayerManager {
 	// private List<Player> players;
 	private Map<Integer, Player> players;
 	Monitor monitor;
-	int total = 0;
 
 	public PlayerManager() {
 		monitor = new Monitor();
 		players = new HashMap<Integer, Player>();
 	}
 
-	public int getTeamOne() {
-		return monitor.getTeamNum(0);
-	}
-
-	public int getTeamtwo() {
-		return monitor.getTeamNum(1);
+	public int getTeamNum(int teamID) {
+		return monitor.getTeamNum(teamID);
 	}
 
 	public int getScore(int teamID) {
-		return teamID == 0 ? monitor.getScoreOne() : monitor.getScoreTwo();
+		return monitor.getScore(teamID);
 	}
 
 	public void addScore(int teamID, int amount) {
 		// non bloquant pour l'appelant
 		Runnable runnable = () -> {
-			if (teamID == 0)
-				monitor.addScoreOne(amount);
-			else
-				monitor.addScoreTwo(amount);
+			monitor.addScore(teamID, amount);
 		};
 
 		new Thread(runnable).start();
@@ -45,19 +37,13 @@ public class PlayerManager {
 	}
 
 	public void addPlayer(Player p) {
-		total++;
 		players.put(p.getId(), p);
-		if (p.getTeam() == 0) {
-			monitor.setTeamNumber(0,1);
-		} else {
-			monitor.setTeamNumber(1,1);
-		}
+		monitor.addTeamNumber(p.getTeam(),1);
 	}
 
-	public void erasePlayer(int id)
-	{
+	public void erasePlayer(int id) {
 		int team = getPlayer(id).getTeam();
-		monitor.setTeamNumber(team,-1);
+		monitor.addTeamNumber(team,-1);
 		players.remove(id);
 	}
 
@@ -65,16 +51,16 @@ public class PlayerManager {
 		return players.values();
 	}
 
-	public List<Player> getPlayersTeam(int team){
+	public List<Player> getPlayersTeam(int team) {
 		List<Player> pteam = new ArrayList<Player>();
-		for(Player p: players.values()) {
+		for(Player p : players.values()) {
 			if(p.getTeam() == team) pteam.add(p);
 		}
 		return pteam;
 	}
 
 	public int getPlayerNumber() {
-		return total;
+		return players.size();
 	}
 
 	public Player getPlayer(int id) {

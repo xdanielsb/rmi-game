@@ -19,10 +19,10 @@ public class GameManager {
 		foods = new ArrayList<>();
 		for (int i = 0; i < nbFood; i++) {
 			foods.add(new Food(-i-15000));
-			foods.get(i);
 		}
 		System.out.println(foods.size());
 	}
+	
 	public List<Food> getFoods() {
 		List<Food> availableFood = new ArrayList<>();
 		for (Food f : foods) {

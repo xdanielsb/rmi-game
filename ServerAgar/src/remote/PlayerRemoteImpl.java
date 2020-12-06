@@ -32,7 +32,7 @@ public class PlayerRemoteImpl extends UnicastRemoteObject implements IPlayerRemo
 	public int registerPlayer(String p) throws RemoteException {
 		synchronized (mutex) {
 			int pID = playerManager.getPlayerNumber();
-			int idTeam = playerManager.getTeamOne() <= playerManager.getTeamtwo() ? 0 : 1;
+			int idTeam = playerManager.getTeamNum(0) <= playerManager.getTeamNum(1) ? 0 : 1;
 			Player newPlayer = new Player(pID, idTeam, p);
 			playerManager.addPlayer(newPlayer);
 			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + pID);
