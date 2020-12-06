@@ -11,6 +11,7 @@ public class ClientManager {
 	public ClientManager() {
 		
 	}
+	
 	public void connectToServer(String username) {
 		
 		try {

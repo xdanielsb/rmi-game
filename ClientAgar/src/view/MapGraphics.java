@@ -7,6 +7,8 @@ import java.util.List;
 import displayer.CoordinateObjectDisplayer;
 import displayer.HeaderHandlerDisplayer;
 import displayer.OuterBoundsDisplayer;
+import displayer.PlayerDisplayer;
+import displayer.VictoryDisplayer;
 import model.Player;
 import model.CoordinateObject;
 import processing.core.PApplet;
@@ -56,9 +58,6 @@ public class MapGraphics extends PApplet {
 	public void draw() {
 		try {
 			Player p = rm.getPlayer(id);
-			double myX = p.getX() + cstX;
-			double myY = p.getY() + cstY;
-			int TID = p.getTeam();
 			float zoomRatio = 1;
 			double mySize = p.getSize();
 			background(230);
@@ -66,30 +65,20 @@ public class MapGraphics extends PApplet {
 
 			if (!rm.gameOver()) {
 				actionPerformed();
-				double stage = (mySize / 20);
-				zoomRatio = (float) (1.04 - (stage * 0.02));
-				if (TID == 0) fill(255, 0, 0);
-				else fill(0, 0, 255);
-				circle((float) myX, (float) myY, (float) mySize * zoomRatio);
+				
+				zoomRatio = (float)(1+0.6 * (2500/(mySize*mySize)));
+				
+				PlayerDisplayer.draw(p, zoomRatio, cstX, cstY, this);
 				OuterBoundsDisplayer.draw(p.getX(), p.getY(), zoomRatio, cstX, cstY, this);
+				
 				for (CoordinateObject v : coordObjs) {
-					fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
-					double objX = v.getX() + cstX;
-					double objY = v.getY() + cstY;
-					double offsetX = myX - objX;
-					double offsetY = myY - objY;
-					objX += (1 - zoomRatio) * offsetX;
-					objY += (1 - zoomRatio) * offsetY;
-					//float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);
-					circle((float) (objX), (float) (objY), (float) (v.getSize() * zoomRatio));
+					CoordinateObjectDisplayer.draw(v, p, zoomRatio, cstX, cstY, this);
 				}
+				
 				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
 				HeaderHandlerDisplayer.draw(header, this);
 			} else {
-				textSize(80);
-				textAlign(CENTER);
-				fill(0);
-				text("Team " + (rm.getScore(0) >= rm.getScore(1) ? "red" : "blue") + " wins", 0, 200, 800, 100);
+				VictoryDisplayer.draw(rm.getScore(0), rm.getScore(1), this);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
