@@ -1,29 +1,18 @@
 package model;
 
-import java.awt.Color;
 import java.io.Serializable;
 
-import processing.core.PApplet;
-
 public class Player implements Serializable {
-	private final int team;
+	
 	private final String name;
+	
+	private Team team;
 	private PlayerCell cell;
 	private int id;
 	private boolean alive;
 
-	public Player(int idP, int idT, String name) {		
+	public Player(int idP, String name) {		
 		this.name = name;
-		team = idT;
-		if (idT == 0) {
-			cell = new PlayerCell(50, 400, 50);
-			cell.setColor(new Color(255, 0, 0));
-		} else {
-
-			cell = new PlayerCell(750, 400, 50);
-			cell.setColor(new Color(0, 0, 255));
-		}
-
 		this.id = idP;
 		this.alive = true;
 	}
@@ -32,8 +21,14 @@ public class Player implements Serializable {
 		return this.id;
 	}
 
-	public int getTeam() {
+	public Team getTeam() {
 		return team;
+	}
+	
+	public void setTeam(Team team) {
+		this.team = team;
+		cell = new PlayerCell(team.getSpawnX(), team.getSpawnY(), PlayerCell.CELL_MIN_SIZE);
+		cell.setColor(team.getColor());
 	}
 
 	public String getName() {

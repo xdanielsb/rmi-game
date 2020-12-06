@@ -1,31 +1,20 @@
 package control;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import model.Board;
 import model.Player;
 
 public class PlayerManager {
-	// private List<Player> players;
-	private Map<Integer, Player> players;
-	Monitor monitor;
 
-	public PlayerManager() {
-		monitor = new Monitor();
-		players = new HashMap<Integer, Player>();
+	private Monitor monitor;
+	private Board board;
+
+	public PlayerManager(Board board) {
+		monitor = new Monitor(board);
+		this.board = board;
 	}
-
-	public int getTeamNum(int teamID) {
-		return monitor.getTeamNum(teamID);
-	}
-
-	public int getScore(int teamID) {
-		return monitor.getScore(teamID);
-	}
-
+	
 	public void addScore(int teamID, int amount) {
 		// non bloquant pour l'appelant
 		Runnable runnable = () -> {
@@ -37,60 +26,39 @@ public class PlayerManager {
 	}
 
 	public void addPlayer(Player p) {
-		players.put(p.getId(), p);
-		monitor.addTeamNumber(p.getTeam(),1);
+		board.addPlayer(p);
 	}
 
 	public void erasePlayer(int id) {
-		int team = getPlayer(id).getTeam();
-		monitor.addTeamNumber(team,-1);
-		players.remove(id);
-	}
-
-	public Collection<Player> getPlayers() {
-		return players.values();
+		board.removePlayer(id);
 	}
 
 	public List<Player> getPlayersTeam(int team) {
-		List<Player> pteam = new ArrayList<Player>();
-		for(Player p : players.values()) {
-			if(p.getTeam() == team) pteam.add(p);
-		}
-		return pteam;
-	}
-
-	public int getPlayerNumber() {
-		return players.size();
+		return board.getTeam(team).getPlayers();
 	}
 
 	public Player getPlayer(int id) {
-		return players.get(id);
+		return board.getPlayer(id);
 	}
 
-	public void move(int id, double x, double y) {
-		Player p = players.get(id);
-		if (p.getId() == id && p.isAlive()) {
-			p.setX(x);
-			p.setY(y);
+	public void move(Player player, double x, double y) {
+		if (player.isAlive()) {
+			player.setX(x);
+			player.setY(y);
 		}
 	}
 
 	private void resetPosition(Player p) {
-		p.setX(p.getTeam() == 0 ? 50 : 750);
-		p.setY(400);
+		p.setX(p.getTeam().getSpawnX());
+		p.setY(p.getTeam().getSpawnY());
 	}
 
 	public void removePlayer(Player p) {
-		/*
-		 * if (p.getTeamID() == 0) nbTone--; else nbTtwo--; players.remove(p);
-		 */
-		// Move(p.getPlayerID(), p.getTeamID()==0? 50:750, 400);
 		p.setAlive(false);
 		p.setSize(0);
 		Runnable runnable = () -> {
 			try {
 				Thread.sleep(3000);
-				// Move(p.getPlayerID(), p.getTeamID()==0? 50:750, 400);
 				resetPosition(p);
 				p.setSize(50);
 				p.setAlive(true);

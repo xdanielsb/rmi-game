@@ -3,15 +3,21 @@ package model;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.Timer;
 
 public class Food extends CoordinateObject implements ActionListener {
 
-	Timer tm = new Timer(10000, this);
+	public static final int FOOD_SIZE = 20;
+	
+	private Timer tm = new Timer(10000, this);
 	private boolean isAlive;
 
-	public Food(int id) {
-		super((Math.random() * 1500) + 50, (Math.random() * 1500) + 50, 20);
+	public Food(int limitX, int limitY) {
+		super(
+			(Math.random() * (limitX-FOOD_SIZE*2)) + FOOD_SIZE, 
+			(Math.random() * (limitY-FOOD_SIZE*2)) + FOOD_SIZE, FOOD_SIZE
+		);
 		this.setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
 		this.isAlive = true;
 	}

@@ -29,7 +29,7 @@ public class ClientConnectGUI extends JFrame implements ActionListener{
 	
 	public ClientConnectGUI(ClientManager manager) {
 		this.manager  = manager;
-		setSize(300,200 );
+		setSize(300, 200);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(dim.width/2-this.getSize().width/2, 
 				    dim.height/2-this.getSize().height/2);
