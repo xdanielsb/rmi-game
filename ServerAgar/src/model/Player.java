@@ -3,6 +3,8 @@ package model;
 import java.awt.Color;
 import java.io.Serializable;
 
+import processing.core.PApplet;
+
 public class Player implements Serializable {
 	private final int team;
 	private final String name;

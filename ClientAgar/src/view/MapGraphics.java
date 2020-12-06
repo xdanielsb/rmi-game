@@ -3,6 +3,10 @@ package view;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
+import displayer.CoordinateObjectDisplayer;
+import displayer.HeaderHandlerDisplayer;
+import displayer.OuterBoundsDisplayer;
 import model.Player;
 import model.CoordinateObject;
 import processing.core.PApplet;
@@ -34,7 +38,7 @@ public class MapGraphics extends PApplet {
 			}
 		};
 		runtime.addShutdownHook(new Thread(runnable));
-		header = new HeaderHandler(this);
+		header = new HeaderHandler();
 		x = rm.getPlayer(id).getX();
 		y = rm.getPlayer(id).getY();
 	}
@@ -67,7 +71,7 @@ public class MapGraphics extends PApplet {
 				if (TID == 0) fill(255, 0, 0);
 				else fill(0, 0, 255);
 				circle((float) myX, (float) myY, (float) mySize * zoomRatio);
-				drawOuterBounds(p.getX(), p.getY(), zoomRatio);
+				OuterBoundsDisplayer.draw(p.getX(), p.getY(), zoomRatio, cstX, cstY, this);
 				for (CoordinateObject v : coordObjs) {
 					fill(v.getColor().getRed(), v.getColor().getGreen(), v.getColor().getBlue());
 					double objX = v.getX() + cstX;
@@ -80,7 +84,7 @@ public class MapGraphics extends PApplet {
 					circle((float) (objX), (float) (objY), (float) (v.getSize() * zoomRatio));
 				}
 				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
-				header.draw();
+				HeaderHandlerDisplayer.draw(header, this);
 			} else {
 				textSize(80);
 				textAlign(CENTER);
@@ -90,27 +94,6 @@ public class MapGraphics extends PApplet {
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
-
-	}
-
-	private void drawOuterBounds(double x, double y, float zoom) {
-		noFill();
-		strokeWeight(5000);
-		stroke(180, 180, 180);
-		float dx = (float) (cstX);
-		float dy = (float) (cstY);
-		float offsetX = (float) x + cstX - dx;
-		float offsetY = (float) y + cstY - dy;
-		dx += (1 - zoom) * offsetX;
-		dy += (1 - zoom) * offsetY;
-
-		float resizing = (1 - zoom) * (1600);
-
-		rect(dx - 2500, dy - 2500, 6600 - resizing, 6600 - resizing);
-		stroke(255, 0, 0);
-		strokeWeight(1);
-		rect(dx, dy, 1600 - resizing, 1600 - resizing);
-		stroke(0, 0, 0);
 
 	}
 

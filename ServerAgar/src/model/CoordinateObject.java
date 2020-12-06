@@ -3,6 +3,8 @@ package model;
 import java.awt.Color;
 import java.io.Serializable;
 
+import processing.core.PApplet;
+
 public abstract class CoordinateObject implements Serializable {
 	
 	private double x;
