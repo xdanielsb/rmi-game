@@ -25,25 +25,27 @@ public class GameManager implements ActionListener {
 	private ServerGUI gui;
 	
 	private Timer tm;
-	float gameTimer = 180;
+	float gameTimer = 40000000;
 	
 	private Board board;
 
 	public GameManager() {
 		board = new Board(1500, 1500, 150);
-		board.addTeam(new Team(0, new Color(255, 0, 0), 50, 400));
-		board.addTeam(new Team(1, new Color(0, 0, 255), 750, 400));
+		board.addTeam(new Team(0, new Color(255, 0, 0), "Rouge", 50, 400));
+		board.addTeam(new Team(1, new Color(0, 0, 255), "Bleu", 750, 400));
 		
 		playerManager = new PlayerManager(board);
 		
 		tm = new Timer(25, this);
-		tm.start();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		checkFoodCollision();
-		checkPlayerCollision();
+		if(!this.gameOver())
+		{
+			checkFoodCollision();
+			checkPlayerCollision();	
+		}
 		gameTimer -= 0.025;
 		// Reset timer for next Tick
 		tm.start();
@@ -79,6 +81,7 @@ public class GameManager implements ActionListener {
 			LocateRegistry.createRegistry(1099);
 			this.remoteManager = new PlayerRemote(this);
 			Naming.rebind("rmi://localhost:1099/PLM", remoteManager);
+			tm.start();
 		} catch (Exception e) {
 			System.out.println("E01: Error initializing the server.");
 			e.printStackTrace();

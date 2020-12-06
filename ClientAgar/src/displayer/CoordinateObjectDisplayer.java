@@ -10,15 +10,14 @@ import view.MapGraphics;
 
 public class CoordinateObjectDisplayer {
 
-	public static void draw(CoordinateObject coordinateObject, Player p, float zoomRatio, int cstX, int cstY,
-			PApplet sketch)
+	public static void draw(CoordinateObject coordinateObject, Player p, float zoomRatio, PApplet sketch)
 	{
 		Color foodColor = coordinateObject.getColor();
 		sketch.fill(foodColor.getRed(), foodColor.getGreen(), foodColor.getBlue());
-		double objX = coordinateObject.getX() + cstX;
-		double objY = coordinateObject.getY() + cstY;
-		double offsetX = p.getX() + cstX - objX;
-		double offsetY = p.getY() + cstY - objY;
+		double objX = coordinateObject.getX();
+		double objY = coordinateObject.getY();
+		double offsetX = p.getX() + objX;
+		double offsetY = p.getY() + objY;
 		objX += (1 - zoomRatio) * offsetX;
 		objY += (1 - zoomRatio) * offsetY;
 		//float resizing = (1 - zoomRatio) * ((float) v.getSize() * zoomRatio);

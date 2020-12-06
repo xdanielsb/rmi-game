@@ -1,14 +1,18 @@
 package displayer;
 
+import java.awt.Color;
+
+import model.Team;
 import processing.core.PApplet;
 
 public class VictoryDisplayer {
-	public static void draw(int scoreTeamOne, int scoreTeamTwo, PApplet sketch)
+	public static void draw(Team winner, PApplet sketch)
 	{
 		sketch.textSize(80);
 		sketch.textAlign(sketch.CENTER);
-		sketch.fill(0);
-		sketch.text("Team " + (scoreTeamOne >= scoreTeamTwo ? "Red" : "Blue") + " wins", sketch.width/2, sketch.height/2);
+		Color teamColor = winner.getColor();
+		sketch.fill(teamColor.getRed(), teamColor.getGreen(), teamColor.getBlue());
+		sketch.text("Team " + winner.getTeamName() + " wins", sketch.width/2, sketch.height/2);
 	}
 
 }

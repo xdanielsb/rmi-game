@@ -10,44 +10,58 @@ import displayer.OuterBoundsDisplayer;
 import displayer.PlayerDisplayer;
 import displayer.VictoryDisplayer;
 import model.Player;
+import model.Board;
 import model.CoordinateObject;
+import model.Food;
 import processing.core.PApplet;
 import remote.IPlayerRemote;
 
 public class MapGraphics extends PApplet {
 
 	private IPlayerRemote rm;
-	private List<CoordinateObject> coordObjs;
+	private List<Food> foods;
+	private List<Player> players;
+	private Board board;
 	private final int id;
 	private double x;
 	private double y;
-	private int centreX, centreY;
-	private int cstX = 0;
-	private int cstY = 0;
+	private int centerX;
+	private int centerY;
 	private HeaderHandler header;
+	private Player player;
+	private float zoomRatio = 1;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
-		coordObjs = new ArrayList<>();
+		foods = new ArrayList<>();
+		players = new ArrayList<>();
+		
+		header = new HeaderHandler();
+		
 		this.rm = distant;
-		this.id = distant.registerPlayer(username);
+		this.id = rm.registerPlayer(username);
+		this.board = rm.getBoard();
+		this.player = board.getPlayer(id);
+
+		x = player.getX();
+		y = player.getY();
+		
 		Runtime runtime = Runtime.getRuntime();
 		Runnable runnable = () -> {
 			try {
-				rm.erasePlayer(id);
+				rm.removePlayer(id);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		};
 		runtime.addShutdownHook(new Thread(runnable));
-		header = new HeaderHandler();
-		x = rm.getPlayer(id).getX();
-		y = rm.getPlayer(id).getY();
 	}
 
 	// method for setting the size of the window
 	public void settings() {
-		size(800, 800);
+		size(1280, 720);
+		centerX = width/2;
+		centerY = height/2;
 	}
 
 	// identical use to setup in Processing IDE except for size()
@@ -56,29 +70,49 @@ public class MapGraphics extends PApplet {
 	}
 
 	public void draw() {
+		background(230);
+		cursor(CROSS);
+		
 		try {
-			Player p = rm.getPlayer(id);
-			float zoomRatio = 1;
-			double mySize = p.getSize();
-			background(230);
-			cursor(CROSS);
+			boolean gameOver = rm.gameOver();
+			this.board = rm.getBoard();
+			this.player = this.board.getPlayer(this.id);
+			double mySize = this.player.getSize();
+			
+			pushMatrix();
+			translate((float)(centerX - player.getX()), (float)(centerY - player.getY()));
 
-			if (!rm.gameOver()) {
+			if (!gameOver) {
 				actionPerformed();
 				
-				zoomRatio = (float)(1+0.6 * (2500/(mySize*mySize)));
+				//this.zoomRatio = (float)(1+0.6 * (2500/(mySize*mySize)));
 				
-				PlayerDisplayer.draw(p, zoomRatio, cstX, cstY, this);
-				OuterBoundsDisplayer.draw(p.getX(), p.getY(), zoomRatio, cstX, cstY, this);
+				PlayerDisplayer.draw(this.player, zoomRatio, this);
 				
-				for (CoordinateObject v : coordObjs) {
-					CoordinateObjectDisplayer.draw(v, p, zoomRatio, cstX, cstY, this);
+				for(Food food : foods) {
+					if(food.isAlive()) {
+						CoordinateObjectDisplayer.draw(food, this.player, zoomRatio, this);		
+					}
 				}
 				
-				header.update(rm.getTimer(), rm.getScore(0), rm.getScore(1));
+				for(Player player : players) {
+					if(player != this.player) {
+						CoordinateObjectDisplayer.draw(player.getCell(), this.player, zoomRatio, this);
+					}
+				}
+				
+				OuterBoundsDisplayer.draw(this.board, this.player.getX(), this.player.getY(), zoomRatio, this);
+
+				popMatrix();
+				
+				header.update(rm.getTimer(),
+							  this.board.getTeam(0).getScore(),
+							  this.board.getTeam(1).getScore()
+				);
+				
 				HeaderHandlerDisplayer.draw(header, this);
 			} else {
-				VictoryDisplayer.draw(rm.getScore(0), rm.getScore(1), this);
+				VictoryDisplayer.draw(this.board.getWinners(), this);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
@@ -87,11 +121,11 @@ public class MapGraphics extends PApplet {
 	}
 
 	public void actionPerformed() throws RemoteException {
-		if (focused && rm.getPlayer(id).isAlive()) {
-			x = rm.getPlayer(id).getX();
-			y = rm.getPlayer(id).getY();
-			double dx = mouseX - x - cstX;
-			double dy = mouseY - y - cstY;
+		if (focused && this.player.isAlive()) {
+			x = this.player.getX();
+			y = this.player.getY();
+			double dx = mouseX - centerX;
+			double dy = mouseY - centerY;
 			double length = Math.sqrt((dx * dx) + (dy * dy));
 			if (length != 0) {
 				dx = dx / length;
@@ -100,14 +134,11 @@ public class MapGraphics extends PApplet {
 			if (length > 10) {
 				x += dx * 1;
 				y += dy * 1;
-				rm.move(id, x, y);
+				rm.sendMousePosition(id, x, y);
 			}
-			this.centreX = width / 2;
-			this.centreY = height / 2;
-			cstX = centreX - (int) x;
-			cstY = centreY - (int) y;
 		}
-		coordObjs = rm.updateAllPositions(id);
+		foods = this.board.getFoods();
+		players = new ArrayList<Player>(this.board.getPlayers());
 	}
 
 }
