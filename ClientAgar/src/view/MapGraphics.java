@@ -19,31 +19,21 @@ import remote.IPlayerRemote;
 public class MapGraphics extends PApplet {
 
 	private IPlayerRemote rm;
-	private List<Food> foods;
-	private List<Player> players;
 	private Board board;
 	private final int id;
-	private double x;
-	private double y;
 	private int centerX;
 	private int centerY;
 	private HeaderHandler header;
 	private Player player;
 	private float zoomRatio = 1;
 
-	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
-		foods = new ArrayList<>();
-		players = new ArrayList<>();
-		
+	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {		
 		header = new HeaderHandler();
 		
 		this.rm = distant;
 		this.id = rm.registerPlayer(username);
 		this.board = rm.getBoard();
 		this.player = board.getPlayer(id);
-
-		x = player.getX();
-		y = player.getY();
 		
 		Runtime runtime = Runtime.getRuntime();
 		Runnable runnable = () -> {
@@ -89,13 +79,13 @@ public class MapGraphics extends PApplet {
 				
 				PlayerDisplayer.draw(this.player, zoomRatio, this);
 				
-				for(Food food : foods) {
+				for(Food food : this.board.getFoods()) {
 					if(food.isAlive()) {
 						CoordinateObjectDisplayer.draw(food, this.player, zoomRatio, this);		
 					}
 				}
 				
-				for(Player player : players) {
+				for(Player player : this.board.getPlayers()) {
 					if(player != this.player) {
 						CoordinateObjectDisplayer.draw(player.getCell(), this.player, zoomRatio, this);
 					}
@@ -121,24 +111,7 @@ public class MapGraphics extends PApplet {
 	}
 
 	public void actionPerformed() throws RemoteException {
-		if (focused && this.player.isAlive()) {
-			x = this.player.getX();
-			y = this.player.getY();
-			double dx = mouseX - centerX;
-			double dy = mouseY - centerY;
-			double length = Math.sqrt((dx * dx) + (dy * dy));
-			if (length != 0) {
-				dx = dx / length;
-				dy = dy / length;
-			}
-			if (length > 10) {
-				x += dx * 1;
-				y += dy * 1;
-				rm.sendMousePosition(id, x, y);
-			}
-		}
-		foods = this.board.getFoods();
-		players = new ArrayList<Player>(this.board.getPlayers());
+		rm.sendMousePosition(id, mouseX - centerX + player.getX(), mouseY - centerY + player.getY());
 	}
 
 }

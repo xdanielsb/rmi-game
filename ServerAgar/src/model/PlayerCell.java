@@ -10,7 +10,7 @@ public class PlayerCell extends FeedableObject{
 	
 	public void moveTo(double movingX, double movingY) {
 		this.setX(this.getX()+movingX);
-		this.setY(this.getX()+movingY);
+		this.setY(this.getY()+movingY);
 	}
 	
 }

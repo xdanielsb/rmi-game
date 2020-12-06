@@ -50,8 +50,8 @@ public class PlayerManager {
 	}
 	
 	public void moveToward(PlayerCell cell, double mouseX, double mouseY) {
-		double distX = cell.getX() - mouseX;
-		double distY = cell.getY() - mouseY;
+		double distX = mouseX - cell.getX();
+		double distY = mouseY - cell.getY();
 		double dist = Math.hypot(distX, distY);
 		if(dist > 10) {
 			cell.moveTo(distX/dist, distY/dist);
