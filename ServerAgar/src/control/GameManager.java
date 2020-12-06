@@ -70,7 +70,7 @@ public class GameManager implements ActionListener {
 	}
 	
 	public void sendMousePosition(int id, double mouseX, double mouseY) {
-		playerManager.move(board.getPlayer(id), mouseX, mouseY);
+		playerManager.sendMousePosition(board.getPlayer(id), mouseX, mouseY);
 	}
 
 	public boolean initServer(ServerGUI gui) {
@@ -93,8 +93,8 @@ public class GameManager implements ActionListener {
 	
 	private void checkPlayerCollision() {
 		List<Player> team1, team2;
-		team1 = playerManager.getPlayersTeam(0);
-		team2 = playerManager.getPlayersTeam(1);
+		team1 = board.getTeam(0).getPlayers();
+		team2 = board.getTeam(1).getPlayers();
 		for( Player pteam1: team1) {
 			if(!pteam1.isAlive()) continue;
 			for(Player pteam2: team2) {

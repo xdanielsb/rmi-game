@@ -4,6 +4,8 @@ import java.util.List;
 
 import model.Board;
 import model.Player;
+import model.PlayerCell;
+import model.Team;
 
 public class PlayerManager {
 
@@ -33,18 +35,26 @@ public class PlayerManager {
 		board.removePlayer(id);
 	}
 
-	public List<Player> getPlayersTeam(int team) {
-		return board.getTeam(team).getPlayers();
+	public List<Player> getPlayersTeam(Team team) {
+		return team.getPlayers();
 	}
 
 	public Player getPlayer(int id) {
 		return board.getPlayer(id);
 	}
 
-	public void move(Player player, double x, double y) {
+	public void sendMousePosition(Player player, double mouseX, double mouseY) {
 		if (player.isAlive()) {
-			player.setX(x);
-			player.setY(y);
+			this.moveToward(player.getCell(), mouseX, mouseY);
+		}
+	}
+	
+	public void moveToward(PlayerCell cell, double mouseX, double mouseY) {
+		double distX = cell.getX() - mouseX;
+		double distY = cell.getY() - mouseY;
+		double dist = Math.hypot(distX, distY);
+		if(dist > 10) {
+			cell.moveTo(distX/dist, distY/dist);
 		}
 	}
 
@@ -60,7 +70,7 @@ public class PlayerManager {
 			try {
 				Thread.sleep(3000);
 				resetPosition(p);
-				p.setSize(50);
+				p.setSize(PlayerCell.CELL_MIN_SIZE);
 				p.setAlive(true);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
