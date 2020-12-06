@@ -1,25 +1,30 @@
 package displayer;
 
+import model.Board;
 import processing.core.PApplet;
 
 public class OuterBoundsDisplayer {
-	public static void draw(double x, double y, float zoom, int cstX, int cstY, PApplet sketch) {
+	public static void draw(Board board, double x, double y, float zoom, PApplet sketch) {
+		int outerHover = 1000;
+		
 		sketch.noFill();
-		sketch.strokeWeight(5000);
-		sketch.stroke(180, 180, 180);
-		float dx = (float) (cstX);
-		float dy = (float) (cstY);
-		float offsetX = (float) x + cstX - dx;
-		float offsetY = (float) y + cstY - dy;
-		dx += (1 - zoom) * offsetX;
-		dy += (1 - zoom) * offsetY;
+		sketch.strokeWeight(outerHover);
+		sketch.stroke(100);
+		
+		float dx = (float)((1 - zoom) * x);
+		float dy = (float)((1 - zoom) * y);
+		
+		float resizingWidth = (1 - zoom) * (board.getBoardWidth());
+		float resizingHeight = (1 - zoom) * (board.getBoardHeight());
 
-		float resizing = (1 - zoom) * (1600);
-
-		sketch.rect(dx - 2500, dy - 2500, 6600 - resizing, 6600 - resizing);
+		sketch.rect(dx - outerHover / 2, 
+					dy - outerHover / 2, 
+					outerHover + board.getBoardWidth() - resizingWidth, 
+					outerHover + board.getBoardHeight() - resizingHeight);
+		
 		sketch.stroke(255, 0, 0);
 		sketch.strokeWeight(1);
-		sketch.rect(dx, dy, 1600 - resizing, 1600 - resizing);
+		sketch.rect(dx, dy, board.getBoardWidth() - resizingWidth, board.getBoardHeight() - resizingHeight);
 		sketch.stroke(0, 0, 0);
 	}
 

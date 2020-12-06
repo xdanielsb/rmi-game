@@ -53,7 +53,12 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	@Override
 	public boolean gameOver() throws RemoteException {
-		return gameManager.gameOver();
+		boolean isGameOver = gameManager.gameOver();
+		if(isGameOver && this.gameManager.getBoard().getWinners() == null)
+		{
+			this.gameManager.getBoard().setWinner();
+		}
+		return isGameOver;
 	}
 
 }

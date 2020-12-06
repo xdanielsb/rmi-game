@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +15,16 @@ public class Board implements Serializable{
 	private Map<Integer, Player> players;
 	private Map<Integer, Team> teams;
 		
-	private int boardLength, boardWidth;
+	private int boardHeight, boardWidth;
 	
 	private Team winners;
 	
 	public Board(int boardLength, int boardWidth, int nbFood) {
+		this.foods = new ArrayList<Food>();
+		players = new HashMap<Integer, Player>();
+		teams = new HashMap<Integer, Team>();
 		
-		this.boardLength = boardLength;
+		this.boardHeight = boardLength;
 		this.boardWidth = boardWidth;
 		
 		players = new HashMap<Integer, Player>();
@@ -34,8 +38,8 @@ public class Board implements Serializable{
 		
 	}
 	
-	public int getBoardLength() {
-		return boardLength;
+	public int getBoardHeight() {
+		return boardHeight;
 	}
 	
 	public int getBoardWidth() {
@@ -72,6 +76,7 @@ public class Board implements Serializable{
 			}
 		}
 		minTeam.addPlayer(player);
+		player.setTeam(minTeam);
 	}
 	
 	public void removePlayer(Player player) {
@@ -95,6 +100,20 @@ public class Board implements Serializable{
 	
 	public Team getWinners() {
 		return winners;
+	}
+
+	public void setWinner() {
+		Team winning = this.teams.get(0);
+		int higherScore = winning.getScore();
+		for(Team team : teams.values())
+		{
+			if(team.getScore() > higherScore)
+			{
+				winning = team;
+				higherScore = winning.getScore();
+			}
+		}
+		this.winners = winning;		
 	}
 	
 	public List<Food> getFoods(){

@@ -11,7 +11,8 @@ public class Player implements Serializable {
 	private int id;
 	private boolean alive;
 
-	public Player(int idP, String name) {		
+	public Player(int idP, String name) {
+		
 		this.name = name;
 		this.id = idP;
 		this.alive = true;

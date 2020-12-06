@@ -11,16 +11,18 @@ public class Team implements Serializable{
 	private int id;
 	private int score;
 	private Color color;
+	private String teamName;
 	
 	private int spawnX, spawnY;
 	
-	public Team(int id, Color color, int spawnX, int spawnY) {
+	public Team(int id, Color color, String teamName, int spawnX, int spawnY) {
 		this.id = id;
 		this.color = color;
 		this.score = 0;
 		this.players = new ArrayList<>();
 		this.spawnX = spawnX;
 		this.spawnY = spawnY;
+		this.teamName = teamName;
 	}
 	
 	public int getId() {
@@ -63,4 +65,8 @@ public class Team implements Serializable{
 		return spawnY;
 	}
 	
+	public String getTeamName()
+	{
+		return this.teamName;
+	}
 }

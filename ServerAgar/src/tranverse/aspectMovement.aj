@@ -1,21 +1,23 @@
 package tranverse;
 
+import model.Player;
+
 public aspect aspectMovement {
 
-	pointcut boundMovement(int i, double x, double y):within(control.PlayerManager) && execution(public void move(int,double,double)) && args(i,x,y);
+	pointcut boundMovement(Player p, double x, double y):within(control.PlayerManager) && execution(public void move(Player,double,double)) && args(p,x,y);
 
-	void around(int i, double x, double y):boundMovement(i,x,y)
+	void around(Player p, double x, double y):boundMovement(p,x,y)
 	{
 		double realX = x, realY = y;
 		if (x < 0)
 			realX = 0;
-		else if (x > 1600)
-			realX = 1600;
+		else if (x > 1500)
+			realX = 1500;
 		if (y < 0)
 			realY = 0;
-		else if (y > 1600) {
-			realY = 1600;
+		else if (y > 1500) {
+			realY = 1500;
 		}
-		proceed(i, realX, realY);
+		proceed(p, realX, realY);
 	}
 }
