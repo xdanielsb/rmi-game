@@ -2,10 +2,8 @@ package remote;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
-import model.Player;
+
 import model.Board;
-import model.CoordinateObject;
 
 public interface IPlayerRemote extends Remote {
 	

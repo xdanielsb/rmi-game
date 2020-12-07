@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class Board implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+	
 	private int nbFood;
 	private List<Food> foods;
 	

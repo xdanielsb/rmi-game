@@ -2,16 +2,14 @@ package remote;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
 
 import control.GameManager;
 import model.Board;
-import model.CoordinateObject;
-import model.Food;
 import model.Player;
 
 public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private GameManager gameManager;
 	private final Object mutex = new Object();

@@ -8,6 +8,8 @@ import javax.swing.Timer;
 
 public class Food extends CoordinateObject implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final int FOOD_SIZE = 20;
 	
 	private Timer tm = new Timer(10000, this);

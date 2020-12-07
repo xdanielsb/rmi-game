@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import model.Board;
 import model.Food;
 import model.Player;
+import model.PlayerCell;
 import model.Team;
 import remote.PlayerRemote;
 import view.ServerGUI;
@@ -24,8 +25,10 @@ public class GameManager implements ActionListener {
 	private PlayerManager playerManager;
 	private ServerGUI gui;
 	
+	private List<PlayerCell> repulsionObjects;
+	
 	private Timer tm;
-	float gameTimer = 40000000;
+	int gameTimer = 40000000;
 	
 	private Board board;
 
@@ -34,19 +37,21 @@ public class GameManager implements ActionListener {
 		board.addTeam(new Team(0, new Color(255, 0, 0), "Rouge", 50, 400));
 		board.addTeam(new Team(1, new Color(0, 0, 255), "Bleu", 750, 400));
 		
+		repulsionObjects = new ArrayList<>();
+		
 		playerManager = new PlayerManager(board);
 		
-		tm = new Timer(25, this);
+		tm = new Timer(16, this);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(!this.gameOver())
-		{
+		if(!this.gameOver()) {
+			checkCollision();
 			checkFoodCollision();
-			checkPlayerCollision();	
+			applyRepulsionPhysic();
 		}
-		gameTimer -= 0.025;
+		gameTimer -= 16;
 		// Reset timer for next Tick
 		tm.start();
 	}
@@ -94,7 +99,12 @@ public class GameManager implements ActionListener {
 		return this.gui;
 	}
 	
-	private void checkPlayerCollision() {
+	private void checkCollision() {
+		for(Player player : board.getPlayers()) {
+			checkBoardCollision(player.getCell());
+//			checkCellCollision(player.getCell());
+//			checkFoodCollision(player.getCell());
+		}
 		List<Player> team1, team2;
 		team1 = board.getTeam(0).getPlayers();
 		team2 = board.getTeam(1).getPlayers();
@@ -121,7 +131,46 @@ public class GameManager implements ActionListener {
 			}
 		}
 	}
-
+	
+	private void checkBoardCollision(PlayerCell cell) {
+		boolean toAdd = false;
+		if(cell.getX() < cell.getSize()) {
+			cell.setRepulsionX(cell.getX()/cell.getSize()*1.1);
+			toAdd = true;
+		}else if(cell.getX() > board.getBoardWidth() - cell.getSize()) {
+			cell.setRepulsionX((cell.getX()-board.getBoardWidth())/cell.getSize()*1.1);
+			toAdd = true;
+		}
+		if(cell.getY() < cell.getSize()) {
+			cell.setRepulsionY(cell.getY()/cell.getSize()*1.1);
+			toAdd = true;
+		}else if(cell.getY() > board.getBoardHeight() - cell.getSize()) {
+			cell.setRepulsionX((board.getBoardHeight() - cell.getY())/cell.getSize()*1.1);
+			toAdd = true;
+		}
+		if(toAdd) {			
+			repulsionObjects.add(cell);
+		}
+	}
+	
+//	public void checkCellCollision(PlayerCell cell){
+//		
+//	}
+//	
+//	public void checkFoodCollision(PlayerCell cell){
+//		
+//	}
+	
+	private void applyRepulsionPhysic() {
+		List<PlayerCell> toRemove = new ArrayList<>();
+		for(PlayerCell cell : repulsionObjects) {
+			cell.proceedRepulsion();
+			if(cell.getRepulsionX() == 0 && cell.getRepulsionY() == 0) {
+				toRemove.add(cell);
+			}
+		}
+		repulsionObjects.removeAll(toRemove);
+	}
 
 	private void updateScore(Player p, int amount) {
 		p.getTeam().addToScore(amount);

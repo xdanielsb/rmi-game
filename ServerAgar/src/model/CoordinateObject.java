@@ -1,11 +1,11 @@
-package model;
+  package model;
 
 import java.awt.Color;
 import java.io.Serializable;
 
-import processing.core.PApplet;
-
 public abstract class CoordinateObject implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private double x;
 	private double y;
