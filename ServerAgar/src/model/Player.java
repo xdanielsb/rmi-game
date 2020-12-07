@@ -2,7 +2,7 @@ package model;
 
 import java.io.Serializable;
 
-public class Player implements Serializable {
+public class Player implements Serializable, Comparable<Player> {
 	
 	private final String name;
 	
@@ -74,6 +74,11 @@ public class Player implements Serializable {
 	
 	public double dist(Player p) {
 		return this.cell.dist(p.getCell());
+	}
+
+	@Override
+	public int compareTo(Player player) {
+		return Double.compare(this.getSize(), player.getSize());
 	}
 	
 }

@@ -1,12 +1,13 @@
 package displayer;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import view.HeaderHandler;
 
 public class HeaderHandlerDisplayer {
 	public static void draw(HeaderHandler headerHandler, PApplet sketch) {
 		float headerHeight = sketch.height*0.07f;
-		sketch.textAlign(sketch.CENTER);
+		sketch.textAlign(PConstants.CENTER);
 		sketch.fill(0);
 		sketch.textSize(24);
 		sketch.text("Timer : " + (int) headerHandler.gameTimer, sketch.width/2, headerHeight);
