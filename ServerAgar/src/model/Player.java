@@ -30,7 +30,11 @@ public class Player implements Serializable, Comparable<Player> {
 
 	public void setTeam(Team team) {
 		this.team = team;
-		cell = new PlayerCell(team.getSpawnX(), team.getSpawnY(), PlayerCell.CELL_MIN_SIZE);
+		cell = new PlayerCell(
+				team.getSpawnX(), 
+				team.getSpawnY(), 
+				PlayerCell.CELL_MIN_SIZE
+		);
 		cell.setColor(team.getColor());
 	}
 

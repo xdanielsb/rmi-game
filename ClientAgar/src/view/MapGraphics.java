@@ -67,8 +67,8 @@ public class MapGraphics extends PApplet {
 			boolean gameOver = rm.gameOver();
 			this.board = rm.getBoard();
 			this.player = this.board.getPlayer(this.id);
-			double mySize = this.player.getSize();
-			zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(mySize*mySize)));
+			double playerDiameter = this.player.getCell().getRadius()*2;
+			zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(playerDiameter*playerDiameter)));
 
 			pushMatrix();
 			scale(zoomRatio);

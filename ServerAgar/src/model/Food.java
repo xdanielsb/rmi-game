@@ -10,7 +10,7 @@ public class Food extends CoordinateObject implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int FOOD_SIZE = 20;
+	public static final int FOOD_SIZE = 2;
 	
 	private Timer tm = new Timer(10000, this);
 	private boolean isAlive;

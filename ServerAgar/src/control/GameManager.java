@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.Timer;
 
 import model.Board;
+import model.CoordinateObject;
 import model.Food;
 import model.Player;
 import model.PlayerCell;
@@ -25,7 +26,7 @@ public class GameManager implements ActionListener {
 	private PlayerManager playerManager;
 	private ServerGUI gui;
 	
-	private List<PlayerCell> repulsionObjects;
+	private List<PlayerCell> movingObjects;
 	
 	private Timer tm;
 	int gameTimer = 40000000;
@@ -33,11 +34,11 @@ public class GameManager implements ActionListener {
 	private Board board;
 
 	public GameManager() {
-		board = new Board(1500, 1500, 150);
+		board = new Board(500, 500, 300);
 		board.addTeam(new Team(0, new Color(255, 0, 0), "Rouge", 50, 400));
 		board.addTeam(new Team(1, new Color(0, 0, 255), "Bleu", 750, 400));
 		
-		repulsionObjects = new ArrayList<>();
+		movingObjects = new ArrayList<>();
 		
 		playerManager = new PlayerManager(board);
 		
@@ -47,9 +48,9 @@ public class GameManager implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(!this.gameOver()) {
+			applyMovePhysic();
 			checkCollision();
 			checkFoodCollision();
-			applyRepulsionPhysic();
 		}
 		gameTimer -= 16;
 		// Reset timer for next Tick
@@ -112,18 +113,18 @@ public class GameManager implements ActionListener {
 			if(!pteam1.isAlive()) continue;
 			for(Player pteam2: team2) {
 				if(!pteam2.isAlive()) continue;
-				if( (pteam1.dist(pteam2) < Math.max(pteam1.getSize()/4, pteam2.getSize()/4)) && Math.abs(pteam1.getSize()-pteam2.getSize()) >= 10) {
-					if (pteam1.getSize() < pteam2.getSize()) {
+				if( (pteam1.dist(pteam2) < Math.max(pteam1.getCell().getRadius()/2, pteam2.getCell().getRadius()/2)) && Math.abs(pteam1.getCell().getRadius()-pteam2.getCell().getRadius()) >= 10) {
+					if (pteam1.getCell().getRadius() < pteam2.getCell().getRadius()) {
 						//pteam1.setAlive(false);
-						pteam2.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
-								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
+						pteam2.setSize(Math.sqrt((pteam2.getCell().getRadius()) * (pteam2.getCell().getRadius())
+								+ (pteam1.getCell().getRadius()) * (pteam1.getCell().getRadius())) * 2);
 						updateScore(pteam2, (int) pteam2.getSize());
 						playerManager.removePlayer(pteam1);
 						break;
 					}else {
 						//pteam2.setAlive(false);
-						pteam1.setSize(Math.sqrt((pteam2.getSize() / 2) * (pteam2.getSize() / 2)
-								+ (pteam1.getSize() / 2) * (pteam1.getSize() / 2)) * 2);
+						pteam1.setSize(Math.sqrt((pteam2.getCell().getRadius()) * (pteam2.getCell().getRadius())
+								+ (pteam1.getCell().getRadius()) * (pteam1.getCell().getRadius())) * 2);
 						updateScore(pteam1, (int) pteam1.getSize());
 						playerManager.removePlayer(pteam2);
 					}
@@ -133,43 +134,42 @@ public class GameManager implements ActionListener {
 	}
 	
 	private void checkBoardCollision(PlayerCell cell) {
-		boolean toAdd = false;
-		if(cell.getX() < cell.getSize()) {
-			cell.setRepulsionX(cell.getX()/cell.getSize()*1.1);
-			toAdd = true;
-		}else if(cell.getX() > board.getBoardWidth() - cell.getSize()) {
-			cell.setRepulsionX((cell.getX()-board.getBoardWidth())/cell.getSize()*1.1);
-			toAdd = true;
+		double radius = cell.getRadius();
+		if(cell.getX() < radius) {
+			cell.addRepulsionX((1-(cell.getX()/radius))*1.01);
+			System.out.println((1-(cell.getX()/radius))*1.01);
 		}
-		if(cell.getY() < cell.getSize()) {
-			cell.setRepulsionY(cell.getY()/cell.getSize()*1.1);
-			toAdd = true;
-		}else if(cell.getY() > board.getBoardHeight() - cell.getSize()) {
-			cell.setRepulsionX((board.getBoardHeight() - cell.getY())/cell.getSize()*1.1);
-			toAdd = true;
+		if(cell.getX() > board.getBoardWidth() - radius) {
+			cell.addRepulsionX((((board.getBoardWidth() - cell.getX())/radius)-1)*1.01);
 		}
-		if(toAdd) {			
-			repulsionObjects.add(cell);
+		if(cell.getY() < radius) {
+			cell.addRepulsionY((1-(cell.getY()/radius))*1.01);
+		}
+		if(cell.getY() > board.getBoardHeight() - radius) {
+			cell.addRepulsionY((((board.getBoardHeight() - cell.getY())/radius)-1)*1.01);
 		}
 	}
 	
 //	public void checkCellCollision(PlayerCell cell){
 //		
 //	}
-//	
+	
 //	public void checkFoodCollision(PlayerCell cell){
 //		
 //	}
 	
-	private void applyRepulsionPhysic() {
-		List<PlayerCell> toRemove = new ArrayList<>();
-		for(PlayerCell cell : repulsionObjects) {
-			cell.proceedRepulsion();
-			if(cell.getRepulsionX() == 0 && cell.getRepulsionY() == 0) {
-				toRemove.add(cell);
+	private void applyMovePhysic() {
+		List<CoordinateObject> toRemove = new ArrayList<>();
+		for(CoordinateObject moveObj : movingObjects) {
+			moveObj.applyMouvement();
+			if(moveObj.getSpeedX() == 0 && moveObj.getSpeedY() == 0) {
+				toRemove.add(moveObj);
 			}
 		}
-		repulsionObjects.removeAll(toRemove);
+		movingObjects.removeAll(toRemove);
+		for(Player p : board.getPlayers()) {
+			p.getCell().applyMouvement();
+		}
 	}
 
 	private void updateScore(Player p, int amount) {
@@ -179,17 +179,14 @@ public class GameManager implements ActionListener {
 	private void checkFoodCollision() {
 		List<Food> eatenFood = new ArrayList<>();
 		for (Player p : board.getPlayers()) {
-			double size = p.getSize() / 2;
+			double size = p.getCell().getRadius();
 			for (Food f : board.getFoods()) {
 				if(f.isAlive()) {
 					double dx = p.getX() - f.getX();
 					double dy = p.getY() - f.getY();
 					double length = Math.sqrt((dx * dx) + (dy * dy));
 					if (length < size) {
-						p.setSize(Math.sqrt(
-								(p.getSize() / 2) * (p.getSize() / 2) + 
-								(f.getSize() / 2) * (f.getSize() / 2)) * 2
-								);
+						p.setSize(p.getSize()+f.getSize());
 						updateScore(p, (int) f.getSize());
 						eatenFood.add(f);						
 					}					

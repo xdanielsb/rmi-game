@@ -54,7 +54,11 @@ public class PlayerManager {
 		double distY = mouseY - cell.getY();
 		double dist = Math.hypot(distX, distY);
 		if(dist > 10) {
-			cell.moveTo(distX/dist, distY/dist);
+			cell.setMovementX(distX/dist);
+			cell.setMovementY(distY/dist);
+		}else {
+			cell.setMovementX(0);
+			cell.setMovementY(0);			
 		}
 	}
 
