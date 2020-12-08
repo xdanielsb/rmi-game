@@ -114,7 +114,11 @@ public class GameManager implements ActionListener {
 		
 		for(int i = 0; i < cells.size() - 1; i++) {
 			for(int j = i+1; j < cells.size(); j++) {
-				checkCellCollision(cells.get(i), cells.get(j));
+				if(cells.get(i).getPlayer().getTeam() == cells.get(j).getPlayer().getTeam()) {
+					checkCellCollisionBetweenTeammates(cells.get(i), cells.get(j));					
+				} else {
+					checkCollisionBetweenEnnemies(cells.get(i), cells.get(j));
+				}
 			}
 		}
 	}
@@ -135,50 +139,44 @@ public class GameManager implements ActionListener {
 		}
 	}
 	
-	public void checkCellCollision(PlayerCell cellA, PlayerCell cellB){
-		
-		if(cellA.getPlayer().getTeam() == cellB.getPlayer().getTeam()) {
-			
-			double distX = cellA.getX() - cellB.getX();
-			double distY = cellA.getY() - cellB.getY();
-			double dist = Math.hypot(distX, distY);
-			double radiusA = cellA.getRadius();
-			double radiusB = cellB.getRadius();
-			if(dist < radiusA+radiusB) {				
-				double superposition = radiusA+radiusB - dist;
-				double proportionA = superposition/radiusA;
-				double proportionB = superposition/radiusB;
-				cellA.addRepulsionX(distX/dist*proportionA);
-				cellA.addRepulsionY(distY/dist*proportionA);
-				cellB.addRepulsionX(-distX/dist*proportionB);
-				cellB.addRepulsionY(-distY/dist*proportionB);
-			}
-			
-		}else {
-			
-			PlayerCell bigger;
-			PlayerCell smaller;
-			if(cellA.getSize() > cellB.getSize()) {
-				bigger = cellA;
-				smaller = cellB;
-			} else {
-				bigger = cellB;
-				smaller = cellA;
-			}
-			if(smaller.getSize() < bigger.getSize()*0.98) {
-				double dist = Math.hypot(
-						bigger.getX() - smaller.getX(),
-						bigger.getY() - smaller.getY()
-				);
-				if(dist < bigger.getRadius()) {
-					bigger.eat(smaller);
-					playerManager.addScore(bigger.getPlayer().getTeam(), smaller.getSize());
-					removeObject(smaller);
-				}
-			}
-			
+	public void checkCellCollisionBetweenTeammates(PlayerCell cellA, PlayerCell cellB){			
+		double distX = cellA.getX() - cellB.getX();
+		double distY = cellA.getY() - cellB.getY();
+		double dist = Math.hypot(distX, distY);
+		double radiusA = cellA.getRadius();
+		double radiusB = cellB.getRadius();
+		if(dist < radiusA+radiusB) {				
+			double superposition = radiusA+radiusB - dist;
+			double proportionA = superposition/radiusA;
+			double proportionB = superposition/radiusB;
+			cellA.addRepulsionX(distX/dist*proportionA);
+			cellA.addRepulsionY(distY/dist*proportionA);
+			cellB.addRepulsionX(-distX/dist*proportionB);
+			cellB.addRepulsionY(-distY/dist*proportionB);
 		}
-		
+	}
+	
+	public void checkCollisionBetweenEnnemies(PlayerCell cellA, PlayerCell cellB) {
+		PlayerCell bigger;
+		PlayerCell smaller;
+		if(cellA.getSize() > cellB.getSize()) {
+			bigger = cellA;
+			smaller = cellB;
+		} else {
+			bigger = cellB;
+			smaller = cellA;
+		}
+		if(smaller.getSize() < bigger.getSize()*0.98) {
+			double dist = Math.hypot(
+					bigger.getX() - smaller.getX(),
+					bigger.getY() - smaller.getY()
+			);
+			if(dist < bigger.getRadius()) {
+				bigger.eat(smaller);
+				playerManager.addScore(bigger.getPlayer().getTeam(), smaller.getSize());
+				removeObject(smaller);
+			}
+		}
 	}
 	
 //	public void checkFoodCollision(PlayerCell cell){
