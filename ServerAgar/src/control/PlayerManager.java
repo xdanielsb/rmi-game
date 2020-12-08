@@ -1,8 +1,5 @@
 package control;
 
-import java.util.List;
-
-import model.Board;
 import model.Player;
 import model.PlayerCell;
 import model.Team;
@@ -10,11 +7,9 @@ import model.Team;
 public class PlayerManager {
 
 	private Monitor monitor;
-	private Board board;
 
-	public PlayerManager(Monitor monitor, Board board) {
+	public PlayerManager(Monitor monitor) {
 		this.monitor = monitor;
-		this.board = board;
 	}
 	
 	public void addScore(Team team, int amount) {
@@ -26,19 +21,7 @@ public class PlayerManager {
 		new Thread(runnable).start();
 
 	}
-
-	public void addPlayer(Player p) {
-		board.addPlayer(p);
-	}
-
-	public List<Player> getPlayersTeam(Team team) {
-		return team.getPlayers();
-	}
-
-	public Player getPlayer(int id) {
-		return board.getPlayer(id);
-	}
-
+	
 	public void sendMousePosition(Player player, double mouseX, double mouseY) {
 		if (player.isAlive()) {
 			this.moveToward(player.getCell(), mouseX, mouseY);

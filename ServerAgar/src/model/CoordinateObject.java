@@ -44,6 +44,10 @@ public abstract class CoordinateObject implements Serializable {
 		return color;
 	}
 	
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
 	public int getSize() {
 		return size;
 	}

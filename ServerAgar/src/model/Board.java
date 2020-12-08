@@ -33,7 +33,7 @@ public class Board implements Serializable{
 		
 		this.nbFood = nbFood;
 		for(int i = 0; i < nbFood; i++) {
-			foods.add(new Food(boardLength, boardWidth));
+			foods.add(new Food(this));
 		}
 		
 		winners = null;
@@ -124,12 +124,6 @@ public class Board implements Serializable{
 	
 	public List<Food> getFoods(){
 		return foods;
-	}
-	
-	public void removeFood(List<Food> eatenFood) {
-		for(Food f : eatenFood) {
-			f.DisableFood();
-		}
 	}
 
 }

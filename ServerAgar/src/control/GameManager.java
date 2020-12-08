@@ -42,7 +42,7 @@ public class GameManager implements ActionListener {
 		movingObjects = new ArrayList<>();
 		
 		monitor = new Monitor(board);
-		playerManager = new PlayerManager(monitor, board);
+		playerManager = new PlayerManager(monitor);
 		
 		tm = new Timer(16, this);
 	}
@@ -50,7 +50,6 @@ public class GameManager implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(!this.gameOver()) {
-			checkFoodCollision();
 			applyMovePhysic();
 			checkCollision();
 		}
@@ -107,7 +106,7 @@ public class GameManager implements ActionListener {
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
 				checkBoardCollision(player.getCell());
-//				checkFoodCollision(player.getCell());
+				checkFoodCollision(player.getCell());
 				cells.add(player.getCell());
 			}
 		}
@@ -179,9 +178,22 @@ public class GameManager implements ActionListener {
 		}
 	}
 	
-//	public void checkFoodCollision(PlayerCell cell){
-//		
-//	}
+	public void checkFoodCollision(PlayerCell cell){
+		for(Food food : board.getFoods()) {
+			double dist = Math.hypot(
+				cell.getX() - food.getX(),
+				cell.getY() - food.getY()
+			);
+			if(dist < cell.getRadius()) {
+				cell.eat(food);
+				playerManager.addScore(
+					cell.getPlayer().getTeam(),
+					food.getSize()
+				);
+				this.removeObject(food);
+			}
+		}
+	}
 	
 	private void applyMovePhysic() {
 		List<CoordinateObject> toRemove = new ArrayList<>();
@@ -198,33 +210,6 @@ public class GameManager implements ActionListener {
 			}
 		}
 	}
-
-	private void updateScore(Player p, int amount) {
-		p.getTeam().addToScore(amount);
-	}
-
-	private void checkFoodCollision() {
-		List<Food> eatenFood = new ArrayList<>();
-		for (Player p : board.getPlayers()) {
-			if(p.isAlive()) {				
-				double size = p.getCell().getRadius();
-				for (Food f : board.getFoods()) {
-					if(f.isAlive()) {
-						double dx = p.getX() - f.getX();
-						double dy = p.getY() - f.getY();
-						double length = Math.sqrt((dx * dx) + (dy * dy));
-						if (length < size) {
-							p.getCell().setSize(p.getSize()+f.getSize());
-							updateScore(p, (int) f.getSize());
-							eatenFood.add(f);						
-						}					
-					}
-				}
-			}
-			board.removeFood(eatenFood);
-			eatenFood.clear();
-		}
-	}
 	
 	public void removeObject(CoordinateObject coordObject) {
 		System.err.println("The server is not suppose tu remove a CoordinateObject who is not cast.");
@@ -238,6 +223,10 @@ public class GameManager implements ActionListener {
 		if(player.getCells().size() <= 0) {
 			playerManager.removePlayer(player);
 		}
+	}
+	
+	public void removeObject(Food food) {
+		food.killFood();
 	}
 	
 }
