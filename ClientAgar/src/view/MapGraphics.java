@@ -1,17 +1,12 @@
 package view;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import displayer.FoodDisplayer;
+import displayer.BoardDisplayer;
 import displayer.HeaderHandlerDisplayer;
-import displayer.OuterBoundsDisplayer;
-import displayer.PlayerDisplayer;
 import displayer.VictoryDisplayer;
 import model.Player;
 import model.PlayerCell;
 import model.Board;
-import model.Food;
 import processing.core.PApplet;
 import remote.IPlayerRemote;
 
@@ -25,6 +20,7 @@ public class MapGraphics extends PApplet {
 	private HeaderHandler header;
 	private Player player;
 	private float zoomRatio;
+	private boolean gameOver;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {		
 		header = new HeaderHandler();
@@ -64,60 +60,12 @@ public class MapGraphics extends PApplet {
 		cursor(CROSS);
 
 		try {
-			boolean gameOver = rm.gameOver();
-			this.board = rm.getBoard();
-			this.player = this.board.getPlayer(this.id);
-			double playerDiameter;
-			if(player.isAlive()) {
-				playerDiameter = this.player.getCell().getRadius()*2;
-			} else {
-				playerDiameter = 1;
-			}
-			zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(playerDiameter*playerDiameter)));
+			update();
+			if (!this.gameOver) {
 
-			pushMatrix();
-			scale(zoomRatio);
+				BoardDisplayer.draw(board, this.player, this.zoomRatio, this.centerX, this.centerY, this);
 
-			translate(
-					(float)((centerX/zoomRatio) - player.getX()), 
-					(float)((centerY/zoomRatio) - player.getY())
-			);
-
-			if (!gameOver) {
-				actionPerformed();
-
-				//this.zoomRatio = (float)(1+0.6 * (2500/(mySize*mySize)));
-
-				for(Food food : this.board.getFoods()) {
-					if(food.isAlive()) {
-						FoodDisplayer.draw(food, this);		
-					}
-				}
-				
-				ArrayList<Player> p = new ArrayList<Player>(this.board.getPlayers());
-				Collections.sort(p);
-				
-				for(Player player : p) {
-					if(player.isAlive()) {						
-						PlayerDisplayer.draw(player, this);
-					}
-				}
-
-				OuterBoundsDisplayer.draw(
-						this.board, 
-						this.player.getX(), 
-						this.player.getY(), 
-						this
-				);
-
-				popMatrix();
-
-				header.update(
-						rm.getTimer(),
-						this.board.getTeam(0).getScore(),
-						this.board.getTeam(1).getScore()
-						);
-				HeaderHandlerDisplayer.draw(header, this);
+				HeaderHandlerDisplayer.draw(this.header, this);
 			} else {
 				VictoryDisplayer.draw(this.board.getWinners(), this);
 			}
@@ -127,8 +75,34 @@ public class MapGraphics extends PApplet {
 
 	}
 
-	public void actionPerformed() throws RemoteException {
-		rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+	public void update() throws RemoteException
+	{		this.gameOver = rm.gameOver();
+		this.board = rm.getBoard();
+		
+		if(this.board.getPlayer(id).isAlive())
+			this.player = this.board.getPlayer(this.id);
+		
+
+		double playerDiameter;
+		if(this.player.isAlive()) {
+			playerDiameter = this.player.getCell().getRadius()*2;
+		} else {
+			playerDiameter = 1;
+		}
+		
+		this.header.update(
+				rm.getTimer(),
+				this.board.getTeam(0).getScore(),
+				this.board.getTeam(1).getScore()
+		);
+		
+		this.zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(playerDiameter*playerDiameter)));
+	
+		updateMousePosition();
+	}
+
+	public void updateMousePosition() throws RemoteException {
+		this.rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
 	}
 
 }

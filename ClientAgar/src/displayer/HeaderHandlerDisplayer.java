@@ -10,7 +10,7 @@ public class HeaderHandlerDisplayer {
 		sketch.textAlign(PConstants.CENTER);
 		sketch.fill(0);
 		sketch.textSize(24);
-		sketch.text("Timer : " + (int) headerHandler.gameTimer, sketch.width/2, headerHeight);
+		sketch.text("Timer : " + (int) headerHandler.gameTimer/1000 + " seconds", sketch.width/2, headerHeight);
 		sketch.fill(255, 0, 0);
 		sketch.textSize(20);
 		sketch.text("Score : " + headerHandler.xP, sketch.width/4, headerHeight);

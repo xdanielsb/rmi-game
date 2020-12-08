@@ -30,7 +30,7 @@ public class GameManager implements ActionListener {
 	private List<PlayerCell> movingObjects;
 	
 	private Timer tm;
-	int gameTimer = 40000000;
+	int gameTimer = 100000;
 	
 	private Board board;
 
