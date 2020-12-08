@@ -6,7 +6,6 @@ import model.Player;
 import model.PlayerCell;
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.core.PFont;
 
 public class PlayerDisplayer {
 	public static void draw(Player player, PApplet sketch)

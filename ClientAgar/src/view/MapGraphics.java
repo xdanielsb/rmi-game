@@ -19,12 +19,12 @@ public class MapGraphics extends PApplet {
 	private float centerY;
 	private HeaderHandler header;
 	private Player player;
-	private float zoomRatio;
 	private boolean gameOver;
+	
+	private BoardDisplayer boardDisplayer;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {		
 		header = new HeaderHandler();
-		zoomRatio = 1.6f;
 
 		this.rm = distant;
 		this.id = rm.registerPlayer(username);
@@ -48,6 +48,13 @@ public class MapGraphics extends PApplet {
 		size(1280, 720);
 		centerX = width/2;
 		centerY = height/2;
+		this.boardDisplayer = new BoardDisplayer(
+				Math.min(width, height),
+				0.1f,
+				PlayerCell.CELL_MIN_SIZE,
+				0.5f,
+				20000
+		);
 	}
 
 	// identical use to setup in Processing IDE except for size()
@@ -63,7 +70,7 @@ public class MapGraphics extends PApplet {
 			update();
 			if (!this.gameOver) {
 
-				BoardDisplayer.draw(board, this.player, this.zoomRatio, this.centerX, this.centerY, this);
+				boardDisplayer.draw(board, this.player, this.centerX, this.centerY, this);
 
 				HeaderHandlerDisplayer.draw(this.header, this);
 			} else {
@@ -88,15 +95,6 @@ public class MapGraphics extends PApplet {
 				this.board.getTeams().get(1).getScore()
 		);
 		
-		this.zoomRatio = calculateScale(
-				Math.min(width, height),
-				0.05f,
-				PlayerCell.CELL_MIN_SIZE,
-				0.6f,
-				1000000,
-				player
-		);
-	
 		updateMousePosition();
 	}
 
@@ -104,21 +102,6 @@ public class MapGraphics extends PApplet {
 		this.rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
 	}
 	
-	public float calculateScale(
-		double screenSize,
-		double initialPlayerScreenProportion,
-		double initialPlayerSize,
-		double maximumPlayerScreenProportion,
-		double maximumPlayerSize,
-		Player player
-	) {
-		double playerScreenProportion = 
-			initialPlayerScreenProportion +
-			(maximumPlayerScreenProportion-initialPlayerScreenProportion)*
-			(Math.sqrt(player.getSize()-initialPlayerSize)/
-			Math.sqrt(maximumPlayerSize - initialPlayerSize));
-		double newScreenSize = player.getRadius()/playerScreenProportion;
-		return (float)(screenSize/newScreenSize);
-	}
+	
 
 }
