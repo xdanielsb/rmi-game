@@ -82,27 +82,43 @@ public class MapGraphics extends PApplet {
 		if(this.board.getPlayer(id).isAlive())
 			this.player = this.board.getPlayer(this.id);
 		
-
-		double playerDiameter;
-		if(this.player.isAlive()) {
-			playerDiameter = this.player.getCell().getRadius()*2;
-		} else {
-			playerDiameter = 1;
-		}
-		
 		this.header.update(
 				rm.getTimer(),
 				this.board.getTeams().get(0).getScore(),
 				this.board.getTeams().get(1).getScore()
 		);
 		
-		this.zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(playerDiameter*playerDiameter)));
+		this.zoomRatio = calculateScale(
+				Math.min(width, height),
+				0.05f,
+				PlayerCell.CELL_MIN_SIZE,
+				0.6f,
+				1000000,
+				player
+		);
 	
 		updateMousePosition();
 	}
 
 	public void updateMousePosition() throws RemoteException {
 		this.rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+	}
+	
+	public float calculateScale(
+		double screenSize,
+		double initialPlayerScreenProportion,
+		double initialPlayerSize,
+		double maximumPlayerScreenProportion,
+		double maximumPlayerSize,
+		Player player
+	) {
+		double playerScreenProportion = 
+			initialPlayerScreenProportion +
+			(maximumPlayerScreenProportion-initialPlayerScreenProportion)*
+			(Math.sqrt(player.getSize()-initialPlayerSize)/
+			Math.sqrt(maximumPlayerSize - initialPlayerSize));
+		double newScreenSize = player.getRadius()/playerScreenProportion;
+		return (float)(screenSize/newScreenSize);
 	}
 
 }

@@ -66,6 +66,13 @@ public class Player implements Serializable, Comparable<Player> {
 		}
 		return this.cell.getSize();
 	}
+	
+	public float getRadius() {
+		if(cell == null) {
+			return 0;
+		}
+		return cell.getRadius();
+	}
 
 	public PlayerCell getCell() {
 		return this.cell;
