@@ -35,11 +35,11 @@ public class Team implements Serializable{
 		return color;
 	}
 	
-	public boolean addPlayer(Player player) {
-		return players.add(player);
+	public void add(Player player) {
+		players.add(player);
 	}
 	
-	public boolean removePlayer(Player player) {
+	public boolean remove(Player player) {
 		return players.remove(player);
 	}
 	

@@ -24,6 +24,7 @@ public class GameManager implements ActionListener {
 	
 	private PlayerRemote remoteManager;
 	private PlayerManager playerManager;
+	private Monitor monitor;
 	private ServerGUI gui;
 	
 	private List<PlayerCell> movingObjects;
@@ -40,7 +41,8 @@ public class GameManager implements ActionListener {
 		
 		movingObjects = new ArrayList<>();
 		
-		playerManager = new PlayerManager(board);
+		monitor = new Monitor(board);
+		playerManager = new PlayerManager(monitor, board);
 		
 		tm = new Timer(16, this);
 	}
@@ -48,9 +50,9 @@ public class GameManager implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(!this.gameOver()) {
+			checkFoodCollision();
 			applyMovePhysic();
 			checkCollision();
-			checkFoodCollision();
 		}
 		gameTimer -= 16;
 		// Reset timer for next Tick
@@ -70,7 +72,7 @@ public class GameManager implements ActionListener {
 	}
 	
 	public void removePlayer(int id) {
-		board.removePlayer(board.getPlayer(id));
+		board.remove(board.getPlayer(id));
 	}
 	
 	public Board getBoard() {
@@ -101,34 +103,18 @@ public class GameManager implements ActionListener {
 	}
 	
 	private void checkCollision() {
+		List<PlayerCell> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
-			checkBoardCollision(player.getCell());
-//			checkCellCollision(player.getCell());
-//			checkFoodCollision(player.getCell());
+			if(player.isAlive()) {
+				checkBoardCollision(player.getCell());
+//				checkFoodCollision(player.getCell());
+				cells.add(player.getCell());
+			}
 		}
-		List<Player> team1, team2;
-		team1 = board.getTeam(0).getPlayers();
-		team2 = board.getTeam(1).getPlayers();
-		for( Player pteam1: team1) {
-			if(!pteam1.isAlive()) continue;
-			for(Player pteam2: team2) {
-				if(!pteam2.isAlive()) continue;
-				if( (pteam1.dist(pteam2) < Math.max(pteam1.getCell().getRadius()/2, pteam2.getCell().getRadius()/2)) && Math.abs(pteam1.getCell().getRadius()-pteam2.getCell().getRadius()) >= 10) {
-					if (pteam1.getCell().getRadius() < pteam2.getCell().getRadius()) {
-						//pteam1.setAlive(false);
-						pteam2.setSize(Math.sqrt((pteam2.getCell().getRadius()) * (pteam2.getCell().getRadius())
-								+ (pteam1.getCell().getRadius()) * (pteam1.getCell().getRadius())) * 2);
-						updateScore(pteam2, (int) pteam2.getSize());
-						playerManager.removePlayer(pteam1);
-						break;
-					}else {
-						//pteam2.setAlive(false);
-						pteam1.setSize(Math.sqrt((pteam2.getCell().getRadius()) * (pteam2.getCell().getRadius())
-								+ (pteam1.getCell().getRadius()) * (pteam1.getCell().getRadius())) * 2);
-						updateScore(pteam1, (int) pteam1.getSize());
-						playerManager.removePlayer(pteam2);
-					}
-				}
+		
+		for(int i = 0; i < cells.size() - 1; i++) {
+			for(int j = i+1; j < cells.size(); j++) {
+				checkCellCollision(cells.get(i), cells.get(j));
 			}
 		}
 	}
@@ -137,7 +123,6 @@ public class GameManager implements ActionListener {
 		double radius = cell.getRadius();
 		if(cell.getX() < radius) {
 			cell.addRepulsionX((1-(cell.getX()/radius))*1.01);
-			System.out.println((1-(cell.getX()/radius))*1.01);
 		}
 		if(cell.getX() > board.getBoardWidth() - radius) {
 			cell.addRepulsionX((((board.getBoardWidth() - cell.getX())/radius)-1)*1.01);
@@ -150,9 +135,51 @@ public class GameManager implements ActionListener {
 		}
 	}
 	
-//	public void checkCellCollision(PlayerCell cell){
-//		
-//	}
+	public void checkCellCollision(PlayerCell cellA, PlayerCell cellB){
+		
+		if(cellA.getPlayer().getTeam() == cellB.getPlayer().getTeam()) {
+			
+			double distX = cellA.getX() - cellB.getX();
+			double distY = cellA.getY() - cellB.getY();
+			double dist = Math.hypot(distX, distY);
+			double radiusA = cellA.getRadius();
+			double radiusB = cellB.getRadius();
+			if(dist < radiusA+radiusB) {				
+				double superposition = radiusA+radiusB - dist;
+				double proportionA = superposition/radiusA;
+				double proportionB = superposition/radiusB;
+				cellA.addRepulsionX(distX/dist*proportionA);
+				cellA.addRepulsionY(distY/dist*proportionA);
+				cellB.addRepulsionX(-distX/dist*proportionB);
+				cellB.addRepulsionY(-distY/dist*proportionB);
+			}
+			
+		}else {
+			
+			PlayerCell bigger;
+			PlayerCell smaller;
+			if(cellA.getSize() > cellB.getSize()) {
+				bigger = cellA;
+				smaller = cellB;
+			} else {
+				bigger = cellB;
+				smaller = cellA;
+			}
+			if(smaller.getSize() < bigger.getSize()*0.98) {
+				double dist = Math.hypot(
+						bigger.getX() - smaller.getX(),
+						bigger.getY() - smaller.getY()
+				);
+				if(dist < bigger.getRadius()) {
+					bigger.eat(smaller);
+					playerManager.addScore(bigger.getPlayer().getTeam(), smaller.getSize());
+					removeObject(smaller);
+				}
+			}
+			
+		}
+		
+	}
 	
 //	public void checkFoodCollision(PlayerCell cell){
 //		
@@ -168,7 +195,9 @@ public class GameManager implements ActionListener {
 		}
 		movingObjects.removeAll(toRemove);
 		for(Player p : board.getPlayers()) {
-			p.getCell().applyMouvement();
+			if(p.isAlive()) {
+				p.getCell().applyMouvement();
+			}
 		}
 	}
 
@@ -179,21 +208,37 @@ public class GameManager implements ActionListener {
 	private void checkFoodCollision() {
 		List<Food> eatenFood = new ArrayList<>();
 		for (Player p : board.getPlayers()) {
-			double size = p.getCell().getRadius();
-			for (Food f : board.getFoods()) {
-				if(f.isAlive()) {
-					double dx = p.getX() - f.getX();
-					double dy = p.getY() - f.getY();
-					double length = Math.sqrt((dx * dx) + (dy * dy));
-					if (length < size) {
-						p.setSize(p.getSize()+f.getSize());
-						updateScore(p, (int) f.getSize());
-						eatenFood.add(f);						
-					}					
+			if(p.isAlive()) {				
+				double size = p.getCell().getRadius();
+				for (Food f : board.getFoods()) {
+					if(f.isAlive()) {
+						double dx = p.getX() - f.getX();
+						double dy = p.getY() - f.getY();
+						double length = Math.sqrt((dx * dx) + (dy * dy));
+						if (length < size) {
+							p.getCell().setSize(p.getSize()+f.getSize());
+							updateScore(p, (int) f.getSize());
+							eatenFood.add(f);						
+						}					
+					}
 				}
 			}
 			board.removeFood(eatenFood);
 			eatenFood.clear();
+		}
+	}
+	
+	public void removeObject(CoordinateObject coordObject) {
+		System.err.println("The server is not suppose tu remove a CoordinateObject who is not cast.");
+		System.err.println("You need to verify all methodes 'removeObject()' of 'GameManager'.");
+	}
+	
+	public void removeObject(PlayerCell cell) {
+		Player player = cell.getPlayer();
+		player.remove(cell);
+		playerManager.addScore(player.getTeam(), -cell.getSize());
+		if(player.getCells().size() <= 0) {
+			playerManager.removePlayer(player);
 		}
 	}
 	

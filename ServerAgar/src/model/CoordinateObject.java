@@ -10,15 +10,16 @@ public abstract class CoordinateObject implements Serializable {
 	
 	private double x;
 	private double y;
-	private double size;
+	private int size;
 	private Color color;
 	private double inertiaX;
 	private double inertiaY;
 
-	public CoordinateObject(double x, double y, double size) {
+	public CoordinateObject(double x, double y, int size, Color color) {
 		this.x = x;
 		this.y = y;
 		this.size = size;
+		this.color = color;
 		this.inertiaX = 0;
 		this.inertiaY = 0;
 	}
@@ -42,16 +43,12 @@ public abstract class CoordinateObject implements Serializable {
 	public Color getColor() {
 		return color;
 	}
-
-	public void setColor(Color color) {
-		this.color = color;
-	}
 	
-	public double getSize() {
+	public int getSize() {
 		return size;
 	}
 
-	public void setSize(double size) {
+	public void setSize(int size) {
 		this.size = size;
 	}
 	

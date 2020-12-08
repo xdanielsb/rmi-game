@@ -77,13 +77,17 @@ public class Board implements Serializable{
 				minTeam = teams.get(t);
 			}
 		}
-		minTeam.addPlayer(player);
+		minTeam.add(player);
 		player.setTeam(minTeam);
 	}
 	
-	public void removePlayer(Player player) {
-		player.getTeam().removePlayer(player);
+	public void remove(Player player) {
+		player.getTeam().remove(player);
 		players.remove(player.getId());
+	}
+	
+	public void remove() {
+		
 	}
 	
 	public Player getPlayer(int id) {
@@ -96,7 +100,7 @@ public class Board implements Serializable{
 	
 	public Player removePlayer(int id) {
 		Player player = players.remove(id);
-		player.getTeam().removePlayer(player);
+		player.getTeam().remove(player);
 		return player;
 	}
 	

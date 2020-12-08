@@ -1,6 +1,8 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player implements Serializable, Comparable<Player> {
 
@@ -30,12 +32,7 @@ public class Player implements Serializable, Comparable<Player> {
 
 	public void setTeam(Team team) {
 		this.team = team;
-		cell = new PlayerCell(
-				team.getSpawnX(), 
-				team.getSpawnY(), 
-				PlayerCell.CELL_MIN_SIZE
-		);
-		cell.setColor(team.getColor());
+		cell = new PlayerCell(this, PlayerCell.CELL_MIN_SIZE);
 	}
 
 	public String getName() {
@@ -51,6 +48,9 @@ public class Player implements Serializable, Comparable<Player> {
 	}
 
 	public double getX() {
+		if(cell == null) {
+			return team.getSpawnX();
+		}
 		return this.cell.getX();
 	}
 
@@ -59,23 +59,41 @@ public class Player implements Serializable, Comparable<Player> {
 	}
 
 	public double getY() {
+		if(cell == null) {
+			return team.getSpawnY();
+		}
 		return this.cell.getY();
 	}
 
 	public void setY(double y) {
 		this.cell.setY(y);
 	}
-
-	public void setSize(double size) {
-		this.cell.setSize(size);
-	}
-
-	public double getSize() {
+	
+	public int getSize() {
+		if(cell == null) {
+			return 0;
+		}
 		return this.cell.getSize();
 	}
 
 	public PlayerCell getCell() {
 		return this.cell;
+	}
+	
+	public List<PlayerCell> getCells(){
+		List<PlayerCell> cells = new ArrayList<>();
+		if(cell != null) {			
+			cells.add(cell);
+		}
+		return cells;
+	}
+	
+	public void add(PlayerCell cell) {
+		this.cell = cell;
+	}
+	
+	public void remove(PlayerCell cell) {
+		this.cell = null;
 	}
 
 	public double dist(Player p) {

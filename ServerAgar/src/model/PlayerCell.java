@@ -11,12 +11,24 @@ public class PlayerCell extends FeedableObject{
 	private double movementX;
 	private double movementY;
 	
-	public PlayerCell(double x, double y, double size) {
-		super(x, y, size);
+	public Player player;
+	
+	public PlayerCell(Player player, int size) {
+		super(
+			player.getTeam().getSpawnX(),
+			player.getTeam().getSpawnY(),
+			size,
+			player.getTeam().getColor()
+		);
 		repulsionX = 0;
 		repulsionY = 0;
 		movementX = 0;
 		movementY = 0;
+		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 	
 	public void setMovementX(double movementX) {

@@ -12,15 +12,15 @@ public class PlayerManager {
 	private Monitor monitor;
 	private Board board;
 
-	public PlayerManager(Board board) {
-		monitor = new Monitor(board);
+	public PlayerManager(Monitor monitor, Board board) {
+		this.monitor = monitor;
 		this.board = board;
 	}
 	
-	public void addScore(int teamID, int amount) {
+	public void addScore(Team team, int amount) {
 		// non bloquant pour l'appelant
 		Runnable runnable = () -> {
-			monitor.addScore(teamID, amount);
+			monitor.addScore(team, amount);
 		};
 
 		new Thread(runnable).start();
@@ -29,10 +29,6 @@ public class PlayerManager {
 
 	public void addPlayer(Player p) {
 		board.addPlayer(p);
-	}
-
-	public void erasePlayer(int id) {
-		board.removePlayer(id);
 	}
 
 	public List<Player> getPlayersTeam(Team team) {
@@ -50,31 +46,26 @@ public class PlayerManager {
 	}
 	
 	public void moveToward(PlayerCell cell, double mouseX, double mouseY) {
-		double distX = mouseX - cell.getX();
-		double distY = mouseY - cell.getY();
-		double dist = Math.hypot(distX, distY);
-		if(dist > 10) {
-			cell.setMovementX(distX/dist);
-			cell.setMovementY(distY/dist);
-		}else {
-			cell.setMovementX(0);
-			cell.setMovementY(0);			
+		if(cell != null) {			
+			double distX = mouseX - cell.getX();
+			double distY = mouseY - cell.getY();
+			double dist = Math.hypot(distX, distY);
+			if(dist > 10) {
+				cell.setMovementX(distX/dist);
+				cell.setMovementY(distY/dist);
+			}else {
+				cell.setMovementX(0);
+				cell.setMovementY(0);			
+			}
 		}
-	}
-
-	private void resetPosition(Player p) {
-		p.setX(p.getTeam().getSpawnX());
-		p.setY(p.getTeam().getSpawnY());
 	}
 
 	public void removePlayer(Player p) {
 		p.setAlive(false);
-		p.setSize(0);
 		Runnable runnable = () -> {
 			try {
 				Thread.sleep(3000);
-				resetPosition(p);
-				p.setSize(PlayerCell.CELL_MIN_SIZE);
+				p.add(new PlayerCell(p, PlayerCell.CELL_MIN_SIZE));
 				p.setAlive(true);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

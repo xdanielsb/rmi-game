@@ -18,9 +18,9 @@ public class Food extends CoordinateObject implements ActionListener {
 	public Food(int limitX, int limitY) {
 		super(
 			(Math.random() * (limitX-FOOD_SIZE*2)) + FOOD_SIZE, 
-			(Math.random() * (limitY-FOOD_SIZE*2)) + FOOD_SIZE, FOOD_SIZE
+			(Math.random() * (limitY-FOOD_SIZE*2)) + FOOD_SIZE, FOOD_SIZE,
+			new Color((int)(Math.random() * 0x1000000)).brighter()
 		);
-		this.setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
 		this.isAlive = true;
 	}
 	

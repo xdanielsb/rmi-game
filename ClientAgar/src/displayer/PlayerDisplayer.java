@@ -19,9 +19,9 @@ public class PlayerDisplayer {
 		sketch.fill(playerColor.getRed(), playerColor.getGreen(), playerColor.getBlue());	
 		sketch.circle(0, 0, (float)(player.getCell().getRadius())*2);
 		sketch.fill(255);
-		sketch.textSize(textSize);
-		sketch.text(player.getName(), 0, 0-textSize);
-		sketch.text((int)player.getSize(), 0, 0+textSize);
+//		sketch.textSize(textSize);
+//		sketch.text(player.getName(), 0, 0-textSize);
+//		sketch.text((int)player.getSize(), 0, 0+textSize);
 		
 		sketch.popMatrix();
 	}
