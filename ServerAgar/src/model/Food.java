@@ -13,8 +13,8 @@ public class Food extends CoordinateObject {
 
 	public Food(Board board) {
 		super(
-			(Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE,
-			(Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE,
+			((float)Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE,
+			((float)Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE,
 			FOOD_SIZE,
 			new Color((int)(Math.random() * 0x1000000)).brighter()
 		);
@@ -25,12 +25,12 @@ public class Food extends CoordinateObject {
 	public boolean isAlive() {
 		return isAlive;
 	}
-	
+
 	public void killFood() {
 		isAlive = false;
 		setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
-		setX((Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE);
-		setY((Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE);
+		setX((float)(Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE);
+		setY(((float)Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE);
 		isAlive = true;
 	}
 

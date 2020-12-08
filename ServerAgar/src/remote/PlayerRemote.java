@@ -8,9 +8,9 @@ import model.Board;
 import model.Player;
 
 public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private GameManager gameManager;
 	private final Object mutex = new Object();
 	private int playerIdIncrement = 0;
@@ -30,7 +30,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 	}
 
 	@Override
-	public void sendMousePosition(int id, double x, double y) throws RemoteException {
+	public void sendMousePosition(int id, float x, float y) throws RemoteException {
 		gameManager.sendMousePosition(id, x, y);
 	}
 

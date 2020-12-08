@@ -1,4 +1,4 @@
-  package model;
+package model;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -7,15 +7,15 @@ public abstract class CoordinateObject implements Serializable {
 
 
 	private static final long serialVersionUID = 1L;
-	
-	private double x;
-	private double y;
+
+	private float x;
+	private float y;
 	private int size;
 	private Color color;
-	private double inertiaX;
-	private double inertiaY;
+	private float inertiaX;
+	private float inertiaY;
 
-	public CoordinateObject(double x, double y, int size, Color color) {
+	public CoordinateObject(float x, float y, int size, Color color) {
 		this.x = x;
 		this.y = y;
 		this.size = size;
@@ -24,30 +24,30 @@ public abstract class CoordinateObject implements Serializable {
 		this.inertiaY = 0;
 	}
 
-	public double getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(double x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
-	public double getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(double y) {
+	public void setY(float y) {
 		this.y = y;
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}
-	
+
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	
+
 	public int getSize() {
 		return size;
 	}
@@ -55,39 +55,35 @@ public abstract class CoordinateObject implements Serializable {
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
-	public double getRadius() {
-		return Math.sqrt(size/Math.PI);
+
+	public float getRadius() {
+		return (float)Math.sqrt(size/Math.PI);
 	}
-	
-	public double dist(CoordinateObject coordObj) {
-        return Math.hypot(coordObj.getX()-this.getX(), coordObj.getY()-this.getY());
-    }
-	
-	public double getInertiaX() {
+
+	public float getInertiaX() {
 		return inertiaX;
 	}
-	
-	public void setInertiaX(double inertiaX) {
+
+	public void setInertiaX(float inertiaX) {
 		this.inertiaX = inertiaX;
 	}
 
-	public double getInertiaY() {
+	public float getInertiaY() {
 		return inertiaY;
 	}
-	
-	public void setInertiaY(double inertiaY) {
+
+	public void setInertiaY(float inertiaY) {
 		this.inertiaY = inertiaY;
 	}
-	
-	public double getSpeedX() {
+
+	public float getSpeedX() {
 		return inertiaX;
 	}
 
-	public double getSpeedY() {
+	public float getSpeedY() {
 		return inertiaY;
 	}
-	
+
 	public void applyMouvement() {
 		x += getSpeedX();
 		y += getSpeedY();

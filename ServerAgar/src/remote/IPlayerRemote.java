@@ -9,7 +9,7 @@ public interface IPlayerRemote extends Remote {
 	
 	public int registerPlayer(String p) throws RemoteException;
 
-	public void sendMousePosition(int id, double x, double y) throws RemoteException;
+	public void sendMousePosition(int id, float x, float y) throws RemoteException;
 
 	public float getTimer() throws RemoteException;
 

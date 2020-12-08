@@ -7,7 +7,7 @@ import java.util.List;
 public class Player implements Serializable, Comparable<Player> {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final String name;
 
 	private Team team;
@@ -16,7 +16,6 @@ public class Player implements Serializable, Comparable<Player> {
 	private boolean alive;
 
 	public Player(int idP, String name) {
-
 		this.name = name;
 		this.id = idP;
 		this.alive = true;
@@ -47,28 +46,20 @@ public class Player implements Serializable, Comparable<Player> {
 		return alive;
 	}
 
-	public double getX() {
+	public float getX() {
 		if(cell == null) {
 			return team.getSpawnX();
 		}
 		return this.cell.getX();
 	}
 
-	public void setX(double x) {
-		this.cell.setX(x);
-	}
-
-	public double getY() {
+	public float getY() {
 		if(cell == null) {
 			return team.getSpawnY();
 		}
 		return this.cell.getY();
 	}
 
-	public void setY(double y) {
-		this.cell.setY(y);
-	}
-	
 	public int getSize() {
 		if(cell == null) {
 			return 0;
@@ -79,7 +70,7 @@ public class Player implements Serializable, Comparable<Player> {
 	public PlayerCell getCell() {
 		return this.cell;
 	}
-	
+
 	public List<PlayerCell> getCells(){
 		List<PlayerCell> cells = new ArrayList<>();
 		if(cell != null) {			
@@ -87,17 +78,13 @@ public class Player implements Serializable, Comparable<Player> {
 		}
 		return cells;
 	}
-	
-	public void add(PlayerCell cell) {
+
+	public void addCell(PlayerCell cell) {
 		this.cell = cell;
 	}
-	
-	public void remove(PlayerCell cell) {
-		this.cell = null;
-	}
 
-	public double dist(Player p) {
-		return this.cell.dist(p.getCell());
+	public void removeCell(PlayerCell cell) {
+		this.cell = null;
 	}
 
 	@Override
