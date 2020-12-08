@@ -92,8 +92,8 @@ public class MapGraphics extends PApplet {
 		
 		this.header.update(
 				rm.getTimer(),
-				this.board.getTeam(0).getScore(),
-				this.board.getTeam(1).getScore()
+				this.board.getTeams().get(0).getScore(),
+				this.board.getTeams().get(1).getScore()
 		);
 		
 		this.zoomRatio = (float) (1 + (0.6f * (PlayerCell.CELL_MIN_SIZE*PlayerCell.CELL_MIN_SIZE)/(playerDiameter*playerDiameter)));

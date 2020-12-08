@@ -16,7 +16,7 @@ public class Team implements Serializable{
 
 	private int spawnX, spawnY;
 	
-	private final Object bell;
+	private final Bell bell;
 
 	public Team(Color color, String teamName, int spawnX, int spawnY) {
 		this.color = color;
@@ -25,7 +25,7 @@ public class Team implements Serializable{
 		this.spawnX = spawnX;
 		this.spawnY = spawnY;
 		this.teamName = teamName;
-		bell = new Object();
+		bell = new Bell();
 	}
 
 	public Color getColor() {
