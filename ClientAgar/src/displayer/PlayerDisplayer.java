@@ -13,7 +13,7 @@ public class PlayerDisplayer {
 		sketch.pushMatrix();
 		sketch.translate((float)player.getX(), (float)player.getY());
 		
-		float textSize = (int)(1 - (5f*PlayerCell.CELL_MIN_SIZE/(player.getCell().getRadius()*2)));
+		float textSize = 3;//(int)(1 - (5f*PlayerCell.CELL_MIN_SIZE/(player.getCell().getRadius()*2)));
 		
 		
 		Color playerColor = player.getCell().getColor();

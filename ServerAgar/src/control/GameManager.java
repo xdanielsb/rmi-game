@@ -28,6 +28,8 @@ public class GameManager implements ActionListener {
 	private ServerGUI gui;
 
 	private List<CoordinateObject> movingObjects;
+	private List<Food> foodsToAdd;
+	private List<Food> foodsToRemove;
 
 	private Timer tm;
 	int gameTimer = 1000000;
@@ -40,6 +42,8 @@ public class GameManager implements ActionListener {
 		board.addTeam(new Team(new Color(0, 0, 255), "Bleu", 750, 400));
 
 		movingObjects = new ArrayList<>();
+		foodsToAdd = new ArrayList<>();
+		foodsToRemove = new ArrayList<>();
 
 		monitor = new Monitor(board);
 		playerManager = new PlayerManager(monitor);
@@ -52,6 +56,8 @@ public class GameManager implements ActionListener {
 		if(!this.gameOver()) {
 			applyMovePhysic();
 			checkCollision();
+			mergeNewFoods();
+			removeFoods();
 		}
 		if(gameTimer > 0) {
 			gameTimer -= 16;
@@ -61,6 +67,22 @@ public class GameManager implements ActionListener {
 		}
 		// Reset timer for next Tick
 		tm.start();
+	}
+
+	private void removeFoods() {
+		for(Food food : foodsToRemove) {
+			board.removeFood(food);
+			movingObjects.remove(food);
+		}
+	}
+
+	private void mergeNewFoods() {
+		if(foodsToAdd.size() > 0) {			
+			movingObjects.addAll(foodsToAdd);
+			board.addFoods(foodsToAdd);
+			this.foodsToAdd = new ArrayList<Food>();
+		}
+		
 	}
 
 	public float getTimer() throws RemoteException {
@@ -228,16 +250,14 @@ public class GameManager implements ActionListener {
 	private void removeFood(Food food) {
 		food.killFood();
 		if(!food.isPersistent()) {
-			board.removeFood(food);
-			movingObjects.remove(food);
+			foodsToRemove.add(food);
 		}
 	}
 	
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
-		movingObjects.addAll(foods);
-		board.addFoods(foods);
+		foodsToAdd.addAll(foods);
 	}
 
 }

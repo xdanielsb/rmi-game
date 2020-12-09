@@ -102,6 +102,15 @@ public class MapGraphics extends PApplet {
 		this.rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
 	}
 	
-	
+	@Override
+	public void mousePressed()
+	{
+		try {
+			this.rm.throwFood(this.id, mouseX, mouseY);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }
