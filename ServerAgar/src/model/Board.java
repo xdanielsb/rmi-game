@@ -103,5 +103,13 @@ public class Board implements Serializable{
 	public List<Food> getFoods(){
 		return foods;
 	}
+	
+	public void addFoods(List<Food> foods) {
+		this.foods.addAll(foods);
+	}
+	
+	public boolean removeFood(Food food) {
+		return foods.remove(food);
+	}
 
 }

@@ -1,5 +1,9 @@
 package control;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import model.Food;
 import model.Player;
 import model.PlayerCell;
 import model.Team;
@@ -25,6 +29,24 @@ public class PlayerManager {
 		if (player.isAlive()) {
 			this.moveToward(player.getCell(), mouseX, mouseY);
 		}
+	}
+	
+	public List<Food> throwFood(Player player, float mouseX, float mouseY) {
+		List<Food> foods = new ArrayList<>();
+		for(PlayerCell cell : player.getCells()) {
+			if(cell.getSize() >= PlayerCell.MIN_THROWING_FOOD_SIZE) {
+				double distX = mouseX - cell.getX();
+				double distY = mouseY - cell.getY();
+				double dist = Math.hypot(distX, distY);
+				
+				Food food = new Food(cell, (float)(distX/dist), (float)(distY/dist));
+				foods.add(food);
+				
+				cell.setSize(cell.getSize() - food.getSize());
+				monitor.addScore(cell.getPlayer().getTeam(), -food.getSize());
+			}
+		}
+		return foods;
 	}
 
 	public void moveToward(PlayerCell cell, float mouseX, float mouseY) {

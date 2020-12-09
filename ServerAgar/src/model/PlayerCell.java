@@ -5,6 +5,7 @@ public class PlayerCell extends FeedableObject{
 	private static final long serialVersionUID = 1L;
 
 	public static final int CELL_MIN_SIZE = 50;
+	public static final int MIN_THROWING_FOOD_SIZE = 400;
 
 	private float repulsionX;
 	private float repulsionY;

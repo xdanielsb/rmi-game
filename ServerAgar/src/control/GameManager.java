@@ -27,7 +27,7 @@ public class GameManager implements ActionListener {
 	private Monitor monitor;
 	private ServerGUI gui;
 
-	private List<PlayerCell> movingObjects;
+	private List<CoordinateObject> movingObjects;
 
 	private Timer tm;
 	int gameTimer = 1000000;
@@ -227,6 +227,17 @@ public class GameManager implements ActionListener {
 
 	private void removeFood(Food food) {
 		food.killFood();
+		if(!food.isPersistent()) {
+			board.removeFood(food);
+			movingObjects.remove(food);
+		}
+	}
+	
+	public void throwFood(int playerId, float mouseX, float mouseY) {
+		Player player = board.getPlayer(playerId);
+		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
+		movingObjects.addAll(foods);
+		board.addFoods(foods);
 	}
 
 }

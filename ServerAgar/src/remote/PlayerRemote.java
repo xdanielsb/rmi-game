@@ -35,6 +35,11 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 	}
 
 	@Override
+	public void throwFood(int idPlayer, float mouseX, float mouseY) {
+		gameManager.throwFood(idPlayer, mouseX, mouseY);
+	}
+	
+	@Override
 	public Board getBoard() throws RemoteException {
 		return gameManager.getBoard();
 	}
