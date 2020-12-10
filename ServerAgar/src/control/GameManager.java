@@ -133,22 +133,26 @@ public class GameManager implements ActionListener {
 		List<PlayerCell> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
-				checkBoardCollisionForFeedableObject(player.getCell());
-				checkFoodCollision(player.getCell());
-				cells.add(player.getCell());
+				
+				for(PlayerCell cell : player.getCells()) {					
+					checkBoardCollisionForFeedableObject(cell);
+					checkFoodCollision(cell);
+					cells.add(cell);
+				}
+				
 			}
 		}
-		
 		for(int i = 0; i < cells.size() - 1; i++) {
 			for(int j = i+1; j < cells.size(); j++) {
+				
 				if(cells.get(i).getPlayer().getTeam() == cells.get(j).getPlayer().getTeam()) {
 					checkCellCollisionBetweenTeammates(cells.get(i), cells.get(j));					
 				} else {
 					checkCollisionBetweenEnnemies(cells.get(i), cells.get(j));
 				}
+				
 			}
 		}
-		
 		for(CoordinateObject coordObj : movingObjects) {
 			checkBoardCollisionForCoordinateObject(coordObj);
 		}
@@ -258,9 +262,13 @@ public class GameManager implements ActionListener {
 			}
 		}
 		movingObjects.removeAll(toRemove);
-		for(Player p : board.getPlayers()) {
-			if(p.isAlive()) {
-				p.getCell().applyMouvement();
+		for(Player player : board.getPlayers()) {
+			if(player.isAlive()) {
+				
+				for(PlayerCell cell : player.getCells()) {
+					cell.applyMouvement();
+				}
+				
 			}
 		}
 	}

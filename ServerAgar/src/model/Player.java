@@ -11,7 +11,7 @@ public class Player implements Serializable, Comparable<Player> {
 	private final String name;
 
 	private Team team;
-	private PlayerCell cell;
+	private List<PlayerCell> cells;
 	private int id;
 	private boolean alive;
 
@@ -31,7 +31,8 @@ public class Player implements Serializable, Comparable<Player> {
 
 	public void setTeam(Team team) {
 		this.team = team;
-		cell = new PlayerCell(this, PlayerCell.CELL_MIN_SIZE);
+		cells = new ArrayList<>();
+		cells.add(new PlayerCell(this, PlayerCell.CELL_MIN_SIZE));
 	}
 
 	public String getName() {
@@ -47,51 +48,59 @@ public class Player implements Serializable, Comparable<Player> {
 	}
 
 	public float getX() {
-		if(cell == null) {
-			return team.getSpawnX();
+		float max = Float.MIN_VALUE;
+		float min = Float.MAX_VALUE;
+		for(PlayerCell cell : cells) {
+			float radius = cell.getRadius();
+			float x = cell.getX();
+			if(x-radius < min) {
+				min = x-radius;
+			}
+			if(x+radius > max) {
+				max = x+radius;
+			}
 		}
-		return this.cell.getX();
+		return (min+max)/2;
 	}
 
 	public float getY() {
-		if(cell == null) {
-			return team.getSpawnY();
+		float max = Float.MIN_VALUE;
+		float min = Float.MAX_VALUE;
+		for(PlayerCell cell : cells) {
+			float radius = cell.getRadius();
+			float y = cell.getY();
+			if(y-radius < min) {
+				min = y-radius;
+			}
+			if(y+radius > max) {
+				max = y+radius;
+			}
 		}
-		return this.cell.getY();
+		return (min+max)/2;
 	}
 
 	public int getSize() {
-		if(cell == null) {
-			return 0;
+		int somme = 0;
+		for(PlayerCell cell : cells) {
+			somme += cell.getSize();
 		}
-		return this.cell.getSize();
+		return somme;
 	}
 	
 	public float getRadius() {
-		if(cell == null) {
-			return 0;
-		}
-		return cell.getRadius();
-	}
-
-	public PlayerCell getCell() {
-		return this.cell;
+		return (float)Math.sqrt(getSize()/Math.PI);
 	}
 
 	public List<PlayerCell> getCells(){
-		List<PlayerCell> cells = new ArrayList<>();
-		if(cell != null) {			
-			cells.add(cell);
-		}
 		return cells;
 	}
 
 	public void addCell(PlayerCell cell) {
-		this.cell = cell;
+		cells.add(cell);
 	}
 
-	public void removeCell(PlayerCell cell) {
-		this.cell = null;
+	public boolean removeCell(PlayerCell cell) {
+		return cells.remove(cell);
 	}
 
 	@Override

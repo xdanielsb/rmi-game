@@ -27,7 +27,9 @@ public class PlayerManager {
 
 	public void sendMousePosition(Player player, float mouseX, float mouseY) {
 		if (player.isAlive()) {
-			this.moveToward(player.getCell(), mouseX, mouseY);
+			for(PlayerCell cell : player.getCells()) {
+				moveToward(cell, mouseX, mouseY);
+			}
 		}
 	}
 	
