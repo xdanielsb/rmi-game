@@ -21,15 +21,21 @@ public class MapGraphics extends PApplet {
 	private Player player;
 	private boolean gameOver;
 	
+	private boolean isMouseUpdated;
+	private boolean askForThrow;
+	
 	private BoardDisplayer boardDisplayer;
 
-	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {		
+	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
 		header = new HeaderHandler();
 
 		this.rm = distant;
 		this.id = rm.registerPlayer(username);
 		this.board = rm.getBoard();
 		this.player = board.getPlayer(id);
+		
+		isMouseUpdated = false;
+		askForThrow = false;
 
 		Runtime runtime = Runtime.getRuntime();
 		Runnable runnable = () -> {
@@ -95,22 +101,34 @@ public class MapGraphics extends PApplet {
 				this.board.getTeams().get(1).getScore()
 		);
 		
-		updateMousePosition();
+		if(isMouseUpdated) {
+			try {				
+				rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+				isMouseUpdated = false;
+			}catch(RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(askForThrow) {
+			try {
+				this.rm.throwFood(this.id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+				askForThrow = false;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public void updateMousePosition() throws RemoteException {
-		this.rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+	@Override
+	public void mouseMoved() {
+		isMouseUpdated = true;		
 	}
 	
 	@Override
 	public void mousePressed()
 	{
-		try {
-			this.rm.throwFood(this.id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		askForThrow = true;
 	}
 
 }
