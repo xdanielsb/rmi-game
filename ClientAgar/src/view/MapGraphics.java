@@ -106,7 +106,7 @@ public class MapGraphics extends PApplet {
 	public void mousePressed()
 	{
 		try {
-			this.rm.throwFood(this.id, mouseX, mouseY);
+			this.rm.throwFood(this.id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

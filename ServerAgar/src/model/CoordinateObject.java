@@ -87,12 +87,12 @@ public abstract class CoordinateObject implements Serializable {
 	public void applyMouvement() {
 		x += getSpeedX();
 		y += getSpeedY();
-		inertiaX *= 0.75;
-		if(inertiaX < 0.1) {
+		inertiaX *= 0.95;
+		if(inertiaX < 0.01 && inertiaX > -0.01) {
 			inertiaX = 0;
 		}
-		inertiaY *= 0.75;
-		if(inertiaY < 0.1) {
+		inertiaY *= 0.95;
+		if(inertiaY < 0.01 && inertiaY > -0.01) {
 			inertiaY = 0;
 		}
 	}

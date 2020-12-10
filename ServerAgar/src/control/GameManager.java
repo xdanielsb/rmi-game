@@ -13,6 +13,7 @@ import javax.swing.Timer;
 
 import model.Board;
 import model.CoordinateObject;
+import model.FeedableObject;
 import model.Food;
 import model.Player;
 import model.PlayerCell;
@@ -32,7 +33,7 @@ public class GameManager implements ActionListener {
 	private List<Food> foodsToRemove;
 
 	private Timer tm;
-	int gameTimer = 1000000;
+	private int gameTimer = 1000000;
 
 	private Board board;
 
@@ -132,12 +133,12 @@ public class GameManager implements ActionListener {
 		List<PlayerCell> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
-				checkBoardCollision(player.getCell());
+				checkBoardCollisionForFeedableObject(player.getCell());
 				checkFoodCollision(player.getCell());
 				cells.add(player.getCell());
 			}
 		}
-
+		
 		for(int i = 0; i < cells.size() - 1; i++) {
 			for(int j = i+1; j < cells.size(); j++) {
 				if(cells.get(i).getPlayer().getTeam() == cells.get(j).getPlayer().getTeam()) {
@@ -147,21 +148,47 @@ public class GameManager implements ActionListener {
 				}
 			}
 		}
+		
+		for(CoordinateObject coordObj : movingObjects) {
+			checkBoardCollisionForCoordinateObject(coordObj);
+		}
+	}
+	
+	private void checkBoardCollisionForCoordinateObject(CoordinateObject coordObj) {
+		float radius = coordObj.getRadius();
+		if(coordObj.getX() < radius) {
+			coordObj.setX(radius);
+			coordObj.setInertiaX(-coordObj.getInertiaX());
+		}else if(coordObj.getX() > board.getBoardWidth() - radius) {
+			coordObj.setX(board.getBoardWidth() - radius);
+			coordObj.setInertiaX(-coordObj.getInertiaX());
+		}
+		if(coordObj.getY() < radius) {
+			coordObj.setY(radius);
+			coordObj.setInertiaY(-coordObj.getInertiaY());
+		}else if(coordObj.getY() > board.getBoardHeight() - radius) {
+			coordObj.setY(board.getBoardHeight() - radius);
+			coordObj.setInertiaY(-coordObj.getInertiaY());
+		}
 	}
 
-	private void checkBoardCollision(PlayerCell cell) {
+	private void checkBoardCollisionForFeedableObject(FeedableObject cell) {
 		float radius = cell.getRadius();
 		if(cell.getX() < radius) {
 			cell.addRepulsionX((1-(cell.getX()/radius))*1.01f);
+			cell.setInertiaX(-cell.getInertiaX());
 		}
 		if(cell.getX() > board.getBoardWidth() - radius) {
 			cell.addRepulsionX((((board.getBoardWidth() - cell.getX())/radius)-1)*1.01f);
+			cell.setInertiaX(-cell.getInertiaX());
 		}
 		if(cell.getY() < radius) {
 			cell.addRepulsionY((1-(cell.getY()/radius))*1.01f);
+			cell.setInertiaY(-cell.getInertiaY());
 		}
 		if(cell.getY() > board.getBoardHeight() - radius) {
 			cell.addRepulsionY((((board.getBoardHeight() - cell.getY())/radius)-1)*1.01f);
+			cell.setInertiaY(-cell.getInertiaY());
 		}
 	}
 

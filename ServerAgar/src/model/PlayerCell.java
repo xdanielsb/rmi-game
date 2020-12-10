@@ -7,8 +7,6 @@ public class PlayerCell extends FeedableObject{
 	public static final int CELL_MIN_SIZE = 50;
 	public static final int MIN_THROWING_FOOD_SIZE = 400;
 
-	private float repulsionX;
-	private float repulsionY;
 	private float movementX;
 	private float movementY;
 
@@ -21,8 +19,6 @@ public class PlayerCell extends FeedableObject{
 			size,
 			player.getTeam().getColor()
 		);
-		repulsionX = 0;
-		repulsionY = 0;
 		movementX = 0;
 		movementY = 0;
 		this.player = player;
@@ -40,29 +36,14 @@ public class PlayerCell extends FeedableObject{
 		this.movementY = movementY;
 	}
 
-	public void addRepulsionX(float repulsionX) {
-		this.repulsionX += repulsionX;
-	}
-
-	public void addRepulsionY(float repulsionY) {
-		this.repulsionY += repulsionY;
-	}
-
 	@Override
 	public float getSpeedX() {
-		return super.getSpeedX() + repulsionX + movementX;
+		return super.getSpeedX() + movementX;
 	}
 
 	@Override
 	public float getSpeedY() {
-		return super.getSpeedY() + repulsionY + movementY;
-	}
-
-	@Override
-	public void applyMouvement() {
-		super.applyMouvement();
-		repulsionX = 0;
-		repulsionY = 0;
+		return super.getSpeedY() + movementY;
 	}
 
 }

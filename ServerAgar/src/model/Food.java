@@ -31,8 +31,8 @@ public class Food extends CoordinateObject {
 				(int)(cell.getSize()*0.05),
 				cell.getColor()
 		);
-		setInertiaY(directionX*3);
-		setInertiaY(directionY*3);
+		setInertiaX(directionX*4.5f);
+		setInertiaY(directionY*4.5f);
 		isAlive = true;
 		isPersistent = false;
 	}
@@ -47,7 +47,7 @@ public class Food extends CoordinateObject {
 
 	public void killFood() {
 		isAlive = false;
-		if(isPersistent) { 			
+		if(isPersistent) {
 			setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
 			setX((float)(Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE);
 			setY(((float)Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE);

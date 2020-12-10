@@ -2,15 +2,21 @@ package displayer;
 
 import java.awt.Color;
 
-import model.CoordinateObject;
+import model.Food;
 import processing.core.PApplet;
 
 public class FoodDisplayer {
 
-	public static void draw(CoordinateObject coordinateObject, PApplet sketch)
+	public static void draw(Food food, PApplet sketch)
 	{
-		Color foodColor = coordinateObject.getColor();
+		Color foodColor = food.getColor();
 		sketch.fill(foodColor.getRed(), foodColor.getGreen(), foodColor.getBlue());
-		sketch.circle((float) (coordinateObject.getX()), (float) (coordinateObject.getY()), (float) (3));
+		float diameter;
+		if(food.isPersistent()) {
+			diameter = 3;
+		} else {
+			diameter = food.getRadius() * 2;
+		}
+		sketch.circle((float) (food.getX()), (float) (food.getY()), diameter);
 	}
 }

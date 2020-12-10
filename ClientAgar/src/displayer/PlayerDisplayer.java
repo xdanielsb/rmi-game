@@ -3,7 +3,6 @@ package displayer;
 import java.awt.Color;
 
 import model.Player;
-import model.PlayerCell;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
