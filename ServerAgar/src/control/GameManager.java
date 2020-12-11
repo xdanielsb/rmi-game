@@ -38,7 +38,7 @@ public class GameManager implements ActionListener {
 	private Board board;
 
 	public GameManager() {
-		board = new Board(500, 500, 300);
+		board = new Board(500, 500, 300, 20);
 		board.addTeam(new Team(new Color(255, 0, 0), "Rouge", 50, 400));
 		board.addTeam(new Team(new Color(0, 0, 255), "Bleu", 750, 400));
 

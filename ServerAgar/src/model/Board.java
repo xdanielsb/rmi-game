@@ -12,6 +12,7 @@ public class Board implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private List<Food> foods;
+	private List<SpikeCell> spikes;
 
 	private Map<Integer, Player> players;
 	private List<Team> teams;
@@ -20,18 +21,23 @@ public class Board implements Serializable{
 
 	private Team winners;
 
-	public Board(int boardLength, int boardWidth, int nbFood) {
-		foods = new ArrayList<Food>();
-		players = new HashMap<Integer, Player>();
-		teams = new ArrayList<Team>();
+	public Board(int boardLength, int boardWidth, int nbFood, int nbSpike) {
+		foods = new ArrayList<>();
+		spikes = new ArrayList<>();
+		players = new HashMap<>();
+		teams = new ArrayList<>();
 
 		this.boardHeight = boardLength;
 		this.boardWidth = boardWidth;
 
-		players = new HashMap<Integer, Player>();
+		players = new HashMap<>();
 
 		for(int i = 0; i < nbFood; i++) {
 			foods.add(new Food(this));
+		}
+
+		for(int i = 0; i < nbFood; i++) {
+			spikes.add(new SpikeCell(this));
 		}
 
 		winners = null;
@@ -110,6 +116,14 @@ public class Board implements Serializable{
 	
 	public boolean removeFood(Food food) {
 		return foods.remove(food);
+	}
+
+	public void addSpikes(List<SpikeCell> spikes) {
+		this.spikes.addAll(spikes);
+	}
+	
+	public boolean removeSpike(SpikeCell spike) {
+		return spikes.remove(spike);
 	}
 
 }
