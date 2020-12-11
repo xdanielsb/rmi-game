@@ -12,6 +12,8 @@ public interface IPlayerRemote extends Remote {
 	public void sendMousePosition(int idPlayer, float mouseX, float mouseY) throws RemoteException;
 
 	public void throwFood(int idPlayer, float mouseX, float mouseY) throws RemoteException;
+
+	public void split(int idPlayer, float mouseX, float mouseY) throws RemoteException;
 	
 	public float getTimer() throws RemoteException;
 

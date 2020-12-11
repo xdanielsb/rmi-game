@@ -57,6 +57,7 @@ public class GameManager implements ActionListener {
 		if(!this.gameOver()) {
 			applyMovePhysic();
 			checkCollision();
+			playerManager.addWaitingPlayerCells();
 			mergeNewFoods();
 			removeFoods();
 		}
@@ -75,13 +76,14 @@ public class GameManager implements ActionListener {
 			board.removeFood(food);
 			movingObjects.remove(food);
 		}
+		foodsToRemove.clear();
 	}
 
 	private void mergeNewFoods() {
 		if(foodsToAdd.size() > 0) {			
 			movingObjects.addAll(foodsToAdd);
 			board.addFoods(foodsToAdd);
-			this.foodsToAdd = new ArrayList<Food>();
+			foodsToAdd.clear();
 		}
 		
 	}
@@ -146,9 +148,9 @@ public class GameManager implements ActionListener {
 			for(int j = i+1; j < cells.size(); j++) {
 				
 				if(cells.get(i).getPlayer().getTeam() == cells.get(j).getPlayer().getTeam()) {
-					checkCellCollisionBetweenTeammates(cells.get(i), cells.get(j));					
+					checkCellRepulsion(cells.get(i), cells.get(j));					
 				} else {
-					checkCollisionBetweenEnnemies(cells.get(i), cells.get(j));
+					checkCellEating(cells.get(i), cells.get(j));
 				}
 				
 			}
@@ -160,18 +162,18 @@ public class GameManager implements ActionListener {
 	
 	private void checkBoardCollisionForCoordinateObject(CoordinateObject coordObj) {
 		float radius = coordObj.getRadius();
-		if(coordObj.getX() < radius) {
-			coordObj.setX(radius);
+		if(coordObj.getX() < 0) {
+			coordObj.setX(-coordObj.getX());
 			coordObj.setInertiaX(-coordObj.getInertiaX());
-		}else if(coordObj.getX() > board.getBoardWidth() - radius) {
-			coordObj.setX(board.getBoardWidth() - radius);
+		}else if(coordObj.getX() > board.getBoardWidth()) {
+			coordObj.setX(coordObj.getX() - (coordObj.getX() - board.getBoardWidth()));
 			coordObj.setInertiaX(-coordObj.getInertiaX());
 		}
-		if(coordObj.getY() < radius) {
+		if(coordObj.getY() < 0) {
 			coordObj.setY(radius);
 			coordObj.setInertiaY(-coordObj.getInertiaY());
-		}else if(coordObj.getY() > board.getBoardHeight() - radius) {
-			coordObj.setY(board.getBoardHeight() - radius);
+		}else if(coordObj.getY() > board.getBoardHeight()) {
+			coordObj.setY(coordObj.getY() - (coordObj.getY() - board.getBoardHeight()));
 			coordObj.setInertiaY(-coordObj.getInertiaY());
 		}
 	}
@@ -196,7 +198,7 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void checkCellCollisionBetweenTeammates(PlayerCell cellA, PlayerCell cellB){			
+	private void checkCellRepulsion(PlayerCell cellA, PlayerCell cellB){			
 		float distX = cellA.getX() - cellB.getX();
 		float distY = cellA.getY() - cellB.getY();
 		float dist = (float)Math.hypot(distX, distY);
@@ -213,7 +215,7 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void checkCollisionBetweenEnnemies(PlayerCell cellA, PlayerCell cellB) {
+	private void checkCellEating(PlayerCell cellA, PlayerCell cellB) {
 		PlayerCell bigger;
 		PlayerCell smaller;
 		if(cellA.getSize() > cellB.getSize()) {
@@ -264,7 +266,7 @@ public class GameManager implements ActionListener {
 		movingObjects.removeAll(toRemove);
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
-				
+				System.out.println(player.getCells().size());
 				for(PlayerCell cell : player.getCells()) {
 					cell.applyMouvement();
 				}
@@ -293,6 +295,11 @@ public class GameManager implements ActionListener {
 		Player player = board.getPlayer(playerId);
 		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
 		foodsToAdd.addAll(foods);
+	}
+	
+	public void split(int playerId, float mouseX, float mouseY) {
+		Player player = board.getPlayer(playerId);
+		playerManager.split(player, mouseX, mouseY);
 	}
 
 }

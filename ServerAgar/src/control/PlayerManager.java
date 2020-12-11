@@ -11,9 +11,12 @@ import model.Team;
 public class PlayerManager {
 
 	private Monitor monitor;
+	
+	private List<PlayerCell> cellsToAdd;
 
 	public PlayerManager(Monitor monitor) {
 		this.monitor = monitor;
+		cellsToAdd = new ArrayList<>();
 	}
 
 	public void addScore(Team team, int amount) {
@@ -49,6 +52,25 @@ public class PlayerManager {
 			}
 		}
 		return foods;
+	}
+	
+	public void split(Player player, float mouseX, float mouseY) {
+		for(PlayerCell cell : player.getCells()) {
+			if(cell.getSize() >= PlayerCell.MIN_SPLITTING_SIZE) {
+				double distX = mouseX - cell.getX();
+				double distY = mouseY - cell.getY();
+				double dist = Math.hypot(distX, distY);
+				PlayerCell newCell = new PlayerCell(cell, 0.5f, (float)(distX/dist), (float)(distY/dist));
+				cellsToAdd.add(newCell);
+			}
+		}
+	}
+	
+	public void addWaitingPlayerCells() {
+		for(PlayerCell cell : cellsToAdd) {
+			cell.getPlayer().addCell(cell);
+		}
+		cellsToAdd.clear();
 	}
 
 	public void moveToward(PlayerCell cell, float mouseX, float mouseY) {

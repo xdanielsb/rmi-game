@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player implements Serializable, Comparable<Player> {
+public class Player implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -101,11 +101,6 @@ public class Player implements Serializable, Comparable<Player> {
 
 	public boolean removeCell(PlayerCell cell) {
 		return cells.remove(cell);
-	}
-
-	@Override
-	public int compareTo(Player player) {
-		return Double.compare(this.getSize(), player.getSize());
 	}
 
 }

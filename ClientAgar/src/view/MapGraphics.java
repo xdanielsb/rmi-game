@@ -21,8 +21,8 @@ public class MapGraphics extends PApplet {
 	private Player player;
 	private boolean gameOver;
 	
-	private boolean isMouseUpdated;
 	private boolean askForThrow;
+	private boolean askForSplit;
 	
 	private BoardDisplayer boardDisplayer;
 
@@ -34,8 +34,8 @@ public class MapGraphics extends PApplet {
 		this.board = rm.getBoard();
 		this.player = board.getPlayer(id);
 		
-		isMouseUpdated = false;
 		askForThrow = false;
+		askForSplit = false;
 
 		Runtime runtime = Runtime.getRuntime();
 		Runnable runnable = () -> {
@@ -90,7 +90,12 @@ public class MapGraphics extends PApplet {
 
 	public void update() throws RemoteException
 	{		this.gameOver = rm.gameOver();
-		this.board = rm.getBoard();
+		
+		try {			
+			this.board = rm.getBoard();
+		}catch(RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		if(this.board.getPlayer(id).isAlive())
 			this.player = this.board.getPlayer(this.id);
@@ -101,34 +106,41 @@ public class MapGraphics extends PApplet {
 				this.board.getTeams().get(1).getScore()
 		);
 		
-		if(isMouseUpdated) {
-			try {				
-				rm.sendMousePosition(id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
-				isMouseUpdated = false;
-			}catch(RemoteException e) {
-				e.printStackTrace();
-			}
+		float modifyMouseX = mouseX - (centerX) + player.getX();
+		float modifyMouseY = mouseY - (centerY) + player.getY();
+		
+		try {				
+			rm.sendMousePosition(id, modifyMouseX, modifyMouseY);
+		}catch(RemoteException e) {
+			e.printStackTrace();
 		}
 		
 		if(askForThrow) {
 			try {
-				this.rm.throwFood(this.id, mouseX - (centerX) + player.getX(), mouseY - (centerY) + player.getY());
+				rm.throwFood(this.id, modifyMouseX, modifyMouseY);
 				askForThrow = false;
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
-	}
 
-	@Override
-	public void mouseMoved() {
-		isMouseUpdated = true;		
+		if(askForSplit) {
+			try {
+				rm.split(this.id, modifyMouseX, modifyMouseY);
+				askForSplit = false;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
-	public void mousePressed()
-	{
-		askForThrow = true;
+	public void mousePressed() {
+		if(mouseButton == LEFT) {
+			askForSplit = true;
+		}else if(mouseButton == RIGHT) {
+			askForThrow = true;
+		}
 	}
 
 }

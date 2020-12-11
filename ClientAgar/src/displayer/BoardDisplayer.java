@@ -6,6 +6,7 @@ import java.util.Collections;
 import model.Board;
 import model.Food;
 import model.Player;
+import model.PlayerCell;
 import processing.core.PApplet;
 
 public class BoardDisplayer {
@@ -40,8 +41,8 @@ public class BoardDisplayer {
 		sketch.scale(zoomRatio);
 
 		sketch.translate(
-				(float)((centerX/zoomRatio) - player.getX()),
-				(float)((centerY/zoomRatio) - player.getY())
+				(centerX/zoomRatio) - player.getX(),
+				(centerY/zoomRatio) - player.getY()
 		);
 		
 		for(Food food : board.getFoods()) {
@@ -50,13 +51,18 @@ public class BoardDisplayer {
 			}
 		}
 		
-		ArrayList<Player> p = new ArrayList<Player>(board.getPlayers());
-		Collections.sort(p);
+		ArrayList<PlayerCell> cells = new ArrayList<>();
+		for(Player p : board.getPlayers()) {
+			if(p.isAlive()) {						
+				cells.addAll(p.getCells());
 		
-		for(Player playerToDraw : p) {
-			if(playerToDraw.isAlive()) {						
-				PlayerDisplayer.draw(playerToDraw, sketch);
 			}
+		}
+		
+		Collections.sort(cells);
+		
+		for(PlayerCell cellToDraw : cells) {
+			PlayerCellDisplayer.draw(cellToDraw, sketch);
 		}
 
 		OuterBoundsDisplayer.draw(

@@ -3,7 +3,7 @@ package model;
 import java.awt.Color;
 import java.io.Serializable;
 
-public abstract class CoordinateObject implements Serializable {
+public abstract class CoordinateObject implements Serializable, Comparable<CoordinateObject> {
 
 
 	private static final long serialVersionUID = 1L;
@@ -96,5 +96,11 @@ public abstract class CoordinateObject implements Serializable {
 			inertiaY = 0;
 		}
 	}
+	
+	@Override
+	public int compareTo(CoordinateObject coordObj) {
+		return Double.compare(this.getSize(), coordObj.getSize());
+	}
+
 
 }
