@@ -7,11 +7,15 @@ public class PlayerCell extends FeedableObject {
 	public static final int CELL_MIN_SIZE = 50;
 	public static final int MIN_THROWING_FOOD_SIZE = 400;
 	public static final int MIN_SPLITTING_SIZE = 100;
+	public static final float MIN_SPEED = 0.5f;
+	public static final int COOLDOWN_INITIAL = 625;
 
 	private float movementX;
 	private float movementY;
+	
+	private int cooldown;
 
-	public Player player;
+	private Player player;
 
 	public PlayerCell(Player player, int size) {
 		super(
@@ -22,19 +26,24 @@ public class PlayerCell extends FeedableObject {
 		);
 		movementX = 0;
 		movementY = 0;
+		cooldown = 0;
 		this.player = player;
 	}
 	
 	public PlayerCell(PlayerCell cell, float ratio, float directionX, float directionY) {
 		super(
-				cell.getX() + cell.getRadius()*directionX,
-				cell.getY() + cell.getRadius()*directionY,
+				cell.getX(),
+				cell.getY(),
 				(int)(cell.getSize()*ratio),
 				cell.getPlayer().getTeam().getColor()
 		);
 		cell.setSize(cell.getSize() - this.getSize());
+		this.setInertiaX(directionX*4);
+		this.setInertiaY(directionY*4);
 		movementX = 0;
 		movementY = 0;
+		cooldown = COOLDOWN_INITIAL;
+		cell.resetCooldown();
 		player = cell.getPlayer();
 	}
 
@@ -52,13 +61,26 @@ public class PlayerCell extends FeedableObject {
 
 	@Override
 	public float getSpeedX() {
-		return super.getSpeedX() + movementX;
+		return super.getSpeedX() + movementX * (MIN_SPEED + (1-MIN_SPEED)*((float)CELL_MIN_SIZE/(float)getSize()));
 	}
 
 	@Override
 	public float getSpeedY() {
-		return super.getSpeedY() + movementY;
+		return super.getSpeedY() + movementY * (MIN_SPEED + (1-MIN_SPEED)*((float)CELL_MIN_SIZE/(float)getSize()));
 	}
 	
+	public void updateCooldown() {
+		if(cooldown > 0) {
+			cooldown -= 1;
+		}
+	}
+	
+	public int getCooldown() {
+		return cooldown;
+	}
+	
+	public void resetCooldown() {
+		cooldown = COOLDOWN_INITIAL;
+	}
 	
 }

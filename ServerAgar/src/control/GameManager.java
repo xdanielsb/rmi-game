@@ -136,21 +136,32 @@ public class GameManager implements ActionListener {
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
 				
-				for(PlayerCell cell : player.getCells()) {					
+				for(PlayerCell cell : player.getCells()) {
 					checkBoardCollisionForFeedableObject(cell);
 					checkFoodCollision(cell);
+					cell.updateCooldown();
 					cells.add(cell);
 				}
 				
 			}
 		}
 		for(int i = 0; i < cells.size() - 1; i++) {
+			PlayerCell cellA = cells.get(i);
 			for(int j = i+1; j < cells.size(); j++) {
+				PlayerCell cellB = cells.get(j);
 				
-				if(cells.get(i).getPlayer().getTeam() == cells.get(j).getPlayer().getTeam()) {
-					checkCellRepulsion(cells.get(i), cells.get(j));					
+				if(cellA.getPlayer().getTeam() == cellB.getPlayer().getTeam()) {
+					if(cellA.getPlayer() == cellB.getPlayer()) {
+						if(cellA.getCooldown() <= 0 && cellB.getCooldown() <= 0) {							
+							checkCellEating(cellA, cellB);
+						} else {
+							checkCellRepulsion(cellA, cellB);												
+						}
+					} else {						
+						checkCellRepulsion(cellA, cellB);					
+					}
 				} else {
-					checkCellEating(cells.get(i), cells.get(j));
+					checkCellEating(cellA, cellB);
 				}
 				
 			}
@@ -266,11 +277,9 @@ public class GameManager implements ActionListener {
 		movingObjects.removeAll(toRemove);
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
-				System.out.println(player.getCells().size());
 				for(PlayerCell cell : player.getCells()) {
 					cell.applyMouvement();
 				}
-				
 			}
 		}
 	}
