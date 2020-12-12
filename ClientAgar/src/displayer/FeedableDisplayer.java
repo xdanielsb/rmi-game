@@ -2,11 +2,13 @@ package displayer;
 
 import java.awt.Color;
 
+import model.FeedableObject;
 import model.PlayerCell;
+import model.SpikeCell;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
-public class PlayerCellDisplayer {
+public class FeedableDisplayer {
 	public static void draw(PlayerCell cell, PApplet sketch)
 	{
 		sketch.pushMatrix();
@@ -24,5 +26,24 @@ public class PlayerCellDisplayer {
 		sketch.text(cell.getSize(), -textSize/6, textSize);
 		
 		sketch.popMatrix();
+	}
+	
+	public static void draw(SpikeCell cell, PApplet sketch) {
+		sketch.pushMatrix();
+		sketch.translate(cell.getX(), cell.getY());
+		
+		Color color = cell.getColor();
+		sketch.fill(color.getRed(), color.getGreen(), color.getBlue());
+		sketch.circle(0, 0, cell.getRadius()*2);
+		
+		sketch.popMatrix();
+	}
+	
+	public static void draw(FeedableObject cell, PApplet sketch) {
+		if(cell instanceof PlayerCell) {
+			draw((PlayerCell)cell, sketch);
+		} else if(cell instanceof SpikeCell){
+			draw((SpikeCell)cell, sketch);
+		}
 	}
 }

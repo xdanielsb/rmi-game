@@ -2,7 +2,7 @@ package model;
 
 import java.awt.Color;
 
-public class FeedableObject extends CoordinateObject{
+public abstract class FeedableObject extends CoordinateObject{
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +36,11 @@ public class FeedableObject extends CoordinateObject{
 	public void eat(CoordinateObject coordObj) {
 		setSize(getSize() + coordObj.getSize());
 	}
-
+	
+	public boolean collideWith(FeedableObject fd) {
+		return true;
+	}
+		
 	@Override
 	public void applyMouvement() {
 		super.applyMouvement();

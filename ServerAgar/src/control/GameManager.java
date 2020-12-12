@@ -17,6 +17,7 @@ import model.FeedableObject;
 import model.Food;
 import model.Player;
 import model.PlayerCell;
+import model.SpikeCell;
 import model.Team;
 import remote.PlayerRemote;
 import view.ServerGUI;
@@ -31,6 +32,7 @@ public class GameManager implements ActionListener {
 	private List<CoordinateObject> movingObjects;
 	private List<Food> foodsToAdd;
 	private List<Food> foodsToRemove;
+	private List<SpikeCell> spikeToAdd;
 
 	private Timer tm;
 	private int gameTimer = 1000000;
@@ -45,6 +47,7 @@ public class GameManager implements ActionListener {
 		movingObjects = new ArrayList<>();
 		foodsToAdd = new ArrayList<>();
 		foodsToRemove = new ArrayList<>();
+		spikeToAdd = new ArrayList<>();
 
 		monitor = new Monitor(board);
 		playerManager = new PlayerManager(monitor);
@@ -58,8 +61,8 @@ public class GameManager implements ActionListener {
 			applyMovePhysic();
 			checkCollision();
 			playerManager.addWaitingPlayerCells();
-			mergeNewFoods();
-			removeFoods();
+			updateFoodList();
+			updateSpikeList();
 		}
 		if(gameTimer > 0) {
 			gameTimer -= 16;
@@ -71,21 +74,25 @@ public class GameManager implements ActionListener {
 		tm.start();
 	}
 
-	private void removeFoods() {
+	private void updateFoodList() {
 		for(Food food : foodsToRemove) {
 			board.removeFood(food);
 			movingObjects.remove(food);
 		}
 		foodsToRemove.clear();
-	}
-
-	private void mergeNewFoods() {
+		
 		if(foodsToAdd.size() > 0) {			
 			movingObjects.addAll(foodsToAdd);
 			board.addFoods(foodsToAdd);
 			foodsToAdd.clear();
 		}
-		
+	}
+
+	private void updateSpikeList() {
+		for(SpikeCell spike : spikeToAdd) {
+			board.addSpike(spike);
+		}
+		spikeToAdd.clear();
 	}
 
 	public float getTimer() throws RemoteException {
@@ -98,6 +105,10 @@ public class GameManager implements ActionListener {
 
 	public void addPlayer(Player player) {
 		board.addPlayer(player);
+	}
+	
+	public void addSpike(SpikeCell spike) {
+		spikeToAdd.add(spike);
 	}
 
 	public void removePlayer(int id) {
@@ -132,7 +143,7 @@ public class GameManager implements ActionListener {
 	}
 
 	private void checkCollision() {
-		List<PlayerCell> cells = new ArrayList<>();
+		List<FeedableObject> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
 				
@@ -145,22 +156,19 @@ public class GameManager implements ActionListener {
 				
 			}
 		}
+		for(SpikeCell spike : board.getSpikeCells()) {
+			checkBoardCollisionForFeedableObject(spike);
+			checkFoodCollision(spike);
+			cells.add(spike);
+		}
 		for(int i = 0; i < cells.size() - 1; i++) {
-			PlayerCell cellA = cells.get(i);
+			FeedableObject cellA = cells.get(i);
 			for(int j = i+1; j < cells.size(); j++) {
-				PlayerCell cellB = cells.get(j);
+				FeedableObject cellB = cells.get(j);
 				
-				if(cellA.getPlayer().getTeam() == cellB.getPlayer().getTeam()) {
-					if(cellA.getPlayer() == cellB.getPlayer()) {
-						if(cellA.getCooldown() <= 0 && cellB.getCooldown() <= 0) {							
-							checkCellEating(cellA, cellB);
-						} else {
-							checkCellRepulsion(cellA, cellB);												
-						}
-					} else {						
-						checkCellRepulsion(cellA, cellB);					
-					}
-				} else {
+				if(cellA.collideWith(cellB)) {
+					checkCellRepulsion(cellA, cellB);																	
+				} else {					
 					checkCellEating(cellA, cellB);
 				}
 				
@@ -209,7 +217,7 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void checkCellRepulsion(PlayerCell cellA, PlayerCell cellB){			
+	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB){			
 		float distX = cellA.getX() - cellB.getX();
 		float distY = cellA.getY() - cellB.getY();
 		float dist = (float)Math.hypot(distX, distY);
@@ -226,9 +234,9 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void checkCellEating(PlayerCell cellA, PlayerCell cellB) {
-		PlayerCell bigger;
-		PlayerCell smaller;
+	private void checkCellEating(FeedableObject cellA, FeedableObject cellB) {
+		FeedableObject bigger;
+		FeedableObject smaller;
 		if(cellA.getSize() > cellB.getSize()) {
 			bigger = cellA;
 			smaller = cellB;
@@ -236,32 +244,23 @@ public class GameManager implements ActionListener {
 			bigger = cellB;
 			smaller = cellA;
 		}
-		if(smaller.getSize() < bigger.getSize()*0.98) {
-			double dist = Math.hypot(
-				bigger.getX() - smaller.getX(),
-				bigger.getY() - smaller.getY()
-			);
-			if(dist < bigger.getRadius()) {
-				bigger.eat(smaller);
-				playerManager.addScore(bigger.getPlayer().getTeam(), smaller.getSize());
-				removePlayerCell(smaller);
-			}
+		double dist = Math.hypot(
+			bigger.getX() - smaller.getX(),
+			bigger.getY() - smaller.getY()
+		);
+		if(dist < bigger.getRadius()) {
+			playerManager.tryEat(bigger, smaller, this);
 		}
 	}
 
-	private void checkFoodCollision(PlayerCell cell){
+	private void checkFoodCollision(FeedableObject cell){
 		for(Food food : board.getFoods()) {
 			double dist = Math.hypot(
 				cell.getX() - food.getX(),
 				cell.getY() - food.getY()
 			);
 			if(dist < cell.getRadius()) {
-				cell.eat(food);
-				playerManager.addScore(
-					cell.getPlayer().getTeam(),
-					food.getSize()
-				);
-				this.removeFood(food);
+				playerManager.tryEat(cell, food, this);
 			}
 		}
 	}
@@ -282,9 +281,12 @@ public class GameManager implements ActionListener {
 				}
 			}
 		}
+		for(SpikeCell spike : board.getSpikeCells()) {
+			spike.applyMouvement();
+		}
 	}
 
-	private void removePlayerCell(PlayerCell cell) {
+	public void removePlayerCell(PlayerCell cell) {
 		Player player = cell.getPlayer();
 		player.removeCell(cell);
 		playerManager.addScore(player.getTeam(), -cell.getSize());
@@ -293,7 +295,11 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void removeFood(Food food) {
+	public void removeSpikeCell(SpikeCell cell) {
+		board.removeSpike(cell);
+	}
+
+	public void removeFood(Food food) {
 		food.killFood();
 		if(!food.isPersistent()) {
 			foodsToRemove.add(food);

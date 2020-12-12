@@ -30,11 +30,11 @@ public class PlayerCell extends FeedableObject {
 		this.player = player;
 	}
 	
-	public PlayerCell(PlayerCell cell, float ratio, float directionX, float directionY) {
+	public PlayerCell(PlayerCell cell, int size, float directionX, float directionY) {
 		super(
 				cell.getX(),
 				cell.getY(),
-				(int)(cell.getSize()*ratio),
+				size,
 				cell.getPlayer().getTeam().getColor()
 		);
 		cell.setSize(cell.getSize() - this.getSize());
@@ -81,6 +81,25 @@ public class PlayerCell extends FeedableObject {
 	
 	public void resetCooldown() {
 		cooldown = COOLDOWN_INITIAL;
+	}
+	
+	@Override
+	public boolean collideWith(FeedableObject fo) {
+		if(fo instanceof PlayerCell) {
+			return collideWithPlayer((PlayerCell)fo);
+		} else if(fo instanceof SpikeCell) {
+			return collideWithSpike((SpikeCell)fo);
+		}
+		return false;
+	}
+	
+	public boolean collideWithPlayer(PlayerCell cell) {
+		return getPlayer().getTeam() == cell.getPlayer().getTeam() && 
+				!(getPlayer() == getPlayer() && getCooldown() == 0 && cell.getCooldown() == 0);
+	}
+
+	public boolean collideWithSpike(SpikeCell cell) {
+		return false;
 	}
 	
 }

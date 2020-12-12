@@ -36,7 +36,7 @@ public class Board implements Serializable{
 			foods.add(new Food(this));
 		}
 
-		for(int i = 0; i < nbFood; i++) {
+		for(int i = 0; i < nbSpike; i++) {
 			spikes.add(new SpikeCell(this));
 		}
 
@@ -118,12 +118,16 @@ public class Board implements Serializable{
 		return foods.remove(food);
 	}
 
-	public void addSpikes(List<SpikeCell> spikes) {
-		this.spikes.addAll(spikes);
+	public void addSpike(SpikeCell spike) {
+		this.spikes.add(spike);
 	}
 	
 	public boolean removeSpike(SpikeCell spike) {
 		return spikes.remove(spike);
+	}
+	
+	public List<SpikeCell> getSpikeCells(){
+		return spikes;
 	}
 
 }

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.Board;
+import model.FeedableObject;
 import model.Food;
 import model.Player;
-import model.PlayerCell;
 import processing.core.PApplet;
 
 public class BoardDisplayer {
@@ -51,18 +51,19 @@ public class BoardDisplayer {
 			}
 		}
 		
-		ArrayList<PlayerCell> cells = new ArrayList<>();
+		ArrayList<FeedableObject> cells = new ArrayList<>();
 		for(Player p : board.getPlayers()) {
 			if(p.isAlive()) {						
 				cells.addAll(p.getCells());
 		
 			}
 		}
+		cells.addAll(board.getSpikeCells());
 		
 		Collections.sort(cells);
 		
-		for(PlayerCell cellToDraw : cells) {
-			PlayerCellDisplayer.draw(cellToDraw, sketch);
+		for(FeedableObject cellToDraw : cells) {
+			FeedableDisplayer.draw(cellToDraw, sketch);
 		}
 
 		OuterBoundsDisplayer.draw(

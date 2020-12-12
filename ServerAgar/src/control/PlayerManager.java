@@ -3,9 +3,12 @@ package control;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.CoordinateObject;
+import model.FeedableObject;
 import model.Food;
 import model.Player;
 import model.PlayerCell;
+import model.SpikeCell;
 import model.Team;
 
 public class PlayerManager {
@@ -60,10 +63,26 @@ public class PlayerManager {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
-				PlayerCell newCell = new PlayerCell(cell, 0.5f, (float)(distX/dist), (float)(distY/dist));
+				PlayerCell newCell = new PlayerCell(cell, cell.getSize()/2, (float)(distX/dist), (float)(distY/dist));
 				cellsToAdd.add(newCell);
 			}
 		}
+	}
+	
+	public void playerCellExplosion(PlayerCell cell) {
+		float ratio = SpikeCell.EXPLOSION_INITIAL_RATIO;
+		int initialSize = cell.getSize();
+		
+		for(int i = 0; i < SpikeCell.EXPLOSION_NUMBER; i++) {
+			if(cell.getSize() < PlayerCell.MIN_SPLITTING_SIZE) {
+				break;
+			}
+			int size = Math.max((int)(initialSize*ratio), PlayerCell.CELL_MIN_SIZE);
+			double angle = Math.random()*Math.toRadians(360);
+			cell.getPlayer().addCell(new PlayerCell(cell, size, (float)Math.cos(angle), (float)Math.sin(angle)));
+			ratio /= 2;
+		}
+		
 	}
 	
 	public void addWaitingPlayerCells() {
@@ -96,10 +115,76 @@ public class PlayerManager {
 				p.addCell(new PlayerCell(p, PlayerCell.CELL_MIN_SIZE));
 				p.setAlive(true);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		};
 		new Thread(runnable).start();
+	}
+	
+	public void tryEat(FeedableObject eater, CoordinateObject eated, GameManager manager) {
+		if(eater instanceof PlayerCell) {
+			PlayerCell cell = (PlayerCell) eater;
+			if(eated instanceof Food) {
+				playerTryToEatFood(cell, (Food)eated, manager);
+			} else if(eated instanceof PlayerCell) {
+				playerTryToEatPlayer(cell, (PlayerCell)eated, manager);
+			} else if(eated instanceof SpikeCell) {
+				playerTryToEatSpike(cell, (SpikeCell)eated, manager);
+			}
+		} else if(eater instanceof SpikeCell) {
+			if(eated instanceof Food) {
+				spikeTryToEatFood((SpikeCell)eater, (Food)eated, manager);
+			}
+		}
+	}
+	
+	public void playerTryToEatFood(
+			PlayerCell eater,
+			Food eated,
+			GameManager manager
+			) {
+		eater.eat(eated);
+		addScore(eater.getPlayer().getTeam(), eated.getSize());
+		manager.removeFood(eated);
+	}
+
+	public void playerTryToEatPlayer(
+			PlayerCell eater,
+			PlayerCell eated,
+			GameManager manager	) {
+		if(eater.getPlayer() == eated.getPlayer() || eated.getSize() < eater.getSize()*0.98) {
+			eater.eat(eated);
+			addScore(eater.getPlayer().getTeam(), eated.getSize());
+			manager.removePlayerCell(eated);
+		}
+	}
+
+	public void playerTryToEatSpike(
+			PlayerCell eater,
+			SpikeCell eated,
+			GameManager manager
+	) {
+		if(eated.getSize() < eater.getSize()*0.98) {
+			playerCellExplosion(eater);
+			manager.removeSpikeCell(eated);
+		}
+	}
+	
+	public void spikeTryToEatFood(
+			SpikeCell eater,
+			Food eated,
+			GameManager manager
+	) {
+		eater.eat(eated);
+		if(eater.getSize() > SpikeCell.MAX_SPIKE_SIZE) {
+			double dist = Math.hypot(eated.getInertiaX(), eated.getInertiaY());
+			manager.addSpike(new SpikeCell(
+					eater,
+					eater.getSize()/2,
+					(float)(eated.getInertiaX()/dist),
+					(float)(eated.getInertiaY()/dist)
+			));
+		}
+		manager.removeFood(eated);
 	}
 }
