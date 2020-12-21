@@ -1,12 +1,13 @@
 package view;
 
 import java.rmi.RemoteException;
+
 import displayer.BoardDisplayer;
 import displayer.HeaderHandlerDisplayer;
 import displayer.VictoryDisplayer;
+import model.Board;
 import model.Player;
 import model.PlayerCell;
-import model.Board;
 import processing.core.PApplet;
 import remote.IPlayerRemote;
 

@@ -1,4 +1,5 @@
 package control;
+
 import view.ClientConnectGUI;
 
 public class LauncherClient {

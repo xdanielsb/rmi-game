@@ -1,7 +1,5 @@
 package view;
 
-
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -15,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import control.ClientManager;
-
 
 @SuppressWarnings("serial")
 public class ClientConnectGUI extends JFrame implements ActionListener{
