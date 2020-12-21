@@ -1,106 +1,37 @@
 package model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.rmi.Remote;
 import java.util.List;
 
-public class Player implements Serializable {
+public interface Player extends Serializable, Remote {
 
-	private static final long serialVersionUID = 1L;
-
-	private final String name;
-
-	private Team team;
-	private List<PlayerCell> cells;
-	private int id;
-	private boolean alive;
-
-	public Player(int idP, String name) {
-		this.name = name;
-		this.id = idP;
-		this.alive = true;
-	}
-
-	public int getId() {
-		return this.id;
-	}
-
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
-		cells = new ArrayList<>();
-		cells.add(new PlayerCell(this, PlayerCell.CELL_MIN_SIZE));
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setAlive(boolean alive) {
-		this.alive = alive;
-	}
-
-	public boolean isAlive() {
-		return alive;
-	}
-
-	public float getX() {
-		float max = Float.MIN_VALUE;
-		float min = Float.MAX_VALUE;
-		for(PlayerCell cell : cells) {
-			float radius = cell.getRadius();
-			float x = cell.getX();
-			if(x-radius < min) {
-				min = x-radius;
-			}
-			if(x+radius > max) {
-				max = x+radius;
-			}
-		}
-		return (min+max)/2;
-	}
-
-	public float getY() {
-		float max = Float.MIN_VALUE;
-		float min = Float.MAX_VALUE;
-		for(PlayerCell cell : cells) {
-			float radius = cell.getRadius();
-			float y = cell.getY();
-			if(y-radius < min) {
-				min = y-radius;
-			}
-			if(y+radius > max) {
-				max = y+radius;
-			}
-		}
-		return (min+max)/2;
-	}
-
-	public int getSize() {
-		int somme = 0;
-		for(PlayerCell cell : cells) {
-			somme += cell.getSize();
-		}
-		return somme;
-	}
+	static final long serialVersionUID = 1L;
 	
-	public float getRadius() {
-		return (float)Math.sqrt(getSize()/Math.PI);
-	}
+	public int getId();
 
-	public List<PlayerCell> getCells(){
-		return cells;
-	}
+	public String getName();
+	
+	public boolean isAlive();
 
-	public void addCell(PlayerCell cell) {
-		cells.add(cell);
-	}
+	public void setAlive(boolean alive);
 
-	public boolean removeCell(PlayerCell cell) {
-		return cells.remove(cell);
-	}
+	public float getX();
+
+	public float getY();
+
+	public int getSize();
+
+	public float getRadius();
+
+	public List<PlayerCell> getCells();
+	
+	public Team getTeam();
+	
+	public void setTeam(Team team);
+	
+	public void addCell(PlayerCell cell);
+	
+	public boolean removeCell(PlayerCell cell);
 
 }

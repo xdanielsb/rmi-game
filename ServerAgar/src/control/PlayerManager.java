@@ -6,15 +6,18 @@ import java.util.List;
 import model.CoordinateObject;
 import model.FeedableObject;
 import model.Food;
+import model.FoodImpl;
 import model.Player;
 import model.PlayerCell;
+import model.PlayerCellImpl;
 import model.SpikeCell;
+import model.SpikeCellImpl;
 import model.Team;
 
 public class PlayerManager {
 
 	private Monitor monitor;
-	
+
 	private List<PlayerCell> cellsToAdd;
 
 	public PlayerManager(Monitor monitor) {
@@ -38,7 +41,7 @@ public class PlayerManager {
 			}
 		}
 	}
-	
+
 	public List<Food> throwFood(Player player, float mouseX, float mouseY) {
 		List<Food> foods = new ArrayList<>();
 		for(PlayerCell cell : player.getCells()) {
@@ -46,45 +49,45 @@ public class PlayerManager {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
-				
-				Food food = new Food(cell, (float)(distX/dist), (float)(distY/dist));
+
+				Food food = new FoodImpl(cell, (float)(distX/dist), (float)(distY/dist));
 				foods.add(food);
-				
+
 				cell.setSize(cell.getSize() - food.getSize());
 				monitor.addScore(cell.getPlayer().getTeam(), -food.getSize());
 			}
 		}
 		return foods;
 	}
-	
+
 	public void split(Player player, float mouseX, float mouseY) {
 		for(PlayerCell cell : player.getCells()) {
 			if(cell.getSize() >= PlayerCell.MIN_SPLITTING_SIZE) {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
-				PlayerCell newCell = new PlayerCell(cell, cell.getSize()/2, (float)(distX/dist), (float)(distY/dist));
+				PlayerCell newCell = new PlayerCellImpl(cell, cell.getSize()/2, (float)(distX/dist), (float)(distY/dist));
 				cellsToAdd.add(newCell);
 			}
 		}
 	}
-	
+
 	public void playerCellExplosion(PlayerCell cell) {
 		float ratio = SpikeCell.EXPLOSION_INITIAL_RATIO;
 		int initialSize = cell.getSize();
-		
+
 		for(int i = 0; i < SpikeCell.EXPLOSION_NUMBER; i++) {
 			if(cell.getSize() < PlayerCell.MIN_SPLITTING_SIZE) {
 				break;
 			}
 			int size = Math.max((int)(initialSize*ratio), PlayerCell.CELL_MIN_SIZE);
 			double angle = Math.random()*Math.toRadians(360);
-			cell.getPlayer().addCell(new PlayerCell(cell, size, (float)Math.cos(angle), (float)Math.sin(angle)));
+			cell.getPlayer().addCell(new PlayerCellImpl(cell, size, (float)Math.cos(angle), (float)Math.sin(angle)));
 			ratio /= 2;
 		}
-		
+
 	}
-	
+
 	public void addWaitingPlayerCells() {
 		for(PlayerCell cell : cellsToAdd) {
 			cell.getPlayer().addCell(cell);
@@ -93,7 +96,7 @@ public class PlayerManager {
 	}
 
 	public void moveToward(PlayerCell cell, float mouseX, float mouseY) {
-		if(cell != null) {			
+		if(cell != null) {
 			float distX = mouseX - cell.getX();
 			float distY = mouseY - cell.getY();
 			float dist = (float)Math.hypot(distX, distY);
@@ -102,7 +105,7 @@ public class PlayerManager {
 				cell.setMovementY(distY/dist);
 			}else {
 				cell.setMovementX(0);
-				cell.setMovementY(0);			
+				cell.setMovementY(0);
 			}
 		}
 	}
@@ -112,7 +115,7 @@ public class PlayerManager {
 		Runnable runnable = () -> {
 			try {
 				Thread.sleep(3000);
-				p.addCell(new PlayerCell(p, PlayerCell.CELL_MIN_SIZE));
+				p.addCell(new PlayerCellImpl(p, PlayerCell.CELL_MIN_SIZE));
 				p.setAlive(true);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -120,7 +123,7 @@ public class PlayerManager {
 		};
 		new Thread(runnable).start();
 	}
-	
+
 	public void tryEat(FeedableObject eater, CoordinateObject eated, GameManager manager) {
 		if(eater instanceof PlayerCell) {
 			PlayerCell cell = (PlayerCell) eater;
@@ -137,7 +140,7 @@ public class PlayerManager {
 			}
 		}
 	}
-	
+
 	public void playerTryToEatFood(
 			PlayerCell eater,
 			Food eated,
@@ -169,7 +172,7 @@ public class PlayerManager {
 			manager.removeSpikeCell(eated);
 		}
 	}
-	
+
 	public void spikeTryToEatFood(
 			SpikeCell eater,
 			Food eated,
@@ -178,7 +181,7 @@ public class PlayerManager {
 		eater.eat(eated);
 		if(eater.getSize() > SpikeCell.MAX_SPIKE_SIZE) {
 			double dist = Math.hypot(eated.getInertiaX(), eated.getInertiaY());
-			manager.addSpike(new SpikeCell(
+			manager.addSpike(new SpikeCellImpl(
 					eater,
 					eater.getSize()/2,
 					(float)(eated.getInertiaX()/dist),

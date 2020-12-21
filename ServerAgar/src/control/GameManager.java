@@ -12,13 +12,14 @@ import java.util.List;
 import javax.swing.Timer;
 
 import model.Board;
+import model.BoardImpl;
 import model.CoordinateObject;
 import model.FeedableObject;
 import model.Food;
 import model.Player;
 import model.PlayerCell;
 import model.SpikeCell;
-import model.Team;
+import model.TeamImpl;
 import remote.PlayerRemote;
 import view.ServerGUI;
 
@@ -40,9 +41,9 @@ public class GameManager implements ActionListener {
 	private Board board;
 
 	public GameManager() {
-		board = new Board(500, 500, 300, 20);
-		board.addTeam(new Team(new Color(255, 0, 0), "Rouge", 50, 400));
-		board.addTeam(new Team(new Color(0, 0, 255), "Bleu", 750, 400));
+		board = new BoardImpl(500, 500, 300, 20);
+		board.addTeam(new TeamImpl(new Color(255, 0, 0), "Rouge", 50, 400));
+		board.addTeam(new TeamImpl(new Color(0, 0, 255), "Bleu", 750, 400));
 
 		movingObjects = new ArrayList<>();
 		foodsToAdd = new ArrayList<>();
@@ -80,8 +81,8 @@ public class GameManager implements ActionListener {
 			movingObjects.remove(food);
 		}
 		foodsToRemove.clear();
-		
-		if(foodsToAdd.size() > 0) {			
+
+		if(foodsToAdd.size() > 0) {
 			movingObjects.addAll(foodsToAdd);
 			board.addFoods(foodsToAdd);
 			foodsToAdd.clear();
@@ -106,7 +107,7 @@ public class GameManager implements ActionListener {
 	public void addPlayer(Player player) {
 		board.addPlayer(player);
 	}
-	
+
 	public void addSpike(SpikeCell spike) {
 		spikeToAdd.add(spike);
 	}
@@ -146,14 +147,14 @@ public class GameManager implements ActionListener {
 		List<FeedableObject> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
 			if(player.isAlive()) {
-				
+
 				for(PlayerCell cell : player.getCells()) {
 					checkBoardCollisionForFeedableObject(cell);
 					checkFoodCollision(cell);
 					cell.updateCooldown();
 					cells.add(cell);
 				}
-				
+
 			}
 		}
 		for(SpikeCell spike : board.getSpikeCells()) {
@@ -165,20 +166,20 @@ public class GameManager implements ActionListener {
 			FeedableObject cellA = cells.get(i);
 			for(int j = i+1; j < cells.size(); j++) {
 				FeedableObject cellB = cells.get(j);
-				
+
 				if(cellA.collideWith(cellB)) {
-					checkCellRepulsion(cellA, cellB);																	
-				} else {					
+					checkCellRepulsion(cellA, cellB);
+				} else {
 					checkCellEating(cellA, cellB);
 				}
-				
+
 			}
 		}
 		for(CoordinateObject coordObj : movingObjects) {
 			checkBoardCollisionForCoordinateObject(coordObj);
 		}
 	}
-	
+
 	private void checkBoardCollisionForCoordinateObject(CoordinateObject coordObj) {
 		float radius = coordObj.getRadius();
 		if(coordObj.getX() < 0) {
@@ -217,13 +218,13 @@ public class GameManager implements ActionListener {
 		}
 	}
 
-	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB){			
+	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB){
 		float distX = cellA.getX() - cellB.getX();
 		float distY = cellA.getY() - cellB.getY();
 		float dist = (float)Math.hypot(distX, distY);
 		float radiusA = cellA.getRadius();
 		float radiusB = cellB.getRadius();
-		if(dist < radiusA+radiusB) {				
+		if(dist < radiusA+radiusB) {
 			float superposition = radiusA+radiusB - dist;
 			float proportionA = superposition/radiusA;
 			float proportionB = superposition/radiusB;
@@ -305,13 +306,13 @@ public class GameManager implements ActionListener {
 			foodsToRemove.add(food);
 		}
 	}
-	
+
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
 		foodsToAdd.addAll(foods);
 	}
-	
+
 	public void split(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		playerManager.split(player, mouseX, mouseY);

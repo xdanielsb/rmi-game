@@ -6,6 +6,7 @@ import java.rmi.server.UnicastRemoteObject;
 import control.GameManager;
 import model.Board;
 import model.Player;
+import model.PlayerImpl;
 
 public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
@@ -22,7 +23,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 	@Override
 	public int registerPlayer(String p) throws RemoteException {
 		synchronized (mutex) {
-			Player newPlayer = new Player(playerIdIncrement, p);
+			Player newPlayer = new PlayerImpl(playerIdIncrement, p);
 			gameManager.addPlayer(newPlayer);
 			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + playerIdIncrement);
 			return playerIdIncrement++;
