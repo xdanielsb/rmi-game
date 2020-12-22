@@ -7,6 +7,7 @@ import interfaces.Board;
 import interfaces.IPlayerRemote;
 import interfaces.Player;
 import server.control.GameManager;
+import server.control.LogManager;
 import server.model.PlayerImpl;
 
 /**
@@ -39,7 +40,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 		synchronized (mutex) {
 			Player newPlayer = new PlayerImpl(playerIdIncrement, p);
 			gameManager.addPlayer(newPlayer);
-			this.gameManager.getGUI().addLog("New player connected " + p + " with PID : " + playerIdIncrement);
+			LogManager.writeLog(p + " is now connected with PID : " + playerIdIncrement);
 			return playerIdIncrement++;
 		}
 	}

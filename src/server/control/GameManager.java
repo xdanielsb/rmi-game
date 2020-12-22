@@ -20,7 +20,6 @@ import interfaces.SpikeCell;
 import server.model.BoardImpl;
 import server.model.TeamImpl;
 import server.remote.PlayerRemote;
-import server.view.ServerGUI;
 
 /**
  * This class contains all the game's mechanics
@@ -35,7 +34,6 @@ public class GameManager implements ActionListener {
 	private PlayerRemote remoteManager;
 	private PlayerManager playerManager;
 	private Monitor monitor;
-	private ServerGUI gui;
 
 	private List<CoordinateObject> movingObjects;
 	private List<Food> foodsToAdd;
@@ -187,29 +185,21 @@ public class GameManager implements ActionListener {
 	 * @param gui : graphical interface use to run the server
 	 * @return true if the server is correctly initiated
 	 */
-	public boolean initServer(ServerGUI gui) {
+	public boolean initServer() {
 		try {
-			this.gui = gui;
 			LocateRegistry.createRegistry(1099);
 			this.remoteManager = new PlayerRemote(this);
 			Naming.rebind("rmi://localhost:1099/PLM", remoteManager);
 			tm.start();
+			LogManager.writeLog("Server Initialized");
 		} catch (Exception e) {
-			System.out.println("E01: Error initializing the server.");
+			LogManager.writeLog("E01: Error initializing the server.");
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-
-	/**
-	 * Method to get Graphical interface
-	 * @return the graphical interface
-	 */
-	public ServerGUI getGUI() {
-		return this.gui;
-	}
-
+	
 	/**
 	 * Method call during a server tick to check all the board collisions
 	 */
