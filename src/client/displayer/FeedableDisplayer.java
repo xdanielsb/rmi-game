@@ -54,7 +54,7 @@ public class FeedableDisplayer {
 		for(int i = 0; i < 6; i++)
 		{
 			sketch.pushMatrix();
-			sketch.rotate(sketch.radians(i * 15f));
+			sketch.rotate(PApplet.radians(i * 15f));
 			sketch.square(0, 0, cell.getRadius() * 1.6f);
 			sketch.popMatrix();
 		}
