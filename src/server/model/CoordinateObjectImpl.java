@@ -15,6 +15,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	private float x;
 	private float y;
 	private int size;
+	private float radius;
 	private Color color;
 	private float inertiaX;
 	private float inertiaY;
@@ -30,6 +31,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 		this.x = x;
 		this.y = y;
 		this.size = size;
+		this.radius = (float)Math.sqrt(size/Math.PI);
 		this.color = color;
 		this.inertiaX = 0;
 		this.inertiaY = 0;
@@ -97,6 +99,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	 */
 	public void setSize(int size) {
 		this.size = size;
+		radius = (float)Math.sqrt(size/Math.PI);
 	}
 
 	/**
@@ -104,7 +107,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	 * @return cell raduis ( sqrt(cell.size/PI) )
 	 */
 	public float getRadius() {
-		return (float)Math.sqrt(size/Math.PI);
+		return radius;
 	}
 
 	/**
