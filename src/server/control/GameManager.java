@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,14 @@ import server.model.TeamImpl;
 import server.remote.PlayerRemote;
 import server.view.ServerGUI;
 
+/**
+ * This class contains all the game's mechanics
+ * - treatment of client call from remote
+ * - game's ticks
+ * - objects movements
+ * - objects collision
+ * - score update
+ */
 public class GameManager implements ActionListener {
 
 	private PlayerRemote remoteManager;
@@ -40,6 +47,12 @@ public class GameManager implements ActionListener {
 
 	private Board board;
 
+	/**
+	 * Main constructor
+	 * - creation of the board with two teams
+	 * - creation of all the lists for the objects to update (from game mechanics or from events)
+	 * - creation of the player manager and the monitor
+	 */
 	public GameManager() {
 		board = new BoardImpl(500, 500, 300, 20);
 		board.addTeam(new TeamImpl(new Color(255, 0, 0), "Rouge", 50, 400));
@@ -50,12 +63,17 @@ public class GameManager implements ActionListener {
 		foodsToRemove = new ArrayList<>();
 		spikeToAdd = new ArrayList<>();
 
-		monitor = new Monitor(board);
+		monitor = new Monitor();
 		playerManager = new PlayerManager(monitor);
 
 		tm = new Timer(16, this);
 	}
 
+	
+	/**
+	 * Function call by the Timer every 16 milliseconds
+	 * This function execute 1 server tick and apply all game mechanics
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(!this.gameOver()) {
@@ -75,6 +93,12 @@ public class GameManager implements ActionListener {
 		tm.start();
 	}
 
+	/**
+	 * Method call during a server's tick
+	 * Allow to update the food list after the game mechanics,
+	 * to avoid to modify the list when we browse it 
+	 * (by adding a food with a client call or with a game mechanic)
+	 */
 	private void updateFoodList() {
 		for(Food food : foodsToRemove) {
 			board.removeFood(food);
@@ -89,6 +113,10 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during a server's tick
+	 * Allow to update the spike cell list without modifying the list when we brows it
+	 */
 	private void updateSpikeList() {
 		for(SpikeCell spike : spikeToAdd) {
 			board.addSpike(spike);
@@ -96,34 +124,69 @@ public class GameManager implements ActionListener {
 		spikeToAdd.clear();
 	}
 
-	public float getTimer() throws RemoteException {
+	/**
+	 * Method call by the client to know the time left in the game
+	 * @return The time left for the game
+	 */
+	public int getTimer() {
 		return gameTimer;
 	}
 
+	/**
+	 * Method to know if the game is over
+	 * @return true if the game is over, false if not
+	 */
 	public boolean gameOver() {
 		return gameTimer <= 0;
 	}
 
+	/**
+	 * Method to add a player
+	 * @param player : Player to add
+	 */
 	public void addPlayer(Player player) {
 		board.addPlayer(player);
 	}
 
+	/**
+	 * Method to add a spike, this spike will be add to the board at the and of a tick execution
+	 * @param spike : Spike to add
+	 */
 	public void addSpike(SpikeCell spike) {
 		spikeToAdd.add(spike);
 	}
 
+	/**
+	 * Method to remove a player with a specific id from the board
+	 * @param id : int id of the player to remove
+	 */
 	public void removePlayer(int id) {
 		board.removePlayer(board.getPlayer(id));
 	}
 
+	/**
+	 * Method to get the board
+	 * @return the Board
+	 */
 	public Board getBoard() {
 		return board;
 	}
 
+	/**
+	 * Method to ask to move a player in a specific direction
+	 * @param id : int id of the player to move
+	 * @param mouseX : float X position of the direction to take
+	 * @param mouseY : float Y position of the direction to take
+	 */
 	public void sendMousePosition(int id, float mouseX, float mouseY) {
 		playerManager.sendMousePosition(board.getPlayer(id), mouseX, mouseY);
 	}
 
+	/**
+	 * Method initialization of the server 
+	 * @param gui : graphical interface use to run the server
+	 * @return true if the server is correctly initiated
+	 */
 	public boolean initServer(ServerGUI gui) {
 		try {
 			this.gui = gui;
@@ -139,10 +202,17 @@ public class GameManager implements ActionListener {
 		return true;
 	}
 
+	/**
+	 * Method to get Graphical interface
+	 * @return the graphical interface
+	 */
 	public ServerGUI getGUI() {
 		return this.gui;
 	}
 
+	/**
+	 * Method call during a server tick to check all the board collisions
+	 */
 	private void checkCollision() {
 		List<FeedableObject> cells = new ArrayList<>();
 		for(Player player : board.getPlayers()) {
@@ -180,6 +250,11 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during the general collision check
+	 * This method is specific to collision with the board bounds for CoordinateObjects
+	 * @param coordObj : CoordinateObject who possibly collide with board's bounds
+	 */
 	private void checkBoardCollisionForCoordinateObject(CoordinateObject coordObj) {
 		float radius = coordObj.getRadius();
 		if(coordObj.getX() < 0) {
@@ -198,6 +273,11 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during the general collision check
+	 * This method is specific to collision with the board bounds for FeedableObjects
+	 * @param cell : FeedableObject who possibly collide with board's bounds
+	 */
 	private void checkBoardCollisionForFeedableObject(FeedableObject cell) {
 		float radius = cell.getRadius();
 		if(cell.getX() < radius) {
@@ -218,6 +298,12 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during the general collision check when two cell collide
+	 * If two FeedableObjects collide then they repel each other
+	 * @param cellA : first FeedableObject to repulse
+	 * @param cellB : second FeedableObject to repulse
+	 */
 	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB){
 		float distX = cellA.getX() - cellB.getX();
 		float distY = cellA.getY() - cellB.getY();
@@ -235,6 +321,11 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during the general collision check when two FeedableObject overlap
+	 * @param cellA : first FeedableObject who will overlap
+	 * @param cellB : second FeedableObject who will overlap
+	 */
 	private void checkCellEating(FeedableObject cellA, FeedableObject cellB) {
 		FeedableObject bigger;
 		FeedableObject smaller;
@@ -254,6 +345,11 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during the general collision
+	 * This method check if the FeedableObject can eat a food
+	 * @param cell : FeedableObject to feed
+	 */
 	private void checkFoodCollision(FeedableObject cell){
 		for(Food food : board.getFoods()) {
 			double dist = Math.hypot(
@@ -266,6 +362,9 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call during a server's tick to apply move physics on all board objects
+	 */
 	private void applyMovePhysic() {
 		List<CoordinateObject> toRemove = new ArrayList<>();
 		for(CoordinateObject moveObj : movingObjects) {
@@ -287,6 +386,10 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method to remove a player cell from the board
+	 * @param cell : PlayerCell to remove
+	 */
 	public void removePlayerCell(PlayerCell cell) {
 		Player player = cell.getPlayer();
 		player.removeCell(cell);
@@ -296,10 +399,18 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method to remove a SpikeCell from the Board
+	 * @param cell : SpikeCell to remove
+	 */
 	public void removeSpikeCell(SpikeCell cell) {
 		board.removeSpike(cell);
 	}
 
+	/**
+	 * Method to remove a Food from the Board
+	 * @param food : Food to remove
+	 */
 	public void removeFood(Food food) {
 		food.killFood();
 		if(!food.isPersistent()) {
@@ -307,12 +418,24 @@ public class GameManager implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method call on a client event, will ask to this player to throw food
+	 * @param playerId : int id of the player
+	 * @param mouseX : float X direction to throw food
+	 * @param mouseY : float Y direction to throw food
+	 */
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
 		foodsToAdd.addAll(foods);
 	}
 
+	/**
+	 * Method call on a client event, will ask to this player to split himself
+	 * @param playerId : int id of this player
+	 * @param mouseX : float X direction to split
+	 * @param mouseY : float Y direction to split
+	 */
 	public void split(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		playerManager.split(player, mouseX, mouseY);

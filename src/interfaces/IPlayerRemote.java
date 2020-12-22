@@ -13,7 +13,7 @@ public interface IPlayerRemote extends Remote {
 
 	public void split(int idPlayer, float mouseX, float mouseY) throws RemoteException;
 	
-	public float getTimer() throws RemoteException;
+	public int getTimer() throws RemoteException;
 
 	public Board getBoard() throws RemoteException;
 	
