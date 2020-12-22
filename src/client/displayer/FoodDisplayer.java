@@ -7,8 +7,15 @@ import processing.core.PApplet;
 
 public class FoodDisplayer {
 
-	public static void draw(Food food, PApplet sketch)
-	{
+	/**
+	 * Draw a food on the board 
+	 * 
+	 * @param food A food to draw
+	 * @param sketch The object provided by Processing, to draw shapes
+	 */
+	public static void draw(Food food, PApplet sketch) {
+		sketch.stroke(0);
+		sketch.strokeWeight(1);
 		Color foodColor = food.getColor();
 		sketch.fill(foodColor.getRed(), foodColor.getGreen(), foodColor.getBlue());
 		float diameter;

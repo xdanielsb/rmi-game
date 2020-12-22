@@ -1,18 +1,26 @@
 package client.view;
 
+import java.util.List;
+
+import interfaces.Team;
+
 public class HeaderHandler {
 
 	public float gameTimer;
-	public int xP;
-	public int yP;
+	public List<Team> teams;
 
 	public HeaderHandler() {
 		gameTimer = 0;
 	}
 
-	public void update(float newTimer, int so, int st) {
+	/**
+	 * Update the different values of the HeaderHandler
+	 *  
+	 * @param newTimer New value of the game timer
+	 * @param teams List of teams whose informations will be displayed
+	 */
+	public void update(float newTimer, List<Team> teams) {
 		gameTimer = newTimer;
-		xP = so;
-		yP = st;
+		this.teams = teams;
 	}
 }

@@ -48,6 +48,12 @@ public class ClientConnectGUI extends JFrame implements ActionListener{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+	/**
+	 * Triggered when we click on a Swing component with
+	 * an action listener. 
+	 * 
+	 * @param evt Event triggered by the element 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if( evt.getSource() == startGame) {
@@ -57,6 +63,11 @@ public class ClientConnectGUI extends JFrame implements ActionListener{
 		}
 	}
 
+	/**
+	 * Returns the username written by the user in the client GUI
+	 * 
+	 * @return String The username written in the field
+	 */
 	public String getUserName() {
 		return this.username.getText();
 	}

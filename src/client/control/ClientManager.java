@@ -12,8 +12,12 @@ public class ClientManager {
 		
 	}
 	
+	/**
+	 * Connect the client to the server
+	 * 
+	 * @param username Username of the player
+	 */
 	public void connectToServer(String username) {
-		
 		try {
 			this.stub = (IPlayerRemote) Naming.lookup("rmi://localhost:1099/PLM");
 			MapGraphics map = new MapGraphics(stub, username);

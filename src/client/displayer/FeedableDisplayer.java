@@ -9,8 +9,16 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class FeedableDisplayer {
-	public static void draw(PlayerCell cell, PApplet sketch)
-	{
+	
+	/**
+	 * Draw a cell of a player
+	 * 
+	 * @param cell One of the different cells of the player
+	 * @param sketch The object provided by Processing, to draw shapes
+	 */
+	public static void draw(PlayerCell cell, PApplet sketch) {
+		sketch.stroke(0);
+		sketch.strokeWeight(1);
 		sketch.pushMatrix();
 		sketch.translate(cell.getX(), cell.getY());
 		
@@ -28,17 +36,43 @@ public class FeedableDisplayer {
 		sketch.popMatrix();
 	}
 	
+	/**
+	 * Draw a spike cell on the board.
+	 * 
+	 * @param cell A spike cell
+	 * @param sketch The object provided by Processing, to draw shapes
+	 */
 	public static void draw(SpikeCell cell, PApplet sketch) {
+		sketch.stroke(0);
+		sketch.strokeWeight(1);
 		sketch.pushMatrix();
 		sketch.translate(cell.getX(), cell.getY());
-		
 		Color color = cell.getColor();
 		sketch.fill(color.getRed(), color.getGreen(), color.getBlue());
-		sketch.circle(0, 0, cell.getRadius()*2);
+		sketch.rectMode(PConstants.CENTER);
+		
+		for(int i = 0; i < 6; i++)
+		{
+			sketch.pushMatrix();
+			sketch.rotate(sketch.radians(i * 15f));
+			sketch.square(0, 0, cell.getRadius() * 1.6f);
+			sketch.popMatrix();
+		}
+
+		sketch.rectMode(PConstants.CORNER);
+		sketch.noStroke();
+		sketch.circle(0, 0, cell.getRadius() * 2);
 		
 		sketch.popMatrix();
 	}
 	
+	/**
+	 * Get a feedable object in parameter and call the right function
+	 * to draw it
+	 * 
+	 * @param cell A feedable object cell
+	 * @param sketch The object provided by Processing, to draw shapes
+	 */
 	public static void draw(FeedableObject cell, PApplet sketch) {
 		if(cell instanceof PlayerCell) {
 			draw((PlayerCell)cell, sketch);

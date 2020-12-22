@@ -35,10 +35,21 @@ public class BoardDisplayer {
 		maximumPlayerSizeMargeRatio = Math.sqrt(maximumPlayerSize - initialPlayerSize);
 	}
 	
+	/**
+	 * Draws the differents elements composing the board
+	 * of the game.
+	 * 
+	 * @param board 	The board of the game
+	 * @param player 	Player controlled by the client
+	 * @param centerX 	Center of the X axis 
+	 * @param centerY 	Center of the Y axis
+	 * @param sketch 	The object provided by Processing, to draw shapes
+	 */
 	public void draw(Board board, Player player, float centerX, float centerY, PApplet sketch) {
 		sketch.pushMatrix();
 		float zoomRatio = calculateScale(player);
 		sketch.scale(zoomRatio);
+		sketch.strokeWeight(1);
 
 		sketch.translate(
 				(centerX/zoomRatio) - player.getX(),
@@ -76,6 +87,13 @@ public class BoardDisplayer {
 		sketch.popMatrix();
 	}
 	
+	/**
+	 * Calculate and return the zoom ratio depending on
+	 * the player size.
+	 * 
+	 * @param player 	Player controlled by the client
+	 * @return 			The value of the zoom ratio 
+	 */
 	public float calculateScale(Player player) {
 		double playerScreenProportion;
 		

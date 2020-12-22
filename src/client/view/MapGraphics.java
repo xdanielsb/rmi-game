@@ -50,7 +50,6 @@ public class MapGraphics extends PApplet {
 		runtime.addShutdownHook(new Thread(runnable));
 	}
 
-	// method for setting the size of the window
 	public void settings() {
 		size(1280, 720);
 		centerX = width/2;
@@ -64,7 +63,6 @@ public class MapGraphics extends PApplet {
 		);
 	}
 
-	// identical use to setup in Processing IDE except for size()
 	public void setup() {
 		surface.setTitle("Agar IO");
 	}
@@ -89,6 +87,10 @@ public class MapGraphics extends PApplet {
 
 	}
 
+	/**
+	 * Updates the differents objects needed via the interface IPlayerRemote
+	 * to make the client works.
+	 */
 	public void update() throws RemoteException
 	{		this.gameOver = rm.gameOver();
 		
@@ -103,8 +105,7 @@ public class MapGraphics extends PApplet {
 		
 		this.header.update(
 				rm.getTimer(),
-				this.board.getTeams().get(0).getScore(),
-				this.board.getTeams().get(1).getScore()
+				this.board.getTeams()
 		);
 		
 		float modifyMouseX = mouseX - (centerX) + player.getX();
@@ -135,6 +136,12 @@ public class MapGraphics extends PApplet {
 		}
 	}
 	
+
+	/**
+	 * Override of the function mousePressed of Processing. 
+	 * It trigger on the click of any mouth button. We handle the click
+	 * by checking the last button clicked.
+	 */
 	@Override
 	public void mousePressed() {
 		if(mouseButton == LEFT) {
