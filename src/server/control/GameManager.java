@@ -53,8 +53,8 @@ public class GameManager implements ActionListener {
 	 */
 	public GameManager() {
 		board = new BoardImpl(500, 500, 300, 20);
-		board.addTeam(new TeamImpl(new Color(255, 0, 0), "Rouge", 50, 400));
-		board.addTeam(new TeamImpl(new Color(0, 0, 255), "Bleu", 750, 400));
+		board.addTeam(new TeamImpl(new Color(255, 0, 0), "Rouge", 50, 50));
+		board.addTeam(new TeamImpl(new Color(0, 0, 255), "Bleu", 450, 450));
 
 		movingObjects = new ArrayList<>();
 		foodsToAdd = new ArrayList<>();

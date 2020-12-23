@@ -118,7 +118,7 @@ public class BoardImpl implements Board{
 	}
 
 	/**
-	 * Method to add a Player to the Board
+	 * Method to add a Player to the Board and to chose a team for this player
 	 * @param player : Player to add
 	 */
 	public void addPlayer(Player player) {

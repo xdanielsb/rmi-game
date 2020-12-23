@@ -60,6 +60,7 @@ public class PlayerImpl implements Player {
 		this.team = team;
 		cells = new ArrayList<>();
 		cells.add(new PlayerCellImpl(this, PlayerCell.CELL_MIN_SIZE));
+		updateCoordinates();
 	}
 
 	/**
@@ -115,20 +116,20 @@ public class PlayerImpl implements Player {
 			float cellX = cell.getX();
 			float cellY = cell.getY();
 			if(cellX-radius < minX) {
-				minX = x-radius;
+				minX = cellX-radius;
 			}
 			if(cellX+radius > maxX) {
-				maxX = x+radius;
+				maxX = cellX+radius;
 			}
 			if(cellY-radius < minY) {
-				minY = y-radius;
+				minY = cellY-radius;
 			}
 			if(cellY+radius > maxY) {
-				maxY = y+radius;
+				maxY = cellY+radius;
 			}
 		}
-		x =  (minX+maxX)/2;
-		y =  (minY+maxY)/2;
+		x = (minX+maxX)/2;
+		y = (minY+maxY)/2;
 	}
 
 	/**
