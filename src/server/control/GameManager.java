@@ -221,22 +221,30 @@ public class GameManager implements ActionListener {
 
 			}
 		}
+		
 		for(SpikeCell spike : board.getSpikeCells()) {
 			checkBoardCollisionForFeedableObject(spike);
 			checkFoodCollision(spike);
 			cells.add(spike);
 		}
+		
 		for(int i = 0; i < cells.size() - 1; i++) {
 			FeedableObject cellA = cells.get(i);
-			for(int j = i+1; j < cells.size(); j++) {
-				FeedableObject cellB = cells.get(j);
-
-				if(cellA.collideWith(cellB)) {
-					checkCellRepulsion(cellA, cellB);
-				} else {
-					checkCellEating(cellA, cellB);
+			if(cellA.isAlive()) {
+				
+				for(int j = i+1; j < cells.size(); j++) {
+					FeedableObject cellB = cells.get(j);
+					if(cellB.isAlive() && cellA.isAlive()) {
+						
+						if(cellA.collideWith(cellB)) {
+							checkCellRepulsion(cellA, cellB);
+						} else {
+							checkCellEating(cellA, cellB);
+						}
+						
+					}
 				}
-
+				
 			}
 		}
 		for(CoordinateObject coordObj : movingObjects) {

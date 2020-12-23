@@ -14,7 +14,6 @@ public class FoodImpl extends CoordinateObjectImpl implements Food {
 	private static final long serialVersionUID = 1L;
 
 	private Board board;
-	private boolean isAlive;
 	private boolean isPersistent;
 
 	/**
@@ -29,7 +28,6 @@ public class FoodImpl extends CoordinateObjectImpl implements Food {
 				new Color((int)(Math.random() * 0x1000000)).brighter()
 		);
 		this.board = board;
-		isAlive = true;
 		isPersistent = true;
 	}
 	
@@ -48,18 +46,9 @@ public class FoodImpl extends CoordinateObjectImpl implements Food {
 		);
 		setInertiaX(directionX*4.5f);
 		setInertiaY(directionY*4.5f);
-		isAlive = true;
 		isPersistent = false;
 	}
 
-	/**
-	 * Method to know if this food is still alive
-	 * @return true if the food is alive, false if not
-	 */
-	public boolean isAlive() {
-		return isAlive;
-	}
-	
 	/**
 	 * Method to know if this food is persistent ( if, when this food is killed, it will reappeared on the board)
 	 * @return true if this food will reappeared on the board, false if not 
@@ -72,12 +61,12 @@ public class FoodImpl extends CoordinateObjectImpl implements Food {
 	 * Method to kill a food
 	 */
 	public void killFood() {
-		isAlive = false;
+		setAlive(false);
 		if(isPersistent) {
 			setColor(new Color((int)(Math.random() * 0x1000000)).brighter());
 			setX((float)(Math.random() * (board.getBoardWidth()-FOOD_SIZE)) + FOOD_SIZE);
 			setY(((float)Math.random() * (board.getBoardHeight()-FOOD_SIZE)) + FOOD_SIZE);
-			isAlive = true;
+			setAlive(true);
 		}
 	}
 

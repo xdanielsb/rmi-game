@@ -62,6 +62,7 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 	 */
 	public void eat(CoordinateObject coordObj) {
 		setSize(getSize() + coordObj.getSize());
+		coordObj.setAlive(false);
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 	public boolean collideWith(FeedableObject fd) {
 		return true;
 	}
-		
+	
 	@Override
 	public void applyMouvement() {
 		super.applyMouvement();

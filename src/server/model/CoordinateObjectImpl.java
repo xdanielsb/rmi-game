@@ -19,6 +19,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	private Color color;
 	private float inertiaX;
 	private float inertiaY;
+	private boolean isAlive;
 
 	/**
 	 * CoordinateObject main constructor
@@ -35,6 +36,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 		this.color = color;
 		this.inertiaX = 0;
 		this.inertiaY = 0;
+		isAlive = true;
 	}
 
 	/**
@@ -156,6 +158,22 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	 */
 	public float getSpeedY() {
 		return inertiaY;
+	}
+	
+	/**
+	 * Method to know if this cell is still alive
+	 * @return true if the cell is alive, false if not
+	 */
+	public boolean isAlive() {
+		return isAlive;
+	}
+	
+	/**
+	 * Method to modify the life status 
+	 * @param isAlive
+	 */
+	public void setAlive(boolean isAlive) {
+		this.isAlive = isAlive;
 	}
 
 	/**

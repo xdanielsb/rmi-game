@@ -36,6 +36,10 @@ public interface CoordinateObject extends Comparable<CoordinateObject>, Serializ
 
 	public float getSpeedY();
 	
+	public boolean isAlive();
+	
+	public void setAlive(boolean isAlive);
+	
 	public void applyMouvement();
 	
 }
