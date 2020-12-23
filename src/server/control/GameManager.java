@@ -187,7 +187,6 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method initialization of the server 
-	 * @param gui : graphical interface use to run the server
 	 * @return true if the server is correctly initiated
 	 */
 	public boolean initServer() {
