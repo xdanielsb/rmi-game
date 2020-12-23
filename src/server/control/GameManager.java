@@ -36,7 +36,6 @@ public class GameManager implements ActionListener {
 	private Monitor monitor;
 
 	private List<CoordinateObject> movingObjects;
-	private List<Food> foodsToAdd;
 	private List<Food> foodsToRemove;
 	private List<SpikeCell> spikeToAdd;
 
@@ -57,7 +56,6 @@ public class GameManager implements ActionListener {
 		board.addTeam(new TeamImpl(new Color(0, 0, 255), "Bleu", 450, 450));
 
 		movingObjects = new ArrayList<>();
-		foodsToAdd = new ArrayList<>();
 		foodsToRemove = new ArrayList<>();
 		spikeToAdd = new ArrayList<>();
 
@@ -77,9 +75,7 @@ public class GameManager implements ActionListener {
 		if(!this.gameOver()) {
 			applyMovePhysic();
 			checkCollision();
-			playerManager.addWaitingPlayerCells();
-			updateFoodList();
-			updateSpikeList();
+			updateWaitingObjects();
 		}
 		if(gameTimer > 0) {
 			gameTimer -= 16;
@@ -90,38 +86,46 @@ public class GameManager implements ActionListener {
 		// Reset timer for next Tick
 		tm.start();
 	}
-
+	
 	/**
-	 * Method call during a server's tick
-	 * Allow to update the food list after the game mechanics,
-	 * to avoid to modify the list when we browse it 
-	 * (by adding a food with a client call or with a game mechanic)
+	 * Method to add all object add by client event and who need a synchronized or object who need to be add or remove after the list brows
 	 */
-	private void updateFoodList() {
+	private void updateWaitingObjects() {
+		if(monitor.hasAddPlayerWaiting()) {
+			for(Player player : monitor.clearWaitingAddPlayers()) {
+				board.addPlayer(player);
+				playerManager.addScore(player.getTeam(), PlayerCell.CELL_MIN_SIZE);
+			}
+		}
+		
+		if(monitor.hasFoodWaiting()) {
+			List<Food> foods = monitor.clearWaitingFoods();
+			movingObjects.addAll(foods);
+			board.addFoods(foods);
+		}
+		
+		playerManager.updateWaitingObjects();
+		
+		if(monitor.hasRemovePlayerWaiting()) {
+			for(Player player : monitor.clearWaitingRemovePlayers()) {
+				playerManager.addScore(player.getTeam(), -player.getSize());
+				board.removePlayer(player);
+			}
+		}
+		
 		for(Food food : foodsToRemove) {
 			board.removeFood(food);
 			movingObjects.remove(food);
 		}
 		foodsToRemove.clear();
-
-		if(foodsToAdd.size() > 0) {
-			movingObjects.addAll(foodsToAdd);
-			board.addFoods(foodsToAdd);
-			foodsToAdd.clear();
-		}
-	}
-
-	/**
-	 * Method call during a server's tick
-	 * Allow to update the spike cell list without modifying the list when we brows it
-	 */
-	private void updateSpikeList() {
+		
 		for(SpikeCell spike : spikeToAdd) {
 			board.addSpike(spike);
 		}
 		spikeToAdd.clear();
+		
 	}
-
+	
 	/**
 	 * Method call by the client to know the time left in the game
 	 * @return The time left for the game
@@ -143,8 +147,7 @@ public class GameManager implements ActionListener {
 	 * @param player : Player to add
 	 */
 	public void addPlayer(Player player) {
-		board.addPlayer(player);
-		playerManager.addScore(player.getTeam(), PlayerCell.CELL_MIN_SIZE);
+		monitor.addPlayer(player);
 	}
 
 	/**
@@ -161,8 +164,7 @@ public class GameManager implements ActionListener {
 	 */
 	public void removePlayer(int id) {
 		Player player = board.getPlayer(id);
-		playerManager.addScore(player.getTeam(), -player.getSize());
-		board.removePlayer(player);
+		monitor.removePlayer(player);
 	}
 
 	/**
@@ -421,7 +423,7 @@ public class GameManager implements ActionListener {
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
 		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
-		foodsToAdd.addAll(foods);
+		monitor.addFoods(foods);
 	}
 
 	/**

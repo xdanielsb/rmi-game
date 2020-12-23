@@ -21,15 +21,12 @@ public class PlayerManager {
 
 	private Monitor monitor;
 
-	private List<PlayerCell> cellsToAdd;
-
 	/**
 	 * Main constructor of the PlayerManager
 	 * @param monitor : Monitor for synchronized variables
 	 */
 	public PlayerManager(Monitor monitor) {
 		this.monitor = monitor;
-		cellsToAdd = new ArrayList<>();
 	}
 
 	/**
@@ -92,15 +89,17 @@ public class PlayerManager {
 	 * @param mouseY : float Y direction to split
 	 */
 	public void split(Player player, float mouseX, float mouseY) {
+		List<PlayerCell> newCells = new ArrayList<>();
 		for(PlayerCell cell : player.getCells()) {
 			if(cell.getSize() >= PlayerCell.MIN_SPLITTING_SIZE) {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
 				PlayerCell newCell = new PlayerCellImpl(cell, cell.getSize()/2, (float)(distX/dist), (float)(distY/dist));
-				cellsToAdd.add(newCell);
+				newCells.add(newCell);
 			}
 		}
+		monitor.addPlayerCells(newCells);
 	}
 
 	/**
@@ -128,11 +127,12 @@ public class PlayerManager {
 	 * This method allow an update of the player's list at the end of the server tick 
 	 * to avoid list modification while a list browse
 	 */
-	public void addWaitingPlayerCells() {
-		for(PlayerCell cell : cellsToAdd) {
-			cell.getPlayer().addCell(cell);
+	public void updateWaitingObjects() {
+		if(monitor.hasPlayerCellWaiting()) {
+			for(PlayerCell cell : monitor.clearWaitingPlayerCells()) {
+				cell.getPlayer().addCell(cell);
+			}
 		}
-		cellsToAdd.clear();
 	}
 
 	/**
