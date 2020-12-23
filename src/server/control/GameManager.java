@@ -369,6 +369,7 @@ public class GameManager implements ActionListener {
 				for(PlayerCell cell : player.getCells()) {
 					cell.applyMouvement();
 				}
+				player.updateCoordinates();
 			}
 		}
 		for(SpikeCell spike : board.getSpikeCells()) {

@@ -19,6 +19,8 @@ public interface Player extends Serializable, Remote {
 	public float getX();
 
 	public float getY();
+	
+	public void updateCoordinates();
 
 	public int getSize();
 

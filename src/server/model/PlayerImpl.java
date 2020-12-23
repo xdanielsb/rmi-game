@@ -19,6 +19,8 @@ public class PlayerImpl implements Player {
 	private Team team;
 	private List<PlayerCell> cells;
 	private int id;
+	private float x;
+	private float y;
 	private boolean alive;
 
 	/**
@@ -29,6 +31,8 @@ public class PlayerImpl implements Player {
 	public PlayerImpl(int idP, String name) {
 		this.name = name;
 		this.id = idP;
+		x = 0;
+		y = 0;
 		this.alive = true;
 	}
 
@@ -83,42 +87,48 @@ public class PlayerImpl implements Player {
 	}
 
 	/**
-	 * Method to get the position of the player on X coordinate ( is globally equals to it cells position average)
+	 * Method to get the position of the player on X coordinate ( globally equals to it cells position average)
 	 * @return X position
 	 */
 	public float getX() {
-		float max = Float.MIN_VALUE;
-		float min = Float.MAX_VALUE;
-		for(PlayerCell cell : cells) {
-			float radius = cell.getRadius();
-			float x = cell.getX();
-			if(x-radius < min) {
-				min = x-radius;
-			}
-			if(x+radius > max) {
-				max = x+radius;
-			}
-		}
-		return (min+max)/2;
+		return x;
 	}
+	
 	/**
-	 * Method to get the position of the player on Y coordinate ( is globally equals to it cells position average)
+	 * Method to get the position of the player on Y coordinate ( globally equals to it cells position average)
 	 * @return Y position
 	 */
 	public float getY() {
-		float max = Float.MIN_VALUE;
-		float min = Float.MAX_VALUE;
+		return y;
+	}
+	
+	/**
+	 * Method to calculate the coordinate of the player, to avoid multiple calculation each time that we need this coordinates
+	 */
+	public void updateCoordinates() {
+		float maxX = Float.MIN_VALUE;
+		float minX = Float.MAX_VALUE;
+		float maxY = Float.MIN_VALUE;
+		float minY = Float.MAX_VALUE;
 		for(PlayerCell cell : cells) {
 			float radius = cell.getRadius();
-			float y = cell.getY();
-			if(y-radius < min) {
-				min = y-radius;
+			float cellX = cell.getX();
+			float cellY = cell.getY();
+			if(cellX-radius < minX) {
+				minX = x-radius;
 			}
-			if(y+radius > max) {
-				max = y+radius;
+			if(cellX+radius > maxX) {
+				maxX = x+radius;
+			}
+			if(cellY-radius < minY) {
+				minY = y-radius;
+			}
+			if(cellY+radius > maxY) {
+				maxY = y+radius;
 			}
 		}
-		return (min+max)/2;
+		x =  (minX+maxX)/2;
+		y =  (minY+maxY)/2;
 	}
 
 	/**
