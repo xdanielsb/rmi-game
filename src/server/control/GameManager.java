@@ -144,6 +144,7 @@ public class GameManager implements ActionListener {
 	 */
 	public void addPlayer(Player player) {
 		board.addPlayer(player);
+		playerManager.addScore(player.getTeam(), PlayerCell.CELL_MIN_SIZE);
 	}
 
 	/**
@@ -159,7 +160,9 @@ public class GameManager implements ActionListener {
 	 * @param id : int id of the player to remove
 	 */
 	public void removePlayer(int id) {
-		board.removePlayer(board.getPlayer(id));
+		Player player = board.getPlayer(id);
+		playerManager.addScore(player.getTeam(), -player.getSize());
+		board.removePlayer(player);
 	}
 
 	/**

@@ -167,6 +167,7 @@ public class PlayerManager {
 				Thread.sleep(3000);
 				p.addCell(new PlayerCellImpl(p, PlayerCell.CELL_MIN_SIZE));
 				p.setAlive(true);
+				addScore(p.getTeam(), PlayerCell.CELL_MIN_SIZE);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -238,7 +239,7 @@ public class PlayerManager {
 	 * @param eated : SpikeCell to eat
 	 * @param manager : gameManager for board update
 	 */
-	public void playerTryToEatSpike(
+	private void playerTryToEatSpike(
 			PlayerCell eater,
 			SpikeCell eated,
 			GameManager manager
@@ -255,7 +256,7 @@ public class PlayerManager {
 	 * @param eated : Food to eat
 	 * @param manager : gameManager for board update
 	 */
-	public void spikeTryToEatFood(
+	private void spikeTryToEatFood(
 			SpikeCell eater,
 			Food eated,
 			GameManager manager
