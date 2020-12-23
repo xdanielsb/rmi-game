@@ -15,6 +15,18 @@ public interface Player extends Serializable, Remote {
 	public boolean isAlive();
 
 	public void setAlive(boolean alive);
+	
+	public float getThrowDirectionX();
+	
+	public float getThrowDirectionY();
+	
+	public void setThrowDirection(float throwDirectionX, float throwDirectionY);
+
+	public float getSplitDirectionX();
+	
+	public float getSplitDirectionY();
+	
+	public void setSplitDirection(float splitDirectionX, float splitDirectionY);
 
 	public float getX();
 

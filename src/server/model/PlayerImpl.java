@@ -22,6 +22,11 @@ public class PlayerImpl implements Player {
 	private float x;
 	private float y;
 	private boolean alive;
+	
+	private float throwDirectionX;
+	private float throwDirectionY;
+	private float splitDirectionX;
+	private float splitDirectionY;
 
 	/**
 	 * Player main constructor
@@ -34,6 +39,10 @@ public class PlayerImpl implements Player {
 		x = 0;
 		y = 0;
 		this.alive = true;
+		throwDirectionX = 0;
+		throwDirectionY = 0;
+		splitDirectionX = 0;
+		splitDirectionY = 0;
 	}
 
 	/**
@@ -86,7 +95,59 @@ public class PlayerImpl implements Player {
 	public boolean isAlive() {
 		return alive;
 	}
+	
+	/**
+	 * Method to know direction the player want to throw some food (X coordinate)
+	 * @return X coordinate
+	 */
+	public float getThrowDirectionX() {
+		return throwDirectionX;
+	}
 
+	/**
+	 * Method to know direction the player want to throw some food (Y coordinate)
+	 * @return X coordinate
+	 */
+	public float getThrowDirectionY() {
+		return throwDirectionY;
+	}
+	
+	/**
+	 * Method to modify the direction the player want to throw some food
+	 * @param throwDirectionX : X coordinate
+	 * @param throwDirectionY : Y coordinate
+	 */
+	public void setThrowDirection(float throwDirectionX, float throwDirectionY) {
+		this.throwDirectionX = throwDirectionX;
+		this.throwDirectionY = throwDirectionY;
+	}
+
+	/**
+	 * Method to know direction the player want to split himself (X coordinate)
+	 * @return X coordinate
+	 */
+	public float getSplitDirectionX() {
+		return splitDirectionX;
+	}
+	
+	/**
+	 * Method to know direction the player want to split himself (Y coordinate)
+	 * @return X coordinate
+	 */
+	public float getSplitDirectionY() {
+		return splitDirectionY;
+	}
+	
+	/**
+	 * Method to modify the direction the player want to split hiwself
+	 * @param splitDirectionX : X coordinate
+	 * @param splitDirectionY : Y coordinate
+	 */
+	public void setSplitDirection(float splitDirectionX, float splitDirectionY) {
+		this.splitDirectionX = splitDirectionX;
+		this.splitDirectionY = splitDirectionY;
+	}
+	
 	/**
 	 * Method to get the position of the player on X coordinate ( globally equals to it cells position average)
 	 * @return X position

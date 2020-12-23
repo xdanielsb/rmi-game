@@ -76,6 +76,7 @@ public class GameManager implements ActionListener {
 			applyMovePhysic();
 			checkCollision();
 			updateWaitingObjects();
+			checkPlayerEventAction();
 		}
 		if(gameTimer > 0) {
 			gameTimer -= 16;
@@ -98,14 +99,6 @@ public class GameManager implements ActionListener {
 			}
 		}
 		
-		if(monitor.hasFoodWaiting()) {
-			List<Food> foods = monitor.clearWaitingFoods();
-			movingObjects.addAll(foods);
-			board.addFoods(foods);
-		}
-		
-		playerManager.updateWaitingObjects();
-		
 		if(monitor.hasRemovePlayerWaiting()) {
 			for(Player player : monitor.clearWaitingRemovePlayers()) {
 				playerManager.addScore(player.getTeam(), -player.getSize());
@@ -124,6 +117,27 @@ public class GameManager implements ActionListener {
 		}
 		spikeToAdd.clear();
 		
+	}
+	
+	/**
+	 * Method to check if a client ask to a Player object to make an action, and make this action
+	 */
+	private void checkPlayerEventAction() {
+		for(Player player : board.getPlayers()) {
+			
+			if(player.getThrowDirectionX() != 0 || player.getThrowDirectionY() != 0) {
+				List<Food> foods = playerManager.throwFood(player, player.getThrowDirectionX(), player.getThrowDirectionY());
+				movingObjects.addAll(foods);
+				board.addFoods(foods);
+				player.setThrowDirection(0, 0);
+			}
+			
+			if(player.getSplitDirectionX() != 0 || player.getSplitDirectionY() != 0) {
+				playerManager.split(player, player.getSplitDirectionX(), player.getSplitDirectionY());
+				player.setSplitDirection(0, 0);
+			}
+			
+		}
 	}
 	
 	/**
@@ -429,8 +443,7 @@ public class GameManager implements ActionListener {
 	 */
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
-		List<Food> foods = playerManager.throwFood(player, mouseX, mouseY);
-		monitor.addFoods(foods);
+		player.setThrowDirection(mouseX, mouseY);
 	}
 
 	/**
@@ -441,7 +454,7 @@ public class GameManager implements ActionListener {
 	 */
 	public void split(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
-		playerManager.split(player, mouseX, mouseY);
+		player.setSplitDirection(mouseX, mouseY);
 	}
 
 }
