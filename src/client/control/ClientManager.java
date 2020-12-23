@@ -8,10 +8,11 @@ import processing.core.PApplet;
 
 public class ClientManager {
 	private IPlayerRemote stub;
+
 	public ClientManager() {
-		
+
 	}
-	
+
 	/**
 	 * Connect the client to the server
 	 * 
@@ -24,7 +25,7 @@ public class ClientManager {
 			PApplet.runSketch(new String[] { "MapGraphics" }, map);
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 		}
 	}
 }

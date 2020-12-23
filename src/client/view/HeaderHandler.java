@@ -15,9 +15,9 @@ public class HeaderHandler {
 
 	/**
 	 * Update the different values of the HeaderHandler
-	 *  
+	 * 
 	 * @param newTimer New value of the game timer
-	 * @param teams List of teams whose informations will be displayed
+	 * @param teams    List of teams whose informations will be displayed
 	 */
 	public void update(float newTimer, List<Team> teams) {
 		gameTimer = newTimer;

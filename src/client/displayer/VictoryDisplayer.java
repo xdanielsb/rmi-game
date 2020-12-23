@@ -14,13 +14,12 @@ public class VictoryDisplayer {
 	 * @param winner Winning team of the game
 	 * @param sketch The object provided by Processing, to draw shapes
 	 */
-	public static void draw(Team winner, PApplet sketch)
-	{
+	public static void draw(Team winner, PApplet sketch) {
 		sketch.textSize(80);
 		sketch.textAlign(PConstants.CENTER);
 		Color teamColor = winner.getColor();
 		sketch.fill(teamColor.getRed(), teamColor.getGreen(), teamColor.getBlue());
-		sketch.text("Team " + winner.getTeamName() + " wins", sketch.width/2, sketch.height/2);
+		sketch.text("Team " + winner.getTeamName() + " wins", sketch.width / 2, sketch.height / 2);
 	}
 
 }

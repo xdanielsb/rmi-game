@@ -22,12 +22,8 @@ import server.model.TeamImpl;
 import server.remote.PlayerRemote;
 
 /**
- * This class contains all the game's mechanics
- * - treatment of client call from remote
- * - game's ticks
- * - objects movements
- * - objects collision
- * - score update
+ * This class contains all the game's mechanics - treatment of client call from
+ * remote - game's ticks - objects movements - objects collision - score update
  */
 public class GameManager implements ActionListener {
 
@@ -45,10 +41,9 @@ public class GameManager implements ActionListener {
 	private Board board;
 
 	/**
-	 * Main constructor
-	 * - creation of the board with two teams
-	 * - creation of all the lists for the objects to update (from game mechanics or from events)
-	 * - creation of the player manager and the monitor
+	 * Main constructor - creation of the board with two teams - creation of all the
+	 * lists for the objects to update (from game mechanics or from events) -
+	 * creation of the player manager and the monitor
 	 */
 	public GameManager() {
 		board = new BoardImpl(500, 500, 300, 20);
@@ -65,83 +60,86 @@ public class GameManager implements ActionListener {
 		tm = new Timer(16, this);
 	}
 
-	
 	/**
-	 * Function call by the Timer every 16 milliseconds
-	 * This function execute 1 server tick and apply all game mechanics
+	 * Function call by the Timer every 16 milliseconds This function execute 1
+	 * server tick and apply all game mechanics
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(!this.gameOver()) {
+		if (!this.gameOver()) {
 			applyMovePhysic();
 			checkCollision();
 			updateWaitingObjects();
 			checkPlayerEventAction();
 		}
-		if(gameTimer > 0) {
+		if (gameTimer > 0) {
 			gameTimer -= 16;
-			if(gameTimer < 0) {
+			if (gameTimer < 0) {
 				gameTimer = 0;
 			}
 		}
 		// Reset timer for next Tick
 		tm.start();
 	}
-	
+
 	/**
-	 * Method to add all object add by client event and who need a synchronized or object who need to be add or remove after the list brows
+	 * Method to add all object add by client event and who need a synchronized or
+	 * object who need to be add or remove after the list brows
 	 */
 	private void updateWaitingObjects() {
-		if(monitor.hasAddPlayerWaiting()) {
-			for(Player player : monitor.clearWaitingAddPlayers()) {
+		if (monitor.hasAddPlayerWaiting()) {
+			for (Player player : monitor.clearWaitingAddPlayers()) {
 				board.addPlayer(player);
 				playerManager.addScore(player.getTeam(), PlayerCell.CELL_MIN_SIZE);
 			}
 		}
-		
-		if(monitor.hasRemovePlayerWaiting()) {
-			for(Player player : monitor.clearWaitingRemovePlayers()) {
+
+		if (monitor.hasRemovePlayerWaiting()) {
+			for (Player player : monitor.clearWaitingRemovePlayers()) {
 				playerManager.addScore(player.getTeam(), -player.getSize());
 				board.removePlayer(player);
 			}
 		}
-		
-		for(Food food : foodsToRemove) {
+
+		for (Food food : foodsToRemove) {
 			board.removeFood(food);
 			movingObjects.remove(food);
 		}
 		foodsToRemove.clear();
-		
-		for(SpikeCell spike : spikeToAdd) {
+
+		for (SpikeCell spike : spikeToAdd) {
 			board.addSpike(spike);
 		}
 		spikeToAdd.clear();
-		
+
 	}
-	
+
 	/**
-	 * Method to check if a client ask to a Player object to make an action, and make this action
+	 * Method to check if a client ask to a Player object to make an action, and
+	 * make this action
 	 */
 	private void checkPlayerEventAction() {
-		for(Player player : board.getPlayers()) {
-			
-			if(player.getThrowDirectionX() != 0 || player.getThrowDirectionY() != 0) {
-				List<Food> foods = playerManager.throwFood(player, player.getThrowDirectionX(), player.getThrowDirectionY());
+		for (Player player : board.getPlayers()) {
+
+			if (player.getThrowDirectionX() != 0 || player.getThrowDirectionY() != 0) {
+				List<Food> foods = playerManager.throwFood(player, player.getThrowDirectionX(),
+						player.getThrowDirectionY());
 				movingObjects.addAll(foods);
 				board.addFoods(foods);
 				player.setThrowDirection(0, 0);
 			}
-			
-			if(player.getSplitDirectionX() != 0 || player.getSplitDirectionY() != 0) {
+
+			if (player.getSplitDirectionX() != 0 || player.getSplitDirectionY() != 0) {
 				playerManager.split(player, player.getSplitDirectionX(), player.getSplitDirectionY());
 				player.setSplitDirection(0, 0);
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Method call by the client to know the time left in the game
+	 * 
 	 * @return The time left for the game
 	 */
 	public int getTimer() {
@@ -150,6 +148,7 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to know if the game is over
+	 * 
 	 * @return true if the game is over, false if not
 	 */
 	public boolean gameOver() {
@@ -158,6 +157,7 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to add a player
+	 * 
 	 * @param player : Player to add
 	 */
 	public void addPlayer(Player player) {
@@ -165,7 +165,9 @@ public class GameManager implements ActionListener {
 	}
 
 	/**
-	 * Method to add a spike, this spike will be add to the board at the and of a tick execution
+	 * Method to add a spike, this spike will be add to the board at the and of a
+	 * tick execution
+	 * 
 	 * @param spike : Spike to add
 	 */
 	public void addSpike(SpikeCell spike) {
@@ -174,6 +176,7 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to remove a player with a specific id from the board
+	 * 
 	 * @param id : int id of the player to remove
 	 */
 	public void removePlayer(int id) {
@@ -183,6 +186,7 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to get the board
+	 * 
 	 * @return the Board
 	 */
 	public Board getBoard() {
@@ -191,7 +195,8 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to ask to move a player in a specific direction
-	 * @param id : int id of the player to move
+	 * 
+	 * @param id     : int id of the player to move
 	 * @param mouseX : float X position of the direction to take
 	 * @param mouseY : float Y position of the direction to take
 	 */
@@ -200,7 +205,8 @@ public class GameManager implements ActionListener {
 	}
 
 	/**
-	 * Method initialization of the server 
+	 * Method initialization of the server
+	 * 
 	 * @return true if the server is correctly initiated
 	 */
 	public boolean initServer() {
@@ -217,16 +223,16 @@ public class GameManager implements ActionListener {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Method call during a server tick to check all the board collisions
 	 */
 	private void checkCollision() {
 		List<FeedableObject> cells = new ArrayList<>();
-		for(Player player : board.getPlayers()) {
-			if(player.isAlive()) {
+		for (Player player : board.getPlayers()) {
+			if (player.isAlive()) {
 
-				for(PlayerCell cell : player.getCells()) {
+				for (PlayerCell cell : player.getCells()) {
 					checkBoardCollisionForFeedableObject(cell);
 					checkFoodCollision(cell);
 					cell.updateCooldown();
@@ -235,144 +241,144 @@ public class GameManager implements ActionListener {
 
 			}
 		}
-		
-		for(SpikeCell spike : board.getSpikeCells()) {
+
+		for (SpikeCell spike : board.getSpikeCells()) {
 			checkBoardCollisionForFeedableObject(spike);
 			checkFoodCollision(spike);
 			cells.add(spike);
 		}
-		
-		for(int i = 0; i < cells.size() - 1; i++) {
+
+		for (int i = 0; i < cells.size() - 1; i++) {
 			FeedableObject cellA = cells.get(i);
-			if(cellA.isAlive()) {
-				
-				for(int j = i+1; j < cells.size(); j++) {
+			if (cellA.isAlive()) {
+
+				for (int j = i + 1; j < cells.size(); j++) {
 					FeedableObject cellB = cells.get(j);
-					if(cellB.isAlive() && cellA.isAlive()) {
-						
-						if(cellA.collideWith(cellB)) {
+					if (cellB.isAlive() && cellA.isAlive()) {
+
+						if (cellA.collideWith(cellB)) {
 							checkCellRepulsion(cellA, cellB);
 						} else {
 							checkCellEating(cellA, cellB);
 						}
-						
+
 					}
 				}
-				
+
 			}
 		}
-		for(CoordinateObject coordObj : movingObjects) {
+		for (CoordinateObject coordObj : movingObjects) {
 			checkBoardCollisionForCoordinateObject(coordObj);
 		}
 	}
 
 	/**
-	 * Method call during the general collision check
-	 * This method is specific to collision with the board bounds for CoordinateObjects
+	 * Method call during the general collision check This method is specific to
+	 * collision with the board bounds for CoordinateObjects
+	 * 
 	 * @param coordObj : CoordinateObject who possibly collide with board's bounds
 	 */
 	private void checkBoardCollisionForCoordinateObject(CoordinateObject coordObj) {
 		float radius = coordObj.getRadius();
-		if(coordObj.getX() < 0) {
+		if (coordObj.getX() < 0) {
 			coordObj.setX(-coordObj.getX());
 			coordObj.setInertiaX(-coordObj.getInertiaX());
-		}else if(coordObj.getX() > board.getBoardWidth()) {
+		} else if (coordObj.getX() > board.getBoardWidth()) {
 			coordObj.setX(coordObj.getX() - (coordObj.getX() - board.getBoardWidth()));
 			coordObj.setInertiaX(-coordObj.getInertiaX());
 		}
-		if(coordObj.getY() < 0) {
+		if (coordObj.getY() < 0) {
 			coordObj.setY(radius);
 			coordObj.setInertiaY(-coordObj.getInertiaY());
-		}else if(coordObj.getY() > board.getBoardHeight()) {
+		} else if (coordObj.getY() > board.getBoardHeight()) {
 			coordObj.setY(coordObj.getY() - (coordObj.getY() - board.getBoardHeight()));
 			coordObj.setInertiaY(-coordObj.getInertiaY());
 		}
 	}
 
 	/**
-	 * Method call during the general collision check
-	 * This method is specific to collision with the board bounds for FeedableObjects
+	 * Method call during the general collision check This method is specific to
+	 * collision with the board bounds for FeedableObjects
+	 * 
 	 * @param cell : FeedableObject who possibly collide with board's bounds
 	 */
 	private void checkBoardCollisionForFeedableObject(FeedableObject cell) {
 		float radius = cell.getRadius();
-		if(cell.getX() < radius) {
-			cell.addRepulsionX((1-(cell.getX()/radius))*1.01f);
+		if (cell.getX() < radius) {
+			cell.addRepulsionX((1 - (cell.getX() / radius)) * 1.01f);
 			cell.setInertiaX(-cell.getInertiaX());
 		}
-		if(cell.getX() > board.getBoardWidth() - radius) {
-			cell.addRepulsionX((((board.getBoardWidth() - cell.getX())/radius)-1)*1.01f);
+		if (cell.getX() > board.getBoardWidth() - radius) {
+			cell.addRepulsionX((((board.getBoardWidth() - cell.getX()) / radius) - 1) * 1.01f);
 			cell.setInertiaX(-cell.getInertiaX());
 		}
-		if(cell.getY() < radius) {
-			cell.addRepulsionY((1-(cell.getY()/radius))*1.01f);
+		if (cell.getY() < radius) {
+			cell.addRepulsionY((1 - (cell.getY() / radius)) * 1.01f);
 			cell.setInertiaY(-cell.getInertiaY());
 		}
-		if(cell.getY() > board.getBoardHeight() - radius) {
-			cell.addRepulsionY((((board.getBoardHeight() - cell.getY())/radius)-1)*1.01f);
+		if (cell.getY() > board.getBoardHeight() - radius) {
+			cell.addRepulsionY((((board.getBoardHeight() - cell.getY()) / radius) - 1) * 1.01f);
 			cell.setInertiaY(-cell.getInertiaY());
 		}
 	}
 
 	/**
-	 * Method call during the general collision check when two cell collide
-	 * If two FeedableObjects collide then they repel each other
+	 * Method call during the general collision check when two cell collide If two
+	 * FeedableObjects collide then they repel each other
+	 * 
 	 * @param cellA : first FeedableObject to repulse
 	 * @param cellB : second FeedableObject to repulse
 	 */
-	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB){
+	private void checkCellRepulsion(FeedableObject cellA, FeedableObject cellB) {
 		float distX = cellA.getX() - cellB.getX();
 		float distY = cellA.getY() - cellB.getY();
-		float dist = (float)Math.hypot(distX, distY);
+		float dist = (float) Math.hypot(distX, distY);
 		float radiusA = cellA.getRadius();
 		float radiusB = cellB.getRadius();
-		if(dist < radiusA+radiusB) {
-			float superposition = radiusA+radiusB - dist;
-			float proportionA = superposition/radiusA;
-			float proportionB = superposition/radiusB;
-			cellA.addRepulsionX(distX/dist*proportionA);
-			cellA.addRepulsionY(distY/dist*proportionA);
-			cellB.addRepulsionX(-distX/dist*proportionB);
-			cellB.addRepulsionY(-distY/dist*proportionB);
+		if (dist < radiusA + radiusB) {
+			float superposition = radiusA + radiusB - dist;
+			float proportionA = superposition / radiusA;
+			float proportionB = superposition / radiusB;
+			cellA.addRepulsionX(distX / dist * proportionA);
+			cellA.addRepulsionY(distY / dist * proportionA);
+			cellB.addRepulsionX(-distX / dist * proportionB);
+			cellB.addRepulsionY(-distY / dist * proportionB);
 		}
 	}
 
 	/**
-	 * Method call during the general collision check when two FeedableObject overlap
+	 * Method call during the general collision check when two FeedableObject
+	 * overlap
+	 * 
 	 * @param cellA : first FeedableObject who will overlap
 	 * @param cellB : second FeedableObject who will overlap
 	 */
 	private void checkCellEating(FeedableObject cellA, FeedableObject cellB) {
 		FeedableObject bigger;
 		FeedableObject smaller;
-		if(cellA.getSize() > cellB.getSize()) {
+		if (cellA.getSize() > cellB.getSize()) {
 			bigger = cellA;
 			smaller = cellB;
 		} else {
 			bigger = cellB;
 			smaller = cellA;
 		}
-		double dist = Math.hypot(
-			bigger.getX() - smaller.getX(),
-			bigger.getY() - smaller.getY()
-		);
-		if(dist < bigger.getRadius()) {
+		double dist = Math.hypot(bigger.getX() - smaller.getX(), bigger.getY() - smaller.getY());
+		if (dist < bigger.getRadius()) {
 			playerManager.tryEat(bigger, smaller, this);
 		}
 	}
 
 	/**
-	 * Method call during the general collision
-	 * This method check if the FeedableObject can eat a food
+	 * Method call during the general collision This method check if the
+	 * FeedableObject can eat a food
+	 * 
 	 * @param cell : FeedableObject to feed
 	 */
-	private void checkFoodCollision(FeedableObject cell){
-		for(Food food : board.getFoods()) {
-			double dist = Math.hypot(
-				cell.getX() - food.getX(),
-				cell.getY() - food.getY()
-			);
-			if(dist < cell.getRadius()) {
+	private void checkFoodCollision(FeedableObject cell) {
+		for (Food food : board.getFoods()) {
+			double dist = Math.hypot(cell.getX() - food.getX(), cell.getY() - food.getY());
+			if (dist < cell.getRadius()) {
 				playerManager.tryEat(cell, food, this);
 			}
 		}
@@ -383,41 +389,43 @@ public class GameManager implements ActionListener {
 	 */
 	private void applyMovePhysic() {
 		List<CoordinateObject> toRemove = new ArrayList<>();
-		for(CoordinateObject moveObj : movingObjects) {
+		for (CoordinateObject moveObj : movingObjects) {
 			moveObj.applyMouvement();
-			if(moveObj.getSpeedX() == 0 && moveObj.getSpeedY() == 0) {
+			if (moveObj.getSpeedX() == 0 && moveObj.getSpeedY() == 0) {
 				toRemove.add(moveObj);
 			}
 		}
 		movingObjects.removeAll(toRemove);
-		for(Player player : board.getPlayers()) {
-			if(player.isAlive()) {
-				for(PlayerCell cell : player.getCells()) {
+		for (Player player : board.getPlayers()) {
+			if (player.isAlive()) {
+				for (PlayerCell cell : player.getCells()) {
 					cell.applyMouvement();
 				}
 				player.updateCoordinates();
 			}
 		}
-		for(SpikeCell spike : board.getSpikeCells()) {
+		for (SpikeCell spike : board.getSpikeCells()) {
 			spike.applyMouvement();
 		}
 	}
 
 	/**
 	 * Method to remove a player cell from the board
+	 * 
 	 * @param cell : PlayerCell to remove
 	 */
 	public void removePlayerCell(PlayerCell cell) {
 		Player player = cell.getPlayer();
 		player.removeCell(cell);
 		playerManager.addScore(player.getTeam(), -cell.getSize());
-		if(player.getCells().size() <= 0) {
+		if (player.getCells().size() <= 0) {
 			playerManager.removePlayer(player);
 		}
 	}
 
 	/**
 	 * Method to remove a SpikeCell from the Board
+	 * 
 	 * @param cell : SpikeCell to remove
 	 */
 	public void removeSpikeCell(SpikeCell cell) {
@@ -426,20 +434,22 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method to remove a Food from the Board
+	 * 
 	 * @param food : Food to remove
 	 */
 	public void removeFood(Food food) {
 		food.killFood();
-		if(!food.isPersistent()) {
+		if (!food.isPersistent()) {
 			foodsToRemove.add(food);
 		}
 	}
 
 	/**
 	 * Method call on a client event, will ask to this player to throw food
+	 * 
 	 * @param playerId : int id of the player
-	 * @param mouseX : float X direction to throw food
-	 * @param mouseY : float Y direction to throw food
+	 * @param mouseX   : float X direction to throw food
+	 * @param mouseY   : float Y direction to throw food
 	 */
 	public void throwFood(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);
@@ -448,9 +458,10 @@ public class GameManager implements ActionListener {
 
 	/**
 	 * Method call on a client event, will ask to this player to split himself
+	 * 
 	 * @param playerId : int id of this player
-	 * @param mouseX : float X direction to split
-	 * @param mouseY : float Y direction to split
+	 * @param mouseX   : float X direction to split
+	 * @param mouseY   : float Y direction to split
 	 */
 	public void split(int playerId, float mouseX, float mouseY) {
 		Player player = board.getPlayer(playerId);

@@ -1,6 +1,5 @@
 package server;
 
-
 import server.control.GameManager;
 import server.control.LogManager;
 

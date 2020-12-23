@@ -14,12 +14,13 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 
 	private float repulsionX;
 	private float repulsionY;
-	
+
 	/**
 	 * FeedableObject main constructor
-	 * @param x : X coordinate of the cell
-	 * @param y : Y coordinate of the cell
-	 * @param size : size of the cell
+	 * 
+	 * @param x     : X coordinate of the cell
+	 * @param y     : Y coordinate of the cell
+	 * @param size  : size of the cell
 	 * @param color : color of the cell
 	 */
 	public FeedableObjectImpl(float x, float y, int size, Color color) {
@@ -29,19 +30,25 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 	}
 
 	/**
-	 * Method to modify the repulsion vector on X coordinate 
-	 * (remember that the repulsion vector is set to 0 at the end of each server tick)
-	 * @param repulsionX : repulsion vector to add on X coordinate (positive or negative)
+	 * Method to modify the repulsion vector on X coordinate (remember that the
+	 * repulsion vector is set to 0 at the end of each server tick)
+	 * 
+	 * @param repulsionX : repulsion vector to add on X coordinate (positive or
+	 *                   negative)
 	 */
+	@Override
 	public void addRepulsionX(float repulsionX) {
 		this.repulsionX += repulsionX;
 	}
 
 	/**
-	 * Method to modify the repulsion vector on Y coordinate 
-	 * (remember that the repulsion vector is set to 0 at the end of each server tick)
-	 * @param repulsionY : repulsion vector to add on Y coordinate (positive or negative)
+	 * Method to modify the repulsion vector on Y coordinate (remember that the
+	 * repulsion vector is set to 0 at the end of each server tick)
+	 * 
+	 * @param repulsionY : repulsion vector to add on Y coordinate (positive or
+	 *                   negative)
 	 */
+	@Override
 	public void addRepulsionY(float repulsionY) {
 		this.repulsionY += repulsionY;
 	}
@@ -55,30 +62,35 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 	public float getSpeedY() {
 		return super.getSpeedY() + repulsionY;
 	}
-	
+
 	/**
 	 * Method to eat a cell
+	 * 
 	 * @param coordObj : the cell to eat
 	 */
+	@Override
 	public void eat(CoordinateObject coordObj) {
 		setSize(getSize() + coordObj.getSize());
 		coordObj.setAlive(false);
 	}
-	
+
 	/**
 	 * Method to know if this feedableObjcet collide with an other one
+	 * 
 	 * @param fd : FeedableObject to possibly collide with
-	 * @return true in any case, this method need to be Override to have a different behavior
+	 * @return true in any case, this method need to be Override to have a different
+	 *         behavior
 	 */
+	@Override
 	public boolean collideWith(FeedableObject fd) {
 		return true;
 	}
-	
+
 	@Override
 	public void applyMouvement() {
 		super.applyMouvement();
 		repulsionX = 0;
 		repulsionY = 0;
 	}
-	
+
 }

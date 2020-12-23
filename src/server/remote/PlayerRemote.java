@@ -11,7 +11,8 @@ import server.control.LogManager;
 import server.model.PlayerImpl;
 
 /**
- * This class will handle all method callable by the client (other than model manipulation)
+ * This class will handle all method callable by the client (other than model
+ * manipulation)
  */
 public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
@@ -23,6 +24,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Main constructor
+	 * 
 	 * @param gameManager : The object handling the running of the server
 	 */
 	public PlayerRemote(GameManager gameManager) throws RemoteException {
@@ -31,6 +33,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to register a player
+	 * 
 	 * @param p : String name of the player
 	 * @return : int id of the new player
 	 */
@@ -46,7 +49,8 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to ask for a player movement
-	 * @param id : int id of the player
+	 * 
+	 * @param id     : int id of the player
 	 * @param mouseX : float X direction of the movement
 	 * @param mouseY : float Y direction of the movement
 	 */
@@ -57,9 +61,10 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to ask to a player to throw Food
+	 * 
 	 * @param idPlayer : int id of the player
-	 * @param mouseX : float X direction of the throw
-	 * @param mouseY : float Y direction of the throw
+	 * @param mouseX   : float X direction of the throw
+	 * @param mouseY   : float Y direction of the throw
 	 */
 	@Override
 	public void throwFood(int idPlayer, float mouseX, float mouseY) throws RemoteException {
@@ -68,17 +73,19 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to ask for a player to split
+	 * 
 	 * @param idPlayer : int id of the player
-	 * @param mouseX : float X direction of the split
-	 * @param mouseY : float Y direction of the split
+	 * @param mouseX   : float X direction of the split
+	 * @param mouseY   : float Y direction of the split
 	 */
 	@Override
 	public void split(int idPlayer, float mouseX, float mouseY) throws RemoteException {
 		gameManager.split(idPlayer, mouseX, mouseY);
 	}
-	
+
 	/**
 	 * Method to get the board
+	 * 
 	 * @return the game Board
 	 */
 	@Override
@@ -88,6 +95,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to remove a player of the game
+	 * 
 	 * @param id : int id of the player
 	 */
 	@Override
@@ -96,8 +104,8 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 	}
 
 	/**
-	 * Method to get the time left in the game
-	 * return int number of milliseconds left in the game
+	 * Method to get the time left in the game return int number of milliseconds
+	 * left in the game
 	 */
 	@Override
 	public int getTimer() throws RemoteException {
@@ -106,13 +114,13 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to know if the game is over
+	 * 
 	 * @return true if the game is over, false if not
 	 */
 	@Override
 	public boolean gameOver() throws RemoteException {
 		boolean isGameOver = gameManager.gameOver();
-		if(isGameOver && this.gameManager.getBoard().getWinners() == null)
-		{
+		if (isGameOver && this.gameManager.getBoard().getWinners() == null) {
 			this.gameManager.getBoard().setWinner();
 		}
 		return isGameOver;

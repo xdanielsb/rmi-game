@@ -8,9 +8,9 @@ import processing.core.PApplet;
 public class FoodDisplayer {
 
 	/**
-	 * Draw a food on the board 
+	 * Draw a food on the board
 	 * 
-	 * @param food A food to draw
+	 * @param food   A food to draw
 	 * @param sketch The object provided by Processing, to draw shapes
 	 */
 	public static void draw(Food food, PApplet sketch) {
@@ -19,11 +19,11 @@ public class FoodDisplayer {
 		Color foodColor = food.getColor();
 		sketch.fill(foodColor.getRed(), foodColor.getGreen(), foodColor.getBlue());
 		float diameter;
-		if(food.isPersistent()) {
+		if (food.isPersistent()) {
 			diameter = 3;
 		} else {
 			diameter = food.getRadius() * 2;
 		}
-		sketch.circle((float) (food.getX()), (float) (food.getY()), diameter);
+		sketch.circle((food.getX()), (food.getY()), diameter);
 	}
 }

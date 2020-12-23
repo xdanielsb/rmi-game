@@ -21,10 +21,10 @@ public class MapGraphics extends PApplet {
 	private HeaderHandler header;
 	private Player player;
 	private boolean gameOver;
-	
+
 	private boolean askForThrow;
 	private boolean askForSplit;
-	
+
 	private BoardDisplayer boardDisplayer;
 
 	public MapGraphics(IPlayerRemote distant, String username) throws RemoteException {
@@ -34,7 +34,7 @@ public class MapGraphics extends PApplet {
 		this.id = rm.registerPlayer(username);
 		this.board = rm.getBoard();
 		this.player = board.getPlayer(id);
-		
+
 		askForThrow = false;
 		askForSplit = false;
 
@@ -50,23 +50,20 @@ public class MapGraphics extends PApplet {
 		runtime.addShutdownHook(new Thread(runnable));
 	}
 
+	@Override
 	public void settings() {
 		size(1280, 720);
-		centerX = width/2;
-		centerY = height/2;
-		this.boardDisplayer = new BoardDisplayer(
-				Math.min(width, height),
-				0.1f,
-				PlayerCell.CELL_MIN_SIZE,
-				0.5f,
-				20000
-		);
+		centerX = width / 2;
+		centerY = height / 2;
+		this.boardDisplayer = new BoardDisplayer(Math.min(width, height), 0.1f, PlayerCell.CELL_MIN_SIZE, 0.5f, 20000);
 	}
 
+	@Override
 	public void setup() {
 		surface.setTitle("Agar IO");
 	}
 
+	@Override
 	public void draw() {
 		background(230);
 		cursor(CROSS);
@@ -88,36 +85,33 @@ public class MapGraphics extends PApplet {
 	}
 
 	/**
-	 * Updates the differents objects needed via the interface IPlayerRemote
-	 * to make the client works.
+	 * Updates the differents objects needed via the interface IPlayerRemote to make
+	 * the client works.
 	 */
-	public void update() throws RemoteException
-	{		this.gameOver = rm.gameOver();
-		
-		try {			
+	public void update() throws RemoteException {
+		this.gameOver = rm.gameOver();
+
+		try {
 			this.board = rm.getBoard();
-		}catch(RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
-		if(this.board.getPlayer(id).isAlive())
+
+		if (this.board.getPlayer(id).isAlive())
 			this.player = this.board.getPlayer(this.id);
-		
-		this.header.update(
-				rm.getTimer(),
-				this.board.getTeams()
-		);
-		
+
+		this.header.update(rm.getTimer(), this.board.getTeams());
+
 		float modifyMouseX = mouseX - (centerX) + player.getX();
 		float modifyMouseY = mouseY - (centerY) + player.getY();
-		
-		try {				
+
+		try {
 			rm.sendMousePosition(id, modifyMouseX, modifyMouseY);
-		}catch(RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
-		if(askForThrow) {
+
+		if (askForThrow) {
 			try {
 				rm.throwFood(this.id, modifyMouseX, modifyMouseY);
 				askForThrow = false;
@@ -126,7 +120,7 @@ public class MapGraphics extends PApplet {
 			}
 		}
 
-		if(askForSplit) {
+		if (askForSplit) {
 			try {
 				rm.split(this.id, modifyMouseX, modifyMouseY);
 				askForSplit = false;
@@ -135,18 +129,16 @@ public class MapGraphics extends PApplet {
 			}
 		}
 	}
-	
 
 	/**
-	 * Override of the function mousePressed of Processing. 
-	 * It trigger on the click of any mouth button. We handle the click
-	 * by checking the last button clicked.
+	 * Override of the function mousePressed of Processing. It trigger on the click
+	 * of any mouth button. We handle the click by checking the last button clicked.
 	 */
 	@Override
 	public void mousePressed() {
-		if(mouseButton == LEFT) {
+		if (mouseButton == LEFT) {
 			askForSplit = true;
-		}else if(mouseButton == RIGHT) {
+		} else if (mouseButton == RIGHT) {
 			askForThrow = true;
 		}
 	}

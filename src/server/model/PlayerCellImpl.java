@@ -20,17 +20,13 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 	private Player player;
 
 	/**
-	 * PlayerCell constructor use at the player creation or recreation 
+	 * PlayerCell constructor use at the player creation or recreation
+	 * 
 	 * @param player : The player liked to the cell
-	 * @param size : size of the cell
+	 * @param size   : size of the cell
 	 */
 	public PlayerCellImpl(Player player, int size) {
-		super(
-				player.getTeam().getSpawnX(),
-				player.getTeam().getSpawnY(),
-				size,
-				player.getTeam().getColor()
-		);
+		super(player.getTeam().getSpawnX(), player.getTeam().getSpawnY(), size, player.getTeam().getColor());
 		movementX = 0;
 		movementY = 0;
 		cooldown = 0;
@@ -39,21 +35,17 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 
 	/**
 	 * PlayerCell constructor use when a placer cell spit itself
-	 * @param cell : the origin cell who split itself
-	 * @param size : size of the new cell
+	 * 
+	 * @param cell       : the origin cell who split itself
+	 * @param size       : size of the new cell
 	 * @param directionX : propulsion vector for the split, on X vector
 	 * @param directionY : propulsion vector for the split, on Y vector
 	 */
 	public PlayerCellImpl(PlayerCell cell, int size, float directionX, float directionY) {
-		super(
-				cell.getX(),
-				cell.getY(),
-				size,
-				cell.getPlayer().getTeam().getColor()
-		);
+		super(cell.getX(), cell.getY(), size, cell.getPlayer().getTeam().getColor());
 		cell.setSize(cell.getSize() - this.getSize());
-		this.setInertiaX(directionX*4);
-		this.setInertiaY(directionY*4);
+		this.setInertiaX(directionX * 4);
+		this.setInertiaY(directionY * 4);
 		movementX = 0;
 		movementY = 0;
 		cooldown = COOLDOWN_INITIAL;
@@ -63,51 +55,63 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 
 	/**
 	 * Method to get the Player of this PlayerCell
+	 * 
 	 * @return player
 	 */
+	@Override
 	public Player getPlayer() {
 		return player;
 	}
 
 	/**
 	 * Method to define the movement of the cell (ask by the client)
+	 * 
 	 * @param movementX : movement vector on X coordinate
 	 */
+	@Override
 	public void setMovementX(float movementX) {
 		this.movementX = movementX;
 	}
 
 	/**
 	 * Method to define the movement of the cell (ask by the client)
+	 * 
 	 * @param movementY : movement vector on Y coordinate
 	 */
+	@Override
 	public void setMovementY(float movementY) {
 		this.movementY = movementY;
 	}
 
 	@Override
 	public float getSpeedX() {
-		return super.getSpeedX() + movementX * (MIN_SPEED + (1-MIN_SPEED)*((float)CELL_MIN_SIZE/(float)getSize()));
+		return super.getSpeedX()
+				+ movementX * (MIN_SPEED + (1 - MIN_SPEED) * ((float) CELL_MIN_SIZE / (float) getSize()));
 	}
 
 	@Override
 	public float getSpeedY() {
-		return super.getSpeedY() + movementY * (MIN_SPEED + (1-MIN_SPEED)*((float)CELL_MIN_SIZE/(float)getSize()));
+		return super.getSpeedY()
+				+ movementY * (MIN_SPEED + (1 - MIN_SPEED) * ((float) CELL_MIN_SIZE / (float) getSize()));
 	}
 
 	/**
-	 * Method to update the time to wait before this cell can merge again with the others cells of the same player (after a split)
+	 * Method to update the time to wait before this cell can merge again with the
+	 * others cells of the same player (after a split)
 	 */
+	@Override
 	public void updateCooldown() {
-		if(cooldown > 0) {
+		if (cooldown > 0) {
 			cooldown -= 1;
 		}
 	}
 
 	/**
 	 * Method to get the merge cooldown
+	 * 
 	 * @return cooldown
 	 */
+	@Override
 	public int getCooldown() {
 		return cooldown;
 	}
@@ -115,32 +119,37 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 	/**
 	 * Method to activate the cooldown before the next possible merge of this cell
 	 */
+	@Override
 	public void resetCooldown() {
 		cooldown = COOLDOWN_INITIAL;
 	}
 
 	@Override
 	public boolean collideWith(FeedableObject fo) {
-		if(fo instanceof PlayerCell) {
-			return collideWithPlayer((PlayerCell)fo);
-		} else if(fo instanceof SpikeCell) {
-			return collideWithSpike((SpikeCell)fo);
+		if (fo instanceof PlayerCell) {
+			return collideWithPlayer((PlayerCell) fo);
+		} else if (fo instanceof SpikeCell) {
+			return collideWithSpike((SpikeCell) fo);
 		}
 		return false;
 	}
 
 	/**
 	 * Method to define the specific condition of colliding with an other PlayerCell
+	 * 
 	 * @param cell : A cell to verify the collision with
-	 * @return true if the two PlayerCell are from the same team, if they are from the same Player : true if the cooldown of one of those cells is positive, false in all other cases
+	 * @return true if the two PlayerCell are from the same team, if they are from
+	 *         the same Player : true if the cooldown of one of those cells is
+	 *         positive, false in all other cases
 	 */
 	public boolean collideWithPlayer(PlayerCell cell) {
-		return getPlayer().getTeam() == cell.getPlayer().getTeam() &&
-				!(getPlayer() == getPlayer() && getCooldown() == 0 && cell.getCooldown() == 0);
+		return getPlayer().getTeam() == cell.getPlayer().getTeam()
+				&& !(getPlayer() == getPlayer() && getCooldown() == 0 && cell.getCooldown() == 0);
 	}
 
 	/**
 	 * Method to define the specific condition of colliding with a SpikeCell
+	 * 
 	 * @param cell A Spike Cell to verify the collision with
 	 * @return a PlayerCell and a SpikeCell will never collide
 	 */

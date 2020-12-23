@@ -11,15 +11,15 @@ public interface PlayerCell extends FeedableObject {
 	public static final int COOLDOWN_INITIAL = 625;
 
 	public Player getPlayer();
-	
+
 	public void setMovementX(float movementX);
 
 	public void setMovementY(float movementY);
 
 	public int getCooldown();
-	
+
 	public void updateCooldown();
-	
+
 	public void resetCooldown();
-	
+
 }

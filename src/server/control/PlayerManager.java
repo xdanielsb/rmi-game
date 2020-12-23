@@ -23,6 +23,7 @@ public class PlayerManager {
 
 	/**
 	 * Main constructor of the PlayerManager
+	 * 
 	 * @param monitor : Monitor for synchronized variables
 	 */
 	public PlayerManager(Monitor monitor) {
@@ -31,7 +32,8 @@ public class PlayerManager {
 
 	/**
 	 * Method to modify the score of a team
-	 * @param team : Team who will have it score modified
+	 * 
+	 * @param team   : Team who will have it score modified
 	 * @param amount : int value to add to the team score (positive or negative)
 	 */
 	public void addScore(Team team, int amount) {
@@ -45,13 +47,14 @@ public class PlayerManager {
 
 	/**
 	 * Method to ask for a player movement in a specific direction
+	 * 
 	 * @param player : Player to move
 	 * @param mouseX : float X direction
 	 * @param mouseY : float Y direction
 	 */
 	public void sendMousePosition(Player player, float mouseX, float mouseY) {
 		if (player.isAlive()) {
-			for(PlayerCell cell : player.getCells()) {
+			for (PlayerCell cell : player.getCells()) {
 				moveToward(cell, mouseX, mouseY);
 			}
 		}
@@ -59,6 +62,7 @@ public class PlayerManager {
 
 	/**
 	 * Method to make a player throw food
+	 * 
 	 * @param player : Player who will throw some food
 	 * @param mouseX : float X direction to throw
 	 * @param mouseY : float Y direction to throw
@@ -66,13 +70,13 @@ public class PlayerManager {
 	 */
 	public List<Food> throwFood(Player player, float mouseX, float mouseY) {
 		List<Food> foods = new ArrayList<>();
-		for(PlayerCell cell : player.getCells()) {
-			if(cell.getSize() >= PlayerCell.MIN_THROWING_FOOD_SIZE) {
+		for (PlayerCell cell : player.getCells()) {
+			if (cell.getSize() >= PlayerCell.MIN_THROWING_FOOD_SIZE) {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
 
-				Food food = new FoodImpl(cell, (float)(distX/dist), (float)(distY/dist));
+				Food food = new FoodImpl(cell, (float) (distX / dist), (float) (distY / dist));
 				foods.add(food);
 
 				cell.setSize(cell.getSize() - food.getSize());
@@ -84,42 +88,45 @@ public class PlayerManager {
 
 	/**
 	 * Method to split a player
+	 * 
 	 * @param player : Player to split
 	 * @param mouseX : float X direction to split
 	 * @param mouseY : float Y direction to split
 	 */
 	public void split(Player player, float mouseX, float mouseY) {
 		List<PlayerCell> cells = new ArrayList<>();
-		for(PlayerCell cell : player.getCells()) {
-			if(cell.getSize() >= PlayerCell.MIN_SPLITTING_SIZE) {
+		for (PlayerCell cell : player.getCells()) {
+			if (cell.getSize() >= PlayerCell.MIN_SPLITTING_SIZE) {
 				double distX = mouseX - cell.getX();
 				double distY = mouseY - cell.getY();
 				double dist = Math.hypot(distX, distY);
-				PlayerCell newCell = new PlayerCellImpl(cell, cell.getSize()/2, (float)(distX/dist), (float)(distY/dist));
+				PlayerCell newCell = new PlayerCellImpl(cell, cell.getSize() / 2, (float) (distX / dist),
+						(float) (distY / dist));
 				cells.add(newCell);
 			}
 		}
-		
-		for(PlayerCell cell : cells) {
+
+		for (PlayerCell cell : cells) {
 			player.addCell(cell);
 		}
 	}
 
 	/**
 	 * Method to make a cell explosion
+	 * 
 	 * @param cell : PlayerCell to explode
 	 */
 	public void playerCellExplosion(PlayerCell cell) {
 		float ratio = SpikeCell.EXPLOSION_INITIAL_RATIO;
 		int initialSize = cell.getSize();
 
-		for(int i = 0; i < SpikeCell.EXPLOSION_NUMBER; i++) {
-			if(cell.getSize() < PlayerCell.MIN_SPLITTING_SIZE) {
+		for (int i = 0; i < SpikeCell.EXPLOSION_NUMBER; i++) {
+			if (cell.getSize() < PlayerCell.MIN_SPLITTING_SIZE) {
 				break;
 			}
-			int size = Math.max((int)(initialSize*ratio), PlayerCell.CELL_MIN_SIZE);
-			double angle = Math.random()*Math.toRadians(360);
-			cell.getPlayer().addCell(new PlayerCellImpl(cell, size, (float)Math.cos(angle), (float)Math.sin(angle)));
+			int size = Math.max((int) (initialSize * ratio), PlayerCell.CELL_MIN_SIZE);
+			double angle = Math.random() * Math.toRadians(360);
+			cell.getPlayer().addCell(new PlayerCellImpl(cell, size, (float) Math.cos(angle), (float) Math.sin(angle)));
 			ratio /= 2;
 		}
 
@@ -127,19 +134,20 @@ public class PlayerManager {
 
 	/**
 	 * Method to apply a move on a specific PlayerCell
-	 * @param cell : PlayerCell to move
+	 * 
+	 * @param cell   : PlayerCell to move
 	 * @param mouseX : float X direction
 	 * @param mouseY : float Y direction
 	 */
 	public void moveToward(PlayerCell cell, float mouseX, float mouseY) {
-		if(cell != null) {
+		if (cell != null) {
 			float distX = mouseX - cell.getX();
 			float distY = mouseY - cell.getY();
-			float dist = (float)Math.hypot(distX, distY);
-			if(dist > 10) {
-				cell.setMovementX(distX/dist);
-				cell.setMovementY(distY/dist);
-			}else {
+			float dist = (float) Math.hypot(distX, distY);
+			if (dist > 10) {
+				cell.setMovementX(distX / dist);
+				cell.setMovementY(distY / dist);
+			} else {
 				cell.setMovementX(0);
 				cell.setMovementY(0);
 			}
@@ -148,6 +156,7 @@ public class PlayerManager {
 
 	/**
 	 * Method to make a kill a player and make him respawn after 3 seconds
+	 * 
 	 * @param p : Player to kill
 	 */
 	public void removePlayer(Player p) {
@@ -166,41 +175,39 @@ public class PlayerManager {
 	}
 
 	/**
-	 * Method to make a FeedableObject eat a CoordinateObject
-	 * This method will act differently for each different couple of Feedable and Coordinate objects
-	 * This method contains all instanceof necessary to redirect to the specific behavior
-	 * @param eater : FeedableObject to feed
-	 * @param eated : CoordinateObject to eat
+	 * Method to make a FeedableObject eat a CoordinateObject This method will act
+	 * differently for each different couple of Feedable and Coordinate objects This
+	 * method contains all instanceof necessary to redirect to the specific behavior
+	 * 
+	 * @param eater   : FeedableObject to feed
+	 * @param eated   : CoordinateObject to eat
 	 * @param manager : gameManager for board update
 	 */
 	public void tryEat(FeedableObject eater, CoordinateObject eated, GameManager manager) {
-		if(eater instanceof PlayerCell) {
+		if (eater instanceof PlayerCell) {
 			PlayerCell cell = (PlayerCell) eater;
-			if(eated instanceof Food) {
-				playerTryToEatFood(cell, (Food)eated, manager);
-			} else if(eated instanceof PlayerCell) {
-				playerTryToEatPlayer(cell, (PlayerCell)eated, manager);
-			} else if(eated instanceof SpikeCell) {
-				playerTryToEatSpike(cell, (SpikeCell)eated, manager);
+			if (eated instanceof Food) {
+				playerTryToEatFood(cell, (Food) eated, manager);
+			} else if (eated instanceof PlayerCell) {
+				playerTryToEatPlayer(cell, (PlayerCell) eated, manager);
+			} else if (eated instanceof SpikeCell) {
+				playerTryToEatSpike(cell, (SpikeCell) eated, manager);
 			}
-		} else if(eater instanceof SpikeCell) {
-			if(eated instanceof Food) {
-				spikeTryToEatFood((SpikeCell)eater, (Food)eated, manager);
+		} else if (eater instanceof SpikeCell) {
+			if (eated instanceof Food) {
+				spikeTryToEatFood((SpikeCell) eater, (Food) eated, manager);
 			}
 		}
 	}
 
 	/**
 	 * Method to make a Player eat a Food
-	 * @param eater : Player to feed
-	 * @param eated : Food to eat
+	 * 
+	 * @param eater   : Player to feed
+	 * @param eated   : Food to eat
 	 * @param manager : gameManager for board update
 	 */
-	private void playerTryToEatFood(
-			PlayerCell eater,
-			Food eated,
-			GameManager manager
-			) {
+	private void playerTryToEatFood(PlayerCell eater, Food eated, GameManager manager) {
 		eater.eat(eated);
 		addScore(eater.getPlayer().getTeam(), eated.getSize());
 		manager.removeFood(eated);
@@ -208,15 +215,13 @@ public class PlayerManager {
 
 	/**
 	 * Method to make a Player eat a Player
-	 * @param eater : Player to feed
-	 * @param eated : player to eat
+	 * 
+	 * @param eater   : Player to feed
+	 * @param eated   : player to eat
 	 * @param manager : gameManager for board update
 	 */
-	private void playerTryToEatPlayer(
-			PlayerCell eater,
-			PlayerCell eated,
-			GameManager manager	) {
-		if(eater.getPlayer() == eated.getPlayer() || eated.getSize() < eater.getSize()*0.98) {
+	private void playerTryToEatPlayer(PlayerCell eater, PlayerCell eated, GameManager manager) {
+		if (eater.getPlayer() == eated.getPlayer() || eated.getSize() < eater.getSize() * 0.98) {
 			eater.eat(eated);
 			addScore(eater.getPlayer().getTeam(), eated.getSize());
 			manager.removePlayerCell(eated);
@@ -225,16 +230,13 @@ public class PlayerManager {
 
 	/**
 	 * Method to make a Player eat a SpikeCell
-	 * @param eater : Player to feed
-	 * @param eated : SpikeCell to eat
+	 * 
+	 * @param eater   : Player to feed
+	 * @param eated   : SpikeCell to eat
 	 * @param manager : gameManager for board update
 	 */
-	private void playerTryToEatSpike(
-			PlayerCell eater,
-			SpikeCell eated,
-			GameManager manager
-	) {
-		if(eated.getSize() < eater.getSize()*0.98) {
+	private void playerTryToEatSpike(PlayerCell eater, SpikeCell eated, GameManager manager) {
+		if (eated.getSize() < eater.getSize() * 0.98) {
 			playerCellExplosion(eater);
 			manager.removeSpikeCell(eated);
 		}
@@ -242,24 +244,17 @@ public class PlayerManager {
 
 	/**
 	 * Method to make a SpikeCell eat a Food
-	 * @param eater : SpikeCell to feed
-	 * @param eated : Food to eat
+	 * 
+	 * @param eater   : SpikeCell to feed
+	 * @param eated   : Food to eat
 	 * @param manager : gameManager for board update
 	 */
-	private void spikeTryToEatFood(
-			SpikeCell eater,
-			Food eated,
-			GameManager manager
-	) {
+	private void spikeTryToEatFood(SpikeCell eater, Food eated, GameManager manager) {
 		eater.eat(eated);
-		if(eater.getSize() > SpikeCell.MAX_SPIKE_SIZE) {
+		if (eater.getSize() > SpikeCell.MAX_SPIKE_SIZE) {
 			double dist = Math.hypot(eated.getInertiaX(), eated.getInertiaY());
-			manager.addSpike(new SpikeCellImpl(
-					eater,
-					eater.getSize()/2,
-					(float)(eated.getInertiaX()/dist),
-					(float)(eated.getInertiaY()/dist)
-			));
+			manager.addSpike(new SpikeCellImpl(eater, eater.getSize() / 2, (float) (eated.getInertiaX() / dist),
+					(float) (eated.getInertiaY() / dist)));
 		}
 		manager.removeFood(eated);
 	}

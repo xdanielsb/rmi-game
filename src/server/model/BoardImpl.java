@@ -15,7 +15,7 @@ import interfaces.Team;
 /**
  * Server implementation of the Board Interface
  */
-public class BoardImpl implements Board{
+public class BoardImpl implements Board {
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,10 +31,11 @@ public class BoardImpl implements Board{
 
 	/**
 	 * Board main constructor
+	 * 
 	 * @param boardHeight : board width (X coordinate)
-	 * @param boardWidth : board height (Y coordinate)
-	 * @param nbFood : number of food on the board
-	 * @param nbSpike : initial number of SpikeCell on the board
+	 * @param boardWidth  : board height (Y coordinate)
+	 * @param nbFood      : number of food on the board
+	 * @param nbSpike     : initial number of SpikeCell on the board
 	 */
 	public BoardImpl(int boardWidth, int boardHeight, int nbFood, int nbSpike) {
 		foods = new ArrayList<>();
@@ -47,11 +48,11 @@ public class BoardImpl implements Board{
 
 		players = new HashMap<>();
 
-		for(int i = 0; i < nbFood; i++) {
+		for (int i = 0; i < nbFood; i++) {
 			foods.add(new FoodImpl(this));
 		}
 
-		for(int i = 0; i < nbSpike; i++) {
+		for (int i = 0; i < nbSpike; i++) {
 			spikes.add(new SpikeCellImpl(this));
 		}
 
@@ -61,40 +62,50 @@ public class BoardImpl implements Board{
 
 	/**
 	 * Method to get Board Width (X coordinate)
+	 * 
 	 * @return board width
 	 */
+	@Override
 	public int getBoardWidth() {
 		return boardWidth;
 	}
-	
+
 	/**
 	 * Method to get Board Height (Y coordinate)
+	 * 
 	 * @return board height
 	 */
+	@Override
 	public int getBoardHeight() {
 		return boardHeight;
 	}
 
 	/**
 	 * Method to get team list of the board
+	 * 
 	 * @return list of team
 	 */
+	@Override
 	public List<Team> getTeams() {
 		return teams;
 	}
 
 	/**
 	 * Method to add a Team to the team list
+	 * 
 	 * @param team : TEam to add
 	 */
+	@Override
 	public void addTeam(Team team) {
 		teams.add(team);
 	}
 
 	/**
 	 * Method to remove a Player to the Board
+	 * 
 	 * @param player : Player to remove
 	 */
+	@Override
 	public void removePlayer(Player player) {
 		player.getTeam().removePlayer(player);
 		players.remove(player.getId());
@@ -102,34 +113,40 @@ public class BoardImpl implements Board{
 
 	/**
 	 * Method to get a player from the Board
+	 * 
 	 * @param id : int id of the player to return
 	 * @return the player with this specific id
 	 */
+	@Override
 	public Player getPlayer(int id) {
 		return players.get(id);
 	}
 
 	/**
 	 * Method to get all the Players of the Board
+	 * 
 	 * @return a Collection with all the players
 	 */
+	@Override
 	public Collection<Player> getPlayers() {
 		return players.values();
 	}
 
 	/**
 	 * Method to add a Player to the Board and to chose a team for this player
+	 * 
 	 * @param player : Player to add
 	 */
+	@Override
 	public void addPlayer(Player player) {
 		players.put(player.getId(), player);
-		if(teams.size() <= 0) {
+		if (teams.size() <= 0) {
 			return;
 		}
 		Team minTeam = null;
 		int min = Integer.MAX_VALUE;
-		for(Team t : teams) {
-			if(t.getPlayers().size() < min) {
+		for (Team t : teams) {
+			if (t.getPlayers().size() < min) {
 				min = t.getPlayers().size();
 				minTeam = t;
 			}
@@ -140,8 +157,10 @@ public class BoardImpl implements Board{
 
 	/**
 	 * Method to get the winner of the party
+	 * 
 	 * @return the winning Team if the game is over, null if not
 	 */
+	@Override
 	public Team getWinners() {
 		return winners;
 	}
@@ -149,65 +168,78 @@ public class BoardImpl implements Board{
 	/**
 	 * Method to ask to the board to chose is winning Team
 	 */
+	@Override
 	public void setWinner() {
 		Team winning = null;
 		int higherScore = -1;
-		for(Team team : teams) {
-			if(team.getScore() > higherScore) {
+		for (Team team : teams) {
+			if (team.getScore() > higherScore) {
 				winning = team;
 				higherScore = winning.getScore();
 			}
 		}
-		this.winners = winning;		
+		this.winners = winning;
 	}
 
 	/**
 	 * Method to get all the foods on the Board
+	 * 
 	 * @return the food list
 	 */
-	public List<Food> getFoods(){
+	@Override
+	public List<Food> getFoods() {
 		return foods;
 	}
-	
+
 	/**
 	 * Method to add some Foods on the Board
+	 * 
 	 * @param foods : food list to add
 	 */
+	@Override
 	public void addFoods(List<Food> foods) {
 		this.foods.addAll(foods);
 	}
-	
+
 	/**
 	 * Method to remove a Food from the Board
+	 * 
 	 * @param food : the Food to remove
 	 * @return true if the remove work, false if not
 	 */
+	@Override
 	public boolean removeFood(Food food) {
 		return foods.remove(food);
 	}
 
 	/**
 	 * Method to add a SpikeCell to the Board
+	 * 
 	 * @param spike : SpikeCell to add
 	 */
+	@Override
 	public void addSpike(SpikeCell spike) {
 		this.spikes.add(spike);
 	}
-	
+
 	/**
 	 * Method to remove a SpikeCell to the Board
+	 * 
 	 * @param spike : SpikeCell to remove
 	 * @return true if the remove work, false if not
 	 */
+	@Override
 	public boolean removeSpike(SpikeCell spike) {
 		return spikes.remove(spike);
 	}
-	
+
 	/**
 	 * Method to get all Spike cells from the Board
+	 * 
 	 * @return the SpikeCell list
 	 */
-	public List<SpikeCell> getSpikeCells(){
+	@Override
+	public List<SpikeCell> getSpikeCells() {
 		return spikes;
 	}
 

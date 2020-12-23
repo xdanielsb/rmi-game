@@ -14,17 +14,17 @@ public interface Team extends Serializable, Remote {
 	public Color getColor();
 
 	public int getScore();
-	
+
 	public void addPlayer(Player player);
-	
+
 	public List<Player> getPlayers();
 
 	public boolean removePlayer(Player player);
-	
+
 	public void addToScore(int amount);
-	
+
 	public int getSpawnX();
-	
+
 	public int getSpawnY();
 
 	public Object getBell();
