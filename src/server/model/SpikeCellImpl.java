@@ -14,7 +14,7 @@ public class SpikeCellImpl extends FeedableObjectImpl implements SpikeCell {
 
 	/**
 	 * SpikeCell construct, use at the board creation
-	 * @param board
+	 * @param board : Board of the game
 	 */
 	public SpikeCellImpl(Board board) {
 		super(

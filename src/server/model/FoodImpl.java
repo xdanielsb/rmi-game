@@ -19,7 +19,7 @@ public class FoodImpl extends CoordinateObjectImpl implements Food {
 
 	/**
 	 * Food constructor use for the foods add to the board add the beginning of the game
-	 * @param board
+	 * @param board Board of the game
 	 */
 	public FoodImpl(Board board) {
 		super(

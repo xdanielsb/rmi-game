@@ -23,8 +23,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Main constructor
-	 * @param gameManager
-	 * @throws RemoteException
+	 * @param gameManager : The object handling the running of the server
 	 */
 	public PlayerRemote(GameManager gameManager) throws RemoteException {
 		this.gameManager = gameManager;
@@ -58,7 +57,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to ask to a player to throw Food
-	 * @param id : int id of the player
+	 * @param idPlayer : int id of the player
 	 * @param mouseX : float X direction of the throw
 	 * @param mouseY : float Y direction of the throw
 	 */
@@ -69,7 +68,7 @@ public class PlayerRemote extends UnicastRemoteObject implements IPlayerRemote {
 
 	/**
 	 * Method to ask for a player to split
-	 * @param id : int id of the player
+	 * @param idPlayer : int id of the player
 	 * @param mouseX : float X direction of the split
 	 * @param mouseY : float Y direction of the split
 	 */

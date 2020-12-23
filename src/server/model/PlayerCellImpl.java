@@ -21,7 +21,7 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 
 	/**
 	 * PlayerCell constructor use at the player creation or recreation 
-	 * @param player
+	 * @param player : The player liked to the cell
 	 * @param size : size of the cell
 	 */
 	public PlayerCellImpl(Player player, int size) {
@@ -131,7 +131,7 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 
 	/**
 	 * Method to define the specific condition of colliding with an other PlayerCell
-	 * @param cell
+	 * @param cell : A cell to verify the collision with
 	 * @return true if the two PlayerCell are from the same team, if they are from the same Player : true if the cooldown of one of those cells is positive, false in all other cases
 	 */
 	public boolean collideWithPlayer(PlayerCell cell) {
@@ -141,7 +141,7 @@ public class PlayerCellImpl extends FeedableObjectImpl implements PlayerCell {
 
 	/**
 	 * Method to define the specific condition of colliding with a SpikeCell
-	 * @param cell
+	 * @param cell A Spike Cell to verify the collision with
 	 * @return a PlayerCell and a SpikeCell will never collide
 	 */
 	public boolean collideWithSpike(SpikeCell cell) {

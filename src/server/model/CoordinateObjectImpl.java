@@ -25,7 +25,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	 * @param x : X coordinate of the CoordinateObject
 	 * @param y : Y coordinate of the CoordinateObject
 	 * @param size : size of the CoordinateObject (can be consider like the CoordinateObject area)
-	 * @param color
+	 * @param color : Color of the coordinate object
 	 */
 	public CoordinateObjectImpl(float x, float y, int size, Color color) {
 		this.x = x;
