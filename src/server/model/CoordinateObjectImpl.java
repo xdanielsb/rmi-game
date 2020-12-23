@@ -176,7 +176,7 @@ public abstract class CoordinateObjectImpl implements CoordinateObject {
 	
 	@Override
 	public int compareTo(CoordinateObject coordObj) {
-		return Double.compare(this.getSize(), coordObj.getSize());
+		return Integer.compare(this.getSize(), coordObj.getSize());
 	}
 
 
