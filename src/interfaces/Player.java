@@ -6,46 +6,45 @@ import java.util.List;
 
 public interface Player extends Serializable, Remote {
 
-	static final long serialVersionUID = 1L;
+  static final long serialVersionUID = 1L;
 
-	public int getId();
+  public int getId();
 
-	public String getName();
+  public String getName();
 
-	public boolean isAlive();
+  public boolean isAlive();
 
-	public void setAlive(boolean alive);
+  public void setAlive(boolean alive);
 
-	public float getThrowDirectionX();
+  public float getThrowDirectionX();
 
-	public float getThrowDirectionY();
+  public float getThrowDirectionY();
 
-	public void setThrowDirection(float throwDirectionX, float throwDirectionY);
+  public void setThrowDirection(float throwDirectionX, float throwDirectionY);
 
-	public float getSplitDirectionX();
+  public float getSplitDirectionX();
 
-	public float getSplitDirectionY();
+  public float getSplitDirectionY();
 
-	public void setSplitDirection(float splitDirectionX, float splitDirectionY);
+  public void setSplitDirection(float splitDirectionX, float splitDirectionY);
 
-	public float getX();
+  public float getX();
 
-	public float getY();
+  public float getY();
 
-	public void updateCoordinates();
+  public void updateCoordinates();
 
-	public int getSize();
+  public int getSize();
 
-	public float getRadius();
+  public float getRadius();
 
-	public List<PlayerCell> getCells();
+  public List<PlayerCell> getCells();
 
-	public Team getTeam();
+  public Team getTeam();
 
-	public void setTeam(Team team);
+  public void setTeam(Team team);
 
-	public void addCell(PlayerCell cell);
+  public void addCell(PlayerCell cell);
 
-	public boolean removeCell(PlayerCell cell);
-
+  public boolean removeCell(PlayerCell cell);
 }

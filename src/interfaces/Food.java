@@ -2,12 +2,11 @@ package interfaces;
 
 public interface Food extends CoordinateObject {
 
-	static final long serialVersionUID = 1L;
+  static final long serialVersionUID = 1L;
 
-	public static final int FOOD_SIZE = 2;
+  public static final int FOOD_SIZE = 2;
 
-	public boolean isPersistent();
+  public boolean isPersistent();
 
-	public void killFood();
-
+  public void killFood();
 }
