@@ -17,6 +17,7 @@ import javax.swing.SwingConstants;
 public class ClientConnectGUI extends JFrame implements ActionListener {
 
   private JPanel panel;
+  private JLabel lblusername;
   private JLabel status;
   private JButton startGame;
   private ClientManager manager;
@@ -30,7 +31,8 @@ public class ClientConnectGUI extends JFrame implements ActionListener {
         dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
     this.panel = new JPanel();
-    this.status = new JLabel("Username", SwingConstants.CENTER);
+    this.lblusername = new JLabel("Username", SwingConstants.CENTER);
+    this.status = new JLabel("", SwingConstants.CENTER);
 
     this.username = new JTextField(15);
     this.startGame = new JButton("Connect to Server");
@@ -38,9 +40,10 @@ public class ClientConnectGUI extends JFrame implements ActionListener {
 
     panel.setLayout(new FlowLayout());
 
-    panel.add(this.status);
+    panel.add(this.lblusername);
     panel.add(this.username);
-    panel.add(startGame);
+    panel.add(this.startGame);
+    panel.add(this.status);
 
     this.getContentPane().add(panel);
     setVisible(true);
@@ -55,9 +58,13 @@ public class ClientConnectGUI extends JFrame implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent evt) {
     if (evt.getSource() == startGame) {
-      this.startGame.setEnabled(false);
-      this.dispose();
-      this.manager.connectToServer(this.getUserName());
+      if (this.manager.isServerOnline()) {
+        this.startGame.setEnabled(false);
+        this.manager.connectToServer(this.getUserName());
+        this.dispose();
+      } else {
+        this.setStatus("Cannot connect to the server.");
+      }
     }
   }
 
@@ -68,5 +75,14 @@ public class ClientConnectGUI extends JFrame implements ActionListener {
    */
   public String getUserName() {
     return this.username.getText();
+  }
+
+  /**
+   * Display response after trying to make connection
+   *
+   * @param status
+   */
+  public void setStatus(String status) {
+    this.status.setText(status);
   }
 }
