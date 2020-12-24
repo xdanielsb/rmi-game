@@ -10,7 +10,9 @@ import interfaces.SpikeCell;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ import server.remote.PlayerRemote;
  * ticks - objects movements - objects collision - score update
  */
 public class GameManager implements ActionListener {
+
+  private static final String serverUrl = "rmi://localhost:1099/PLM";
 
   private PlayerRemote remoteManager;
   private PlayerManager playerManager;
@@ -197,24 +201,19 @@ public class GameManager implements ActionListener {
     playerManager.sendMousePosition(board.getPlayer(id), mouseX, mouseY);
   }
 
-  /**
-   * Method initialization of the server
-   *
-   * @return true if the server is correctly initiated
-   */
-  public boolean initServer() {
+  /** Method initialization of the server */
+  public void initServer() {
+
     try {
       LocateRegistry.createRegistry(1099);
       this.remoteManager = new PlayerRemote(this);
-      Naming.rebind("rmi://localhost:1099/PLM", remoteManager);
+      Naming.rebind(serverUrl, remoteManager);
       tm.start();
       LogManager.writeLog("Server Initialized");
-    } catch (Exception e) {
+    } catch (RemoteException | MalformedURLException e) {
       LogManager.writeLog("E01: Error initializing the server.");
       e.printStackTrace();
-      return false;
     }
-    return true;
   }
 
   /** Method call during a server tick to check all the board collisions */
@@ -222,7 +221,6 @@ public class GameManager implements ActionListener {
     List<FeedableObject> cells = new ArrayList<>();
     for (Player player : board.getPlayers()) {
       if (player.isAlive()) {
-
         for (PlayerCell cell : player.getCells()) {
           checkBoardCollisionForFeedableObject(cell);
           checkFoodCollision(cell);
