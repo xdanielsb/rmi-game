@@ -6,7 +6,7 @@
 ```
 git clone https://github.com/xdanielsb/RMIGame.git
 ```
-2. When it's done, we have to start eclise and choose a workspace. To do so, a window will show up at startup, and asking you to choose a folder, then, click on launch.  
+2. When it's done, we have to start eclipse and choose a workspace. To do so, a window will show up at startup, and asking you to choose a folder, then, click on launch.  
 If no, it means you already have one. So you can go to the next step.  
 
 <img src="assets/EclipseWorkspace.png">
