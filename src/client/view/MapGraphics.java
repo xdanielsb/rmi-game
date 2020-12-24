@@ -56,7 +56,7 @@ public class MapGraphics extends PApplet {
     centerX = width / 2;
     centerY = height / 2;
     this.boardDisplayer =
-        new BoardDisplayer(Math.min(width, height), 0.1f, PlayerCell.CELL_MIN_SIZE, 0.5f, 20000);
+        new BoardDisplayer(Math.min(width, height), 0.1f, PlayerCell.CELL_MIN_SIZE, 0.5f, 10000);
   }
 
   @Override

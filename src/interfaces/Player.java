@@ -38,6 +38,8 @@ public interface Player extends Serializable, Remote {
 
   public float getRadius();
 
+  public void updateSize();
+  
   public List<PlayerCell> getCells();
 
   public Team getTeam();

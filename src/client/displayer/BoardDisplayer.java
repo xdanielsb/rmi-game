@@ -13,10 +13,11 @@ public class BoardDisplayer {
   double screenSize;
   double initialPlayerScreenProportion;
   double initialPlayerSize;
+  double initialPlayerRadius;
   double maximumPlayerScreenProportion;
   double maximumPlayerSize;
 
-  double maximumPlayerSizeMargeRatio;
+  double maximumPlayerRadiusMargeRatio;
 
   public BoardDisplayer(
       double screenSize,
@@ -27,10 +28,11 @@ public class BoardDisplayer {
     this.screenSize = screenSize;
     this.initialPlayerScreenProportion = initialPlayerScreenProportion;
     this.initialPlayerSize = initialPlayerSize;
+    this.initialPlayerRadius = Math.sqrt(initialPlayerSize/Math.PI);
     this.maximumPlayerScreenProportion = maximumPlayerScreenProportion;
     this.maximumPlayerSize = maximumPlayerSize;
 
-    maximumPlayerSizeMargeRatio = Math.sqrt(maximumPlayerSize - initialPlayerSize);
+    maximumPlayerRadiusMargeRatio = Math.sqrt((maximumPlayerSize - initialPlayerSize)/Math.PI);
   }
 
   /**
@@ -97,7 +99,7 @@ public class BoardDisplayer {
       playerScreenProportion =
           initialPlayerScreenProportion
               + (maximumPlayerScreenProportion - initialPlayerScreenProportion)
-                  * (Math.sqrt(player.getSize() - initialPlayerSize) / maximumPlayerSizeMargeRatio);
+                  * ( (player.getRadius()-initialPlayerRadius) / maximumPlayerRadiusMargeRatio);
     }
 
     double newScreenSize = player.getRadius() * 2 / playerScreenProportion;

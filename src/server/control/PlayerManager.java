@@ -129,6 +129,7 @@ public class PlayerManager {
               new PlayerCellImpl(cell, size, (float) Math.cos(angle), (float) Math.sin(angle)));
       ratio /= 2;
     }
+    
   }
 
   /**

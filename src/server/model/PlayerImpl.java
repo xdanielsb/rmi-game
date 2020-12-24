@@ -19,6 +19,9 @@ public class PlayerImpl implements Player {
   private float x;
   private float y;
   private boolean alive;
+  
+  private int size;
+  private float radius;
 
   private float throwDirectionX;
   private float throwDirectionY;
@@ -37,6 +40,10 @@ public class PlayerImpl implements Player {
     x = 0;
     y = 0;
     this.alive = true;
+    
+    size = 0;
+    radius = 0;
+    
     throwDirectionX = 0;
     throwDirectionY = 0;
     splitDirectionX = 0;
@@ -230,11 +237,7 @@ public class PlayerImpl implements Player {
    */
   @Override
   public int getSize() {
-    int somme = 0;
-    for (PlayerCell cell : cells) {
-      somme += cell.getSize();
-    }
-    return somme;
+    return size;
   }
 
   /**
@@ -244,7 +247,18 @@ public class PlayerImpl implements Player {
    */
   @Override
   public float getRadius() {
-    return (float) Math.sqrt(getSize() / Math.PI);
+    return radius;
+  }
+  
+  /**
+   * Method to update the player size and radius values
+   */
+  public void updateSize() {
+    size = 0;
+	for (PlayerCell cell : cells) {
+	  size += cell.getSize();
+	}
+	radius = (float) Math.sqrt(getSize() / Math.PI);
   }
 
   /**

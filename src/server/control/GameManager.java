@@ -71,6 +71,7 @@ public class GameManager implements ActionListener {
     if (!this.gameOver()) {
       applyMovePhysic();
       checkCollision();
+      updatePlayersSize();
       updateWaitingObjects();
       checkPlayerEventAction();
     }
@@ -389,6 +390,15 @@ public class GameManager implements ActionListener {
     for (SpikeCell spike : board.getSpikeCells()) {
       spike.applyMouvement();
     }
+  }
+  
+  /**
+   * Method to update the size of all players
+   */
+  private void updatePlayersSize() {
+	  for(Player player : board.getPlayers()) {
+		  player.updateSize();
+	  }
   }
 
   /**
