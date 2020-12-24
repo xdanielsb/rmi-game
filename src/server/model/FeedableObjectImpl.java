@@ -50,11 +50,19 @@ public abstract class FeedableObjectImpl extends CoordinateObjectImpl implements
 
   @Override
   public float getSpeedX() {
+	double repulsion = Math.hypot(repulsionX, repulsionY);
+	if(repulsion > 1.5) {
+		repulsionX /= repulsion;
+	}
     return super.getSpeedX() + repulsionX;
   }
 
   @Override
   public float getSpeedY() {
+	double repulsion = Math.hypot(repulsionX, repulsionY);
+	if(repulsion > 1) {
+	  repulsionY /= repulsion;
+	}
     return super.getSpeedY() + repulsionY;
   }
 
