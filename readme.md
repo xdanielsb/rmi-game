@@ -1,27 +1,16 @@
 ### This is a simple game to apply RMI, concurrency and AspectJ
 
-- RMI
-- AspectJ
-- Monitor
-
 <img src="assets/demo.gif">
 
-### Server
-- control
-- model
-- remote
-- transverse
-- view
+### Server Model
 
 <img src="assets/ServerModel.png">
 
-
-### Client
-- control
-- view
+### Client Model
 
 <img src="assets/ClientModel.png">
 
 
 ### Intructions
-- create a jar with the packages /model and /remote of the server and add them to the client
+- run the server
+- run different instances of the client
