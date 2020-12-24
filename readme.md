@@ -21,7 +21,7 @@
 
 #### Player movements
 
-The player cells will move in the direction of the mouse on the board. His speed will decrease progressively that the player increase his size.  
+The player cells will move in the direction of the mouse on the board, if the cell will not move if the mouse is at it center. Player cell speed will decrease progressively that the player increase his size.  
 The board display on the client will always place the player a the center of the board. If the player is divided into multiple cells, then the center of the player will be at an equal distance of the player cell the at most extreme distances (for exemple, on X coordinates, the player X will be between the first cell at the left and the last cell at the rigth :
 ```python
 playerX = ( cellL.X-cellL.radius + cellR.X+cellR.radius ) / 2
