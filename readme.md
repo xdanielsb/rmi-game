@@ -1,6 +1,11 @@
 ### This is a simple game to apply RMI, concurrency and AspectJ
 
 
+![Alt Text](assets/demo.gif)
+
+*Exemple of player explosion and gathering in the game*
+
+
 # How to install
 1. To install the project and starting to use it, we have to, in the first time, clone it with git.  
 ```
@@ -179,9 +184,7 @@ for (int i = 0; i < 20; i++) :
     cell.player.addCell( new PlayerCell(size, cos(angle), sin(angle)) );
     ratio /= 2;
 ```
-![Alt Text](assets/demo.gif)
 
-*Exemple of player explosion and gathering*
 
 A spike cell appeare first appeare with a size of 400, if a player throw somme foods on a spike cell and (by eating foods) this spike cell reach 2 time it initial size, the spike cell will split into two new spike cells. On of the spike cell will stay at the same place and the other will be throw in the continuation of the direction that the last food who feed it. This is the only way to increase the number os spike cells.
 
